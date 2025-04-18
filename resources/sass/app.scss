@@ -1,0 +1,262 @@
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import 'bootstrap/scss/bootstrap';
+
+@import "nprogress/nprogress.css";
+
+$primary-color: #ECB34D;
+
+/* Loading 颜色 */
+#nprogress .bar {
+    background: $primary-color !important;
+}
+
+html,
+body {
+    height: 100%;
+    color: #000000;
+    background: #ffffff;
+    font-family: "PingFang SC", "微软雅黑", "Microsoft YaHei", Helvetica, "Helvetica Neue", Tahoma, Arial, sans-serif;
+    font: 14px "PingFang SC", "微软雅黑", "Microsoft YaHei", Helvetica, "Helvetica Neue", Tahoma, Arial, sans-serif;
+}
+
+a,
+a:link,
+a:active,
+a:hover,
+a:visited,
+a:focus {
+    text-decoration: none;
+    list-style: none;
+    outline: none;
+    cursor: pointer;
+}
+
+ul {
+    list-style: none;
+    list-style-type: none;
+}
+
+button:focus,
+button:active:focus,
+button.active:focus,
+button.focus,
+button:active.focus,
+button.active.focus {
+    outline: none;
+}
+
+.btn-primary {
+    color: #fff !important;
+}
+
+/* 定义浏览器下拉条样式 */
+body::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+body::-webkit-scrollbar-button {
+    display: none;
+}
+
+body::-webkit-scrollbar-track {
+    background-color: black;
+}
+
+body::-webkit-scrollbar-track-piece {
+    background: #ffffff;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: #8e8e8e;
+    border-radius: 3px;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background-color: #3b3b3b;
+}
+
+body::-webkit-scrollbar-resizer {
+    background-color: $primary-color;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+
+    main {
+        display: flex;
+        flex-direction: column;
+        flex: 1 0 auto;
+    }
+}
+
+header:after {
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: -1;
+    background-color: rgba(255,255,255,0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    filter: blur(3px);
+    -webkit-filter: blur(3px);
+}
+
+header {
+    width: 100%;
+    height: 72px;
+    position: sticky !important;
+    top: 0;
+    z-index: 9999;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    transition: height 0.5s;
+    box-shadow: 0 .0125rem .25rem #00000013!important;
+
+    .logo {
+        img {
+            width: 60px;
+            height: 60px;
+        }
+    }
+
+    // 导航
+    .main-nav {
+        .nav-item {
+            padding: 0px 20px;
+            position: relative;
+
+            .nav-link {
+                display: block;
+                font-size: 16px;
+                line-height: 26px;
+                font-weight: 300;
+                color: #383838;
+            }
+
+            .nav-link:after {
+                content: "";
+                display: block;
+                background-color: $primary-color;
+                height: 3px;
+                width: 0;
+                transition: .3s;
+            }
+        }
+
+        .nav-item.active  {
+            .nav-link {
+                color: $primary-color;
+            }
+
+            .nav-link:after{
+                width: 100%;
+            }
+        }
+
+        .nav-item:not(.active):hover {
+            .nav-link {
+                color: $primary-color;
+            }
+
+            .nav-link:after {
+                width: 100%;
+            }
+        }
+    }
+
+    // dropdown-menu 控制
+    .dropdown-menu {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+
+        .dropdown-item {
+            padding-top: 8px !important;
+            padding-bottom: 8px !important;
+            border-radius: 0.375rem;
+        }
+    }
+}
+
+// 底部
+footer {
+    width: 100%;
+    background-color: #1d1d1d;
+    box-sizing: border-box;
+    padding: 30px 0 16px 0;
+    overflow: hidden;
+
+    a {
+        color: #cccccc;
+        font-size: 14px;
+    }
+
+    a:hover {
+        color: #ffffff;
+    }
+
+    ul {
+        padding-left: 0 !important;
+
+        li:first-child {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-top: 8px;
+        }
+
+        img {
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        height: 60px;
+
+        .logo {
+            img {
+                width: 52px;
+                height: 52px;
+            }
+        }
+
+        .main-nav {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        .dropdown-nav {
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+
+            .dropdown {
+                height: 72px;
+
+                .nav-link {
+                    margin-right: 12px;
+                }
+            }
+        }
+    }
+
+    // 修改抽屉的宽度为 320px
+    .offcanvas.offcanvas-end {
+        width: 320px !important;
+    }
+}

@@ -1,0 +1,115 @@
+.container-app {
+    margin-top: 30px;
+    margin-bottom: 40px;
+
+    .content {
+        animation: contentIn 1s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
+
+        .title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            margin-top: 50px;
+        }
+
+        .link {
+            font-size: 15px;
+            color: #6ea8feff;
+            margin-top: 5px;
+        }
+
+        .link:hover {
+            color: #6ea8fe99;
+        }
+
+        .text {
+            color: #636972;
+            font-size: 14px;
+            line-height: 24px;
+            margin-top: 10px;
+        }
+
+        .qr-code {
+            margin-top: 20px;
+
+            .qr-code-item {
+                width: 50%;
+
+                img {
+                    width: 85%;
+                    border-radius: 6px;
+                    box-shadow: 0 .0125rem .25rem #00000020 !important;
+                }
+
+                span {
+                    font-size: 13px;
+                    margin-top: 16px;
+                    color: #636972;
+                }
+            }
+        }
+    }
+
+    .app-img {
+        display: flex;
+        justify-content: flex-end;
+
+        img {
+            width: 94%;
+            animation: imgIn 1.2s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
+        }
+    }
+
+    .xqb-row {
+        margin-top: 50px;
+    }
+}
+
+@keyframes contentIn {
+    0% {
+      filter: blur(12px);
+      transform: translateY(-100px);
+      opacity: 0;
+    }
+    100% {
+      filter: blur(0px);
+      transform: translateY(0);
+      opacity: 1;
+    }
+}
+
+@keyframes imgIn {
+    0% {
+      transform: translateY(-100%) rotateX(-180deg);
+      transform-origin: 50% 100%;
+      scale: 0.2;
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0) rotateX(0);
+      transform-origin: 50% 0%;
+      scale: 1;
+      opacity: 1;
+    }
+  }
+
+@media (max-width: 991.98px) {
+    .container-app {
+        margin-top: 12px;
+
+        .content {
+            .title {
+                margin-top: 0px;
+                margin-bottom: 0px;
+            }
+
+            .text {
+                margin-top: 5px;
+            }
+        }
+
+        .app-img {
+            justify-content: center;
+            margin-top: 20px;
+        }
+    }
+}
