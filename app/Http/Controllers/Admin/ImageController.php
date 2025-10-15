@@ -12,38 +12,81 @@ class ImageController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'info' => 'sometimes|array',
+            'info' => 'required',
             'file' => 'required|string'
         ], [], [
             'info' => '图片信息',
             'file' => '图片文件'
         ]);
 
-        $user = $request->user();
-
         $info = $request->info;
 
-        $referer = isset($info) && isset($info['referer']) ? $info['referer'] : '';
+        $file = $request->file;
+
+        if (gettype($info) == 'string') {
+            $info = json_decode($info, true);
+        }
+
+        $referer = $info['referer'] ?? '';
+        if (!$referer) {
+            return response()->json(['message' => '缺少 info 信息'], 403);
+        }
+
+        $user = $request->user();
+
+        $both = $info['both'] ?? false;
+        if ($both) {
+            $thumbnail_name = 'min_' . randStr(8);
+            $min_width = 300;
+        } else {
+            $thumbnail_name = null;
+            $min_width = null;
+        }
 
         if ($referer == 'avatar') {
             $folder = sprintf('storage/upload/image/avatar/%s/', date('Ym', strtotime($user->created_at)));
             $name = $user->id . '.jpg';
             $max_width = 320;
+        } elseif ($referer == 'resource') {
+            $type = $info['type'] ?? '';
+            $types = ['image', 'video', 'audio', 'model'];
+
+            if (!in_array($type, $types)) {
+                return response()->json(['message' => '资源类型不正确'], 403);
+            }
+            // 资源
+            $folder = sprintf('storage/upload/image/resource/%s/%s/', $type, date('Ym', time()));
+            $name = 'max_' . randStr(8);
+            $max_width = null;
+        } elseif ($referer == 'course') {
+            // 课程
+            $folder = sprintf('storage/upload/image/course/%s/', date('Ym', time()));
+            $name = 'max_' . randStr(8);
+            $max_width = null;
+        } else {
+            return  response()->json(['message' => '没有对应的 referer'], 403);
         }
 
-        $res = app(ImageUpload::class)->saveBase64Image($request->file, $folder, $name, $max_width);
+        if ($request->hasFile('file')) {
+            $res = app(ImageUpload::class)->saveFileImage($file, $folder, $name, $max_width, $thumbnail_name, $min_width);
+        } else {
+            $res = app(ImageUpload::class)->saveBase64Image($file, $folder, $name, $max_width, $thumbnail_name, $min_width);
+        }
+
         if ($res && isset($res['error'])) {
-
-            Log::channel('error')->error($res);
-
+            Log::channel('error')->error('upload-image-error', $res);
             return response()->json(['message' => '上传图片失败'], 403);
         }
 
-        $path = $res['url'] . '?time=' . time();
-
         if ($referer == 'avatar') {
+            $path = $res['url'] . '?time=' . time();
             $user->update(['avatar' => $path]);
         }
-        return response()->json(storageUrl($path), 200);
+
+        $url = $res['url'] ? storageUrl($res['url']) : '';
+
+        $thumbnail = $res['thumbnail'] ? storageUrl($res['thumbnail']) : '';
+
+        return response()->json(['url' => $url, 'thumbnail' => $thumbnail]);
     }
 }

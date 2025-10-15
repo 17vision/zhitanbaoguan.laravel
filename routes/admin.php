@@ -9,6 +9,11 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ImageController;
+use App\Http\Controllers\Admin\FileController;
+use App\Http\Controllers\Admin\CourseChapterController;
+use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\ResourceController;
+use App\Http\Controllers\Admin\ResourceGroupController;
 
 Route::get('reset', function (Request $request) {
     defined('STDIN') or define('STDIN', fopen('php://stdin', 'r'));
@@ -58,6 +63,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
 
         Route::post('images', [ImageController::class, 'store']);
 
+        Route::post('files', [FileController::class, 'store']);
+
         Route::group(['middleware' => 'permission:system'], function () {
             // 权限管理（删除权限，角色和用户拥有的权限会自动删除)
             Route::group(['middleware' => 'permission:permission'], function () {
@@ -100,6 +107,58 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::put('users/roles', [UserController::class, 'setUserRoles'])->middleware('permission:user.role');
 
                 Route::post('users/imports', [UserController::class, 'importUser'])->middleware('permission:user.edit');
+            });
+        });
+
+        // 业务管理
+        Route::group(['middleware' => 'permission:business'], function () {
+            // 课程管理
+            Route::group(['middleware' => 'permission:course'], function () {
+                // 课程
+                Route::get('courses', [CourseController::class, 'index'])->middleware('permission:course.index');
+
+                Route::get('courses/{id}', [CourseController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:course.detail');
+
+                Route::post('courses', [CourseController::class, 'store'])->middleware('permission:course.create');
+
+                Route::put('courses', [CourseController::class, 'update'])->middleware('permission:course.update');
+
+                Route::delete('courses', [RoleController::class, 'delete'])->middleware('permission:course.delete');
+
+                // 课程章节
+                Route::get('course_chapters', [CourseChapterController::class, 'index'])->middleware('permission:course.index');
+
+                Route::get('course_chapters/{id}', [CourseChapterController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:course.detail');
+
+                Route::post('course_chapters', [CourseChapterController::class, 'store'])->middleware('permission:course.create');
+
+                Route::put('course_chapters', [CourseController::class, 'update'])->middleware('permission:course.update');
+
+                Route::delete('course_chapters', [CourseChapterController::class, 'delete'])->middleware('permission:course.delete');
+            });
+
+            // 资源管理
+            Route::group(['middleware' => 'permission:resource'], function () {
+
+                Route::get('resources', [ResourceController::class, 'index'])->middleware('permission:resources.index');
+
+                Route::post('resources', [ResourceController::class, 'store'])->middleware('permission:resources.create');
+
+                Route::put('resources', [ResourceController::class, 'update'])->middleware('permission:resources.create');
+
+                Route::delete('resources', [ResourceController::class, 'delete'])->middleware('permission:resources.delete');
+            });
+
+            // 分组管理
+            Route::group(['middleware' => 'permission:resource_group'], function () {
+
+                Route::get('resource_groups', [ResourceGroupController::class, 'index'])->middleware('permission:resource_group.index');
+
+                Route::post('resource_groups', [ResourceGroupController::class, 'store'])->middleware('permission:resource_group.create');
+
+                Route::put('resource_groups', [ResourceGroupController::class, 'update'])->middleware('permission:resource_group.create');
+
+                Route::delete('resource_groups', [ResourceGroupController::class, 'delete'])->middleware('permission:resource_group.delete');
             });
         });
     });

@@ -5,7 +5,7 @@ namespace App\Utils;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Log;
 use Exception;
-use Image;
+use Intervention\Image\Facades\Image;
 
 class ImageUpload
 {
@@ -133,31 +133,22 @@ class ImageUpload
     }
 
     // 保存 input file(2023-06-19 这里需要改造，改造前使用不合适 todo)
-    public function saveFileImage($file, $folder, $name, $suffix, $max_width = false)
+    public function saveFileImage($file, $folder, $name, $max_width = null, $thumbnail_name = null, $min_width = null)
     {
         // 文件具体存储的物理路径，`public_path()` 获取的是 `public` 文件夹的物理路径。
         // 值如：/home/vagrant/Code/larabbs/public/uploads/images/avatars/201709/21/
         $upload_path = public_path() . '/' . $folder;
 
         // 获取文件的后缀名，因图片从剪贴板里黏贴时后缀名为空，所以此处确保后缀一直存在
-        if ($suffix) {
-            $extension = $suffix;
+        if (strtolower($file->getClientOriginalExtension())) {
+            $extension = strtolower($file->getClientOriginalExtension());
         } else {
-            if (strtolower($file->getClientOriginalExtension())) {
-                $extension = strtolower($file->getClientOriginalExtension());
-            } else {
-                $extension = 'png';
-            }
+            $extension = 'png';
         }
-
+        
         // 构建存储的文件夹规则，值如：uploads/images/avatars/201709/21/
         // 文件夹切割能让查找效率更高。
         $file_name = sprintf('%s.%s', $name, $extension);
-
-        // 如果上传的不是图片将终止操作
-        // if (!in_array($extension, $this->allowed_ext)) {
-        //     return array('error' => '请上传图片文件');
-        // }
 
         // 将图片移动到我们的目标存储路径中
         $file->move($upload_path, $file_name);
@@ -168,21 +159,26 @@ class ImageUpload
             // 此类中封装的函数，用于裁剪图片
             $this->reduceSize($upload_path . '/' . $file_name, $max_width);
         }
-        return array('code' => 0, 'url' => $folder . $file_name);
+
+        // 缩略图
+        if ($min_width && $min_width > 0 && $thumbnail_name) {
+            $this->reduceSize($upload_path . $name, $min_width, $upload_path . $thumbnail_name);
+            return ['url' => $folder . $name, 'thumbnail' => $folder . $thumbnail_name];
+        }
+
+        return ['url' => $folder . $file_name, 'thumbnail' => ''];
     }
 
     // 保存 base64 (2023-06-19 这里需要改造，改造前使用不合适 todo)
-    public function saveBase64Image($file, $folder, $name, $max_width = null, $watermark = false, $thumbnail_name = null, $min_width = null)
+    public function saveBase64Image($file, $folder, $name, $max_width = null, $thumbnail_name = null, $min_width = null)
     {
         $upload_path = public_path() . '/' . $folder;
-
         try {
-            // 创建文件夹
             if (!file_exists($upload_path)) {
                 mkdir($upload_path, 0777, true);
             }
         } catch (Exception $e) {
-            Log::info(['error' => $e->getMessage()]);
+            Log::info('saveBase64Image-error', ['error' => $e->getMessage(), 'line' => $e->getLine()]);
         }
 
         if (stripos($file, 'data:image/jpeg;base64,') === 0) {
@@ -190,11 +186,12 @@ class ImageUpload
         } elseif (stripos($file, 'data:image/png;base64,') === 0) {
             $img = base64_decode(str_replace('data:image/png;base64,', '', $file));
         } else {
-            return array('error' => '非图片文件');
+            return ['error' => '非图片文件'];
         }
+
         $result = file_put_contents($upload_path . $name, $img); //返回的是字节数
         if ($result == false) {
-            return array('error' => '写入文件失败，可能没有权限');
+            return ['error' => '写入文件失败，可能没有权限'];
         }
 
         // 如果限制了图片宽度，就进行裁剪
@@ -202,22 +199,13 @@ class ImageUpload
             // 此类中封装的函数，用于裁剪图片
             $this->reduceSize($upload_path . $name, $max_width);
         }
-        // 这里不弄水印了
-        if ($watermark) {
-            // $image = Image::make($upload_path . $name);
-            // if ($image) {
-            //     $image->insert('static/image/common/watermark.png', 'bottom-right', 20, 20);
-            //     $image->save();
-            //     $image->destroy();
-            // }
-        }
-
+ 
         // 缩略图
         if ($min_width && $min_width > 0 && $thumbnail_name) {
             $this->reduceSize($upload_path . $name, $min_width, $upload_path . $thumbnail_name);
-            return array('code' => 0, 'url' => $folder . $name, 'thumbnail' => $folder . $thumbnail_name);
+            return ['url' => $folder . $name, 'thumbnail' => $folder . $thumbnail_name];
         }
-        return array('code' => 0, 'url' => $folder . $name, 'thumbnail' => '');
+        return ['url' => $folder . $name, 'thumbnail' => ''];
     }
 
     private function reduceSize($file_path, $max_width = null, $new_path = null)
