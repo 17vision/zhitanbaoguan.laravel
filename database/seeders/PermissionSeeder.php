@@ -433,7 +433,7 @@ class PermissionSeeder extends Seeder
                         ]
                     ],
                     [
-                        'name'       => '资源管理',
+                        'name'       => 'resource',
                         'path'       => 'resource',
                         'icon'       => '',
                         'title'      => '资源管理',
@@ -479,7 +479,7 @@ class PermissionSeeder extends Seeder
                         ]
                     ],
                     [
-                        'name'       => '资源分组',
+                        'name'       => 'resource_group',
                         'path'       => 'resource_group',
                         'icon'       => '',
                         'title'      => '资源分组',
