@@ -8,7 +8,7 @@ class Course extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'title', 'duration', 'category', 'difficulty', 'description', 'cover', 'background', 'status'];
+    protected $fillable = ['user_id', 'title', 'duration', 'category', 'difficulty', 'description', 'cover', 'tutor_id', 'status'];
 
     protected $appends = ['category_str', 'difficulty_str', 'status_str'];
 
@@ -41,5 +41,10 @@ class Course extends Model
     public function chapters()
     {
         return $this->hasMany(CourseChapter::class);
+    }
+
+    public function tutor()
+    {
+        return $this->hasOne(Tutor::class);
     }
 }

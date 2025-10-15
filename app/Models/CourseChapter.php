@@ -8,7 +8,7 @@ class CourseChapter extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'course_id', 'title', 'description', 'resource_id', 'index'];
+    protected $fillable = ['user_id', 'course_id', 'title', 'description', 'background', 'resource_id', 'index'];
 
     public function resource()
     {

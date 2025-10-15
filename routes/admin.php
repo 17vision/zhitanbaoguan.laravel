@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\FileController;
 use App\Http\Controllers\Admin\CourseChapterController;
 use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\TutorController;
 use App\Http\Controllers\Admin\ResourceController;
 use App\Http\Controllers\Admin\ResourceGroupController;
 
@@ -135,6 +136,18 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::put('course_chapters', [CourseController::class, 'update'])->middleware('permission:course.update');
 
                 Route::delete('course_chapters', [CourseChapterController::class, 'delete'])->middleware('permission:course.delete');
+            });
+
+            // 导师管理
+            Route::group(['middleware' => 'permission:tutor'], function () {
+
+                Route::get('tutors', [TutorController::class, 'index'])->middleware('permission:tutor.index');
+
+                Route::post('tutors', [TutorController::class, 'store'])->middleware('permission:tutor.create');
+
+                Route::put('tutors', [TutorController::class, 'update'])->middleware('permission:tutor.create');
+
+                Route::delete('tutors', [TutorController::class, 'delete'])->middleware('permission:tutor.delete');
             });
 
             // 资源管理

@@ -42,7 +42,11 @@ class CourseChapterController extends Controller
         return response()->json($role);
     }
 
-    public function store(Request $request) {}
+    public function store(Request $request) {
+        // if (isset($data['background']) && $data['background']) {
+        //     $data['background'] = reverseStorageUrl($data['background']);
+        // }
+    }
     public function update(Request $request) {}
 
     public function delete(Request $request) {}

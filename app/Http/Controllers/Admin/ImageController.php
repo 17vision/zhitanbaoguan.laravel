@@ -45,7 +45,7 @@ class ImageController extends Controller
 
         if ($referer == 'avatar') {
             $folder = sprintf('storage/upload/image/avatar/%s/', date('Ym', strtotime($user->created_at)));
-            $name = $user->id . '.jpg';
+            $name = $user->id;
             $max_width = 320;
         } elseif ($referer == 'resource') {
             $type = $info['type'] ?? '';
@@ -63,13 +63,19 @@ class ImageController extends Controller
             $folder = sprintf('storage/upload/image/course/%s/', date('Ym', time()));
             $name = 'max_' . randStr(8);
             $max_width = null;
-        } else {
+        } elseif ($referer == 'tutor') {
+            $folder = sprintf('storage/upload/image/tutor/%s/', date('Ym', time()));
+            $name = randStr(8);
+            $max_width = 240;
+        }else {
             return  response()->json(['message' => '没有对应的 referer'], 403);
         }
 
         if ($request->hasFile('file')) {
             $res = app(ImageUpload::class)->saveFileImage($file, $folder, $name, $max_width, $thumbnail_name, $min_width);
         } else {
+            $name = $name . '.jpg';
+
             $res = app(ImageUpload::class)->saveBase64Image($file, $folder, $name, $max_width, $thumbnail_name, $min_width);
         }
 

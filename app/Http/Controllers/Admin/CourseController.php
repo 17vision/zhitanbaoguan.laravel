@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\Tutor;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
@@ -51,7 +52,7 @@ class CourseController extends Controller
             'difficulty' => 'required|in:1,2,3',
             'description' => 'filled|string|max:999',
             'cover' => 'filled|string',
-            'background' =>  'filled|string',
+            'tutor_id' =>  'filled|integer',
             'status' => 'filled|in:0,1',
         ], [], [
             'title' => '标题',
@@ -60,13 +61,13 @@ class CourseController extends Controller
             'difficulty' => '难度',
             'description' => '描述',
             'cover' => '封面',
-            'background' => '背景',
+            'tutor_id' => '导师 id',
             'status' => '状态',
         ]);
 
         $user = $request->user();
 
-        $data = $request->only(['title', 'duration', 'category', 'difficulty', 'description', 'cover', 'background', 'status']);
+        $data = $request->only(['title', 'duration', 'category', 'difficulty', 'description', 'cover', 'tutor_id', 'status']);
 
         $data['user_id'] = $user->id;
 
@@ -74,8 +75,10 @@ class CourseController extends Controller
             $data['cover'] = reverseStorageUrl($data['cover']);
         }
 
-        if (isset($data['background']) && $data['background']) {
-            $data['background'] = reverseStorageUrl($data['background']);
+        if (isset($data['tutor_id']) && $data['tutor_id']) {
+            if (!Tutor::query()->where('id',  $data['tutor_id'])->exists()) {
+                return response()->json(['message' => '导师不存在'], 403);
+            }
         }
 
         $course = Course::create($data);
@@ -111,7 +114,7 @@ class CourseController extends Controller
 
         $user = $request->user();
 
-        $data = $request->only(['title', 'duration', 'category', 'difficulty', 'description', 'cover', 'background', 'status']);
+        $data = $request->only(['title', 'duration', 'category', 'difficulty', 'description', 'cover', 'tutor_id', 'status']);
 
         if (empty($data)) {
             return response()->json(['message' => '请提交有效数据'], 403);
@@ -123,8 +126,10 @@ class CourseController extends Controller
             $data['cover'] = reverseStorageUrl($data['cover']);
         }
 
-        if (isset($data['background']) && $data['background']) {
-            $data['background'] = reverseStorageUrl($data['background']);
+        if (isset($data['tutor_id']) && $data['tutor_id']) {
+            if (!Tutor::query()->where('id',  $data['tutor_id'])->exists()) {
+                return response()->json(['message' => '导师不存在'], 403);
+            }
         }
 
         $course = Course::query()->where('id', $id)->first();
