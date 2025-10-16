@@ -61,7 +61,7 @@ class ImageController extends Controller
         } elseif ($referer == 'course') {
             // 课程
             $folder = sprintf('storage/upload/image/course/%s/', date('Ym', time()));
-            $name = 'max_' . randStr(8);
+            $name = randStr(8);
             $max_width = null;
         } elseif ($referer == 'tutor') {
             $folder = sprintf('storage/upload/image/tutor/%s/', date('Ym', time()));

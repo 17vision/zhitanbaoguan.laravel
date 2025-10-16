@@ -38,6 +38,14 @@ class Course extends Model
         return $array[$value] ?? '';
     }
 
+    public function getCoverAttribute()
+    {
+        if (isset($this->attributes['cover'])) {
+            return storageUrl($this->attributes['cover']);
+        }
+        return '';
+    }
+
     public function chapters()
     {
         return $this->hasMany(CourseChapter::class);
@@ -45,6 +53,6 @@ class Course extends Model
 
     public function tutor()
     {
-        return $this->hasOne(Tutor::class);
+        return $this->hasOne(Tutor::class, 'id', 'tutor_id');
     }
 }

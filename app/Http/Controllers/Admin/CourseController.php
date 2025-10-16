@@ -15,17 +15,23 @@ class CourseController extends Controller
             'page' => 'required|integer|min:1',
             'limit' => 'filled|integer',
             'name' => 'filled|string',
+            'status' => 'filled|in:0,1',
         ], [], [
             'page' => '当前页',
             'limit' => '单页显示条数',
             'name' => '名称',
+            'status' => '状态',
         ]);
 
         $limit = $request->input('limit', 30);
 
-        $title = $request->name;
+        $title = $request->title;
 
-        $query = Course::query();
+        $query = Course::query()->with(['chapters', 'tutor']);
+
+        if (isset($request->status)) {
+            $query->where('status', $request->status);
+        }
 
         if ($title) {
             $query->where('title', 'like', '%' . $title . '%');
@@ -38,7 +44,7 @@ class CourseController extends Controller
 
     public function detail(Request $request, $id)
     {
-        $role = Course::where('id', $id)->first();
+        $role = Course::where('id', $id)->with(['chapters', 'tutor'])->first();
 
         return response()->json($role);
     }
@@ -46,7 +52,7 @@ class CourseController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|stirng|min:1|max:64',
+            'title' => 'required|string|min:1|max:64',
             // 'duration' => 'required|integer',
             'category' => 'required|in:1,2,3',
             'difficulty' => 'required|in:1,2,3',
@@ -90,7 +96,7 @@ class CourseController extends Controller
     {
         $request->validate([
             'id' => 'required|integer',
-            'title' => 'filled|stirng|min:1|max:64',
+            'title' => 'filled|string|min:1|max:64',
             'duration' => 'filled|integer',
             'category' => 'filled|in:1,2,3',
             'difficulty' => 'filled|in:1,2,3',

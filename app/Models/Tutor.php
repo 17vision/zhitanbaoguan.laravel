@@ -14,11 +14,7 @@ class Tutor extends Model
     public function getAvatarAttribute()
     {
         if (isset($this->attributes['avatar'])) {
-            $dataurl = $this->attributes['avatar'];
-            if (Str::startsWith($dataurl, ['http://', 'https://'])) {
-                return $dataurl;
-            }
-            return url($dataurl);
+            return storageUrl($this->attributes['avatar']);
         }
         return '';
     }

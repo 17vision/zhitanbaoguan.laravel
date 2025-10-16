@@ -46,7 +46,7 @@ class TutorController extends Controller
     {
         $request->validate([
             'user_id' =>  'filled|integer',
-            'username' => 'required|stirng|min:1|max:64',
+            'username' => 'required|string|min:1|max:64',
             'avatar' => 'filled|string',
             'introduction' => 'filled|string',
         ], [], [
@@ -68,7 +68,7 @@ class TutorController extends Controller
         $request->validate([
             'id' => 'required|integer',
             'user_id' =>  'filled|integer',
-            'username' => 'filled|stirng|min:1|max:64',
+            'username' => 'filled|string|min:1|max:64',
             'avatar' => 'filled|string',
             'introduction' => 'filled|string',
         ], [], [
@@ -105,7 +105,7 @@ class TutorController extends Controller
 
         $course = Tutor::query()->where('id', $id)->first();
         if (!$course) {
-            return response()->json(['message' => '课程不存在'], 403);
+            return response()->json(['message' => '导师不存在'], 403);
         }
 
         return response()->json($course);
