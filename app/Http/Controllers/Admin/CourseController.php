@@ -47,7 +47,7 @@ class CourseController extends Controller
     {
         $request->validate([
             'title' => 'required|stirng|min:1|max:64',
-            'duration' => 'required|integer',
+            // 'duration' => 'required|integer',
             'category' => 'required|in:1,2,3',
             'difficulty' => 'required|in:1,2,3',
             'description' => 'filled|string|max:999',
@@ -56,7 +56,7 @@ class CourseController extends Controller
             'status' => 'filled|in:0,1',
         ], [], [
             'title' => '标题',
-            'duration' => '时长',
+            // 'duration' => '时长',
             'category' => '分类',
             'difficulty' => '难度',
             'description' => '描述',

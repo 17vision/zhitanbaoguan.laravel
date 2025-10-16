@@ -27,7 +27,7 @@ class TutorController extends Controller
         $query = Tutor::query();
 
         if ($username) {
-            $request->where('username', 'like', '%' . $username . '%');
+            $query->where('username', 'like', '%' . $username . '%');
         }
 
         $courses = $query->paginate($limit);
