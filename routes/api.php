@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\AuthorizationController;
 use App\Http\Controllers\Api\EasySmsController;
 use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\VideoController;
+use App\Http\Controllers\Api\UserController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,7 +19,8 @@ use App\Http\Controllers\Api\VideoController;
 */
 
 // 登录注册相关
-Route::middleware(['request', 'throttle:' . config('api.rate_limits.sign')])->group(function () {
+// 'request' 去掉验证
+Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(function () {
 
     // 账号密码登录注册
     Route::post('login/password', [AuthorizationController::class, 'passwordLogin']);
@@ -26,13 +29,17 @@ Route::middleware(['request', 'throttle:' . config('api.rate_limits.sign')])->gr
 
     // 发送短信
     Route::post('sms', [EasySmsController::class, 'sendSms']);
+
+    // 小程序登录
+    Route::post('wxmini-login', [UserController::class, 'wxminiLogin']);
 });
 
 // 非登录注册相关
-Route::middleware(['request', 'throttle:' . config('api.rate_limits.access'), 'user.get'])->group(function () {
-
+// 'request', 去掉验证
+// 'user.login' 这个也不要
+Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])->group(function () {
     // 下边需要授权才可以
-    Route::middleware(['auth:api', 'user.login'])->group(function () {
+    Route::middleware(['auth:api'])->group(function () {
         // 小程序授权管理后台登录
         Route::post('admin-login', [AuthorizationController::class, 'adminLogin']);
 

@@ -14,7 +14,6 @@ class ImageController extends Controller
             [
                 'file' => 'required',
                 'referer' => 'required|string',
-                'sign' => 'required|string'
             ],
             [],
             [
@@ -23,33 +22,35 @@ class ImageController extends Controller
             ]
         );
 
-        $referer = $request->referer;
+        $file = $request->file;
 
-        $sign = $request->sign;
+        $referer = $request->referer;
 
         $user = $request->user();
 
         if ($referer == 'avatar') {
             $folder = sprintf('storage/upload/image/%s/%s/', $referer, date('Ym', strtotime($user->created_at)));
-            $raw_name = $user->id . '_raw.jpg';
-            $name = $user->id . '.jpg';
+            $name = $user->id;
             $max_width = 200;
 
-            $result = app(ImageUpload::class)->saveBinaryImage(file_get_contents($request->file), $folder, $name, $max_width, $raw_name);
+            if ($request->hasFile('file')) {
+                $result = app(ImageUpload::class)->saveFileImage($file, $folder, $name, $max_width);
+            } else {
+                $name = $name . '.jpg';
+                $result = app(ImageUpload::class)->saveBase64Image($file, $folder, $name, $max_width);
+            }
+
             if ($result && isset($result['error']) && $result['error']) {
                 return response()->json(['message' => $result['error']], 403);
             }
 
-            $raw = $result['raw'] . '?time=' . time();
             $url = $result['url'] . '?time=' . time();
 
-            // 如果是 upage_bg 是默认的，就一起变化了
-            if (Str::contains($user->upage_bg, 'static/image')) {
-                $user->update(['avatar' => $url, 'avatar_raw' => $raw, 'upage_bg' => $raw]);
-            } else {
-                $user->update(['avatar' => $url, 'avatar_raw' => $raw]);
-            }
-            return response()->json(['avatar' => storageUrl($url), 'avatar_raw' => storageUrl($raw)]);
+            $user->update(['avatar' => $url]);
+
+            return response()->json(['url' => storageUrl($url)]);
         }
+
+        return  response()->json(['message' => '没有对应的 referer'], 403);
     }
 }
