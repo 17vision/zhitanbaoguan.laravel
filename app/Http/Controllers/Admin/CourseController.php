@@ -28,7 +28,7 @@ class CourseController extends Controller
         $query = Course::query();
 
         if ($name) {
-            $request->where('name', 'like', '%' . $name . '%');
+            $query->where('name', 'like', '%' . $name . '%');
         }
 
         $courses = $query->paginate($limit);
