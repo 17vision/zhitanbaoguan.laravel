@@ -13,7 +13,7 @@ class ImageController extends Controller
     {
         $request->validate([
             'info' => 'required',
-            'file' => 'required|string'
+            'file' => 'required'
         ], [], [
             'info' => '图片信息',
             'file' => '图片文件'
