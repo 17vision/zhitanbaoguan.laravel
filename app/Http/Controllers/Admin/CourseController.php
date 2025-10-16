@@ -23,12 +23,12 @@ class CourseController extends Controller
 
         $limit = $request->input('limit', 30);
 
-        $name = $request->name;
+        $title = $request->name;
 
         $query = Course::query();
 
-        if ($name) {
-            $query->where('name', 'like', '%' . $name . '%');
+        if ($title) {
+            $query->where('title', 'like', '%' . $title . '%');
         }
 
         $courses = $query->paginate($limit);
