@@ -26,12 +26,16 @@ class ResourceGroupController extends Controller
             'parent_id' => '父 id',
             'index' => '排序'
         ]);
-        
+
         $user = $request->user();
 
         $data = $request->only(['name', 'parent_id', 'index']);
 
         $data['user_id'] = $user->id;
+
+        if (isset($data['parent_id']) && !ResourceGroup::query()->where('id', $data['parent_id'])->exists()) {
+            return response()->json(['message' => '父分组不存在'], 403);
+        }
 
         $resourceGroup =  ResourceGroup::create($data);
 
@@ -52,18 +56,23 @@ class ResourceGroupController extends Controller
         ]);
 
         $id = $request->id;
-        
+
         $user = $request->user();
 
         $data = $request->only(['name', 'parent_id', 'index']);
 
         $data['user_id'] = $user->id;
 
+
+        if (isset($data['parent_id']) && !ResourceGroup::query()->where('id', $data['parent_id'])->exists()) {
+            return response()->json(['message' => '父分组不存在'], 403);
+        }
+
         $resourceGroup =  ResourceGroup::query()->where('id', $id)->first();
         if (!$resourceGroup) {
             return response()->json(['message' => '分组不存在'], 403);
         }
-        
+
         $resourceGroup->update($data);
 
         return response()->json($resourceGroup);

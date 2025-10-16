@@ -133,7 +133,7 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
 
                 Route::post('course_chapters', [CourseChapterController::class, 'store'])->middleware('permission:course.create');
 
-                Route::put('course_chapters', [CourseController::class, 'update'])->middleware('permission:course.update');
+                Route::put('course_chapters', [CourseChapterController::class, 'update'])->middleware('permission:course.update');
 
                 Route::delete('course_chapters', [CourseChapterController::class, 'delete'])->middleware('permission:course.delete');
             });
@@ -153,13 +153,13 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
             // 资源管理
             Route::group(['middleware' => 'permission:resource'], function () {
 
-                Route::get('resources', [ResourceController::class, 'index'])->middleware('permission:resources.index');
+                Route::get('resources', [ResourceController::class, 'index'])->middleware('permission:resource.index');
 
-                Route::post('resources', [ResourceController::class, 'store'])->middleware('permission:resources.create');
+                Route::post('resources', [ResourceController::class, 'store'])->middleware('permission:resource.create');
 
-                Route::put('resources', [ResourceController::class, 'update'])->middleware('permission:resources.create');
+                Route::put('resources', [ResourceController::class, 'update'])->middleware('permission:resource.create');
 
-                Route::delete('resources', [ResourceController::class, 'delete'])->middleware('permission:resources.delete');
+                Route::delete('resources', [ResourceController::class, 'delete'])->middleware('permission:resource.delete');
             });
 
             // 分组管理

@@ -161,9 +161,12 @@ class ImageUpload
         }
 
         // 缩略图
-        if ($min_width && $min_width > 0 && $thumbnail_name) {
-            $this->reduceSize($upload_path . $name, $min_width, $upload_path . $thumbnail_name);
-            return ['url' => $folder . $name, 'thumbnail' => $folder . $thumbnail_name];
+        if ($min_width && $min_width > 0 && $thumbnail_name && $extension != 'gif') {
+            $oriPath = sprintf('%s/%s', $upload_path, $file_name);
+            $newName = sprintf('%s.%s', $thumbnail_name, $extension);
+            $newPath = sprintf('%s/%s', $upload_path, $newName);
+            $this->reduceSize($oriPath, $min_width, $newPath);
+            return ['url' => $folder . $file_name, 'thumbnail' => $folder . $newName];
         }
 
         return ['url' => $folder . $file_name, 'thumbnail' => ''];
@@ -210,6 +213,8 @@ class ImageUpload
 
     private function reduceSize($file_path, $max_width = null, $new_path = null)
     {
+        Log::info('filepath', ['filepath' => $file_path, 'newpath' => $new_path]);
+
         // 先实例化，传参是文件的磁盘物理路径
         $image = Image::make($file_path);
 

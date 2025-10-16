@@ -58,9 +58,9 @@ class ImageController extends Controller
             $folder = sprintf('storage/upload/image/resource/%s/%s/', $type, date('Ym', time()));
             $name = 'max_' . randStr(8);
             $max_width = null;
-        } elseif ($referer == 'course') {
+        } elseif ($referer == 'course' || $referer == 'course_chapter') {
             // 课程
-            $folder = sprintf('storage/upload/image/course/%s/', date('Ym', time()));
+            $folder = sprintf('storage/upload/image/%s/%s/', $referer, date('Ym', time()));
             $name = randStr(8);
             $max_width = null;
         } elseif ($referer == 'tutor') {

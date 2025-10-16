@@ -56,21 +56,21 @@ class ResourceController extends Controller
         return response()->json($resources);
     }
 
-    // 上传素材
+    // 提交素材
     public function store(Request $request)
     {
         $request->validate([
             'type' => 'required|in:1,2,3,4',
-            'resource_group_id' => 'required|integer',
             'name' => 'required|string',
             'path' => 'required|string',
-            'thumbnail' => 'filled|string'
+            'thumbnail' => 'filled|string',
+            'resource_group_id' => 'filled|integer',
         ], [], [
             'name' => '名称',
-            'resource_group_id' => '分组 id',
             'type' => '分类',
             'path' => '地址',
             'thumbnail' => '封面图',
+            'resource_group_id' => '分组 id',
         ]);
 
         $data = $request->only(['type', 'resource_group_id', 'name', 'path', 'thumbnail']);
@@ -90,15 +90,15 @@ class ResourceController extends Controller
         return response()->json($resource);
     }
 
-    // 上传素材
+    // 修改素材
     public function update(Request $request)
     {
         $request->validate([
             'id' => 'required|integer',
-            'type' => 'required|in:1,2,3,4',
-            'resource_group_id' => 'required|integer',
-            'name' => 'required|string',
-            'path' => 'required|string',
+            'type' => 'filled|in:1,2,3,4',
+            'resource_group_id' => 'filled|integer',
+            'name' => 'filled|string',
+            'path' => 'filled|string',
             'thumbnail' => 'filled|string'
         ], [], [
             'id' => '资源 id',
@@ -112,6 +112,10 @@ class ResourceController extends Controller
         $id = $request->id;
 
         $data = $request->only(['type', 'resource_group_id', 'name', 'path', 'thumbnail']);
+
+        if (empty($data)) {
+            return response()->json(['message' => '请提交数据'], 403);
+        }
 
         $user = $request->user();
 
@@ -138,7 +142,7 @@ class ResourceController extends Controller
 
         $media = $resource->update($data);
 
-        return response()->json($media);
+        return response()->json(['result' => $media]);
     }
 
     public function delete(Request $request)

@@ -12,7 +12,7 @@ return new class extends Migration
         Schema::create('resources', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->index()->comment('创建人');
-            $table->unsignedBigInteger('resource_group_id')->index();
+            $table->unsignedBigInteger('resource_group_id')->index()->nullable();
             $table->string('name', 32);
             $table->unsignedTinyInteger('type')->comment('1 图片 2 视频 3 音频 4 模型');
             $table->string('path')->comment('素材地址');

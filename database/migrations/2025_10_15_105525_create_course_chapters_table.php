@@ -15,7 +15,7 @@ return new class extends Migration
             $table->unsignedBigInteger('course_id')->index()->comment('课程 id');
             $table->string('title')->comment('标题');
             $table->text('description')->nullable()->comment('描述');
-            $table->unsignedSmallInteger('duration')->default(0)->comment('时长');
+            $table->unsignedSmallInteger('duration')->default(0)->comment('时长，单位秒');
             $table->string('background')->nullable()->comment('背景');
             $table->unsignedBigInteger('resource_id')->index()->nullable()->comment('资源 id');
             $table->unsignedSmallInteger('index')->default(0)->comment('排序');
