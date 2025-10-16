@@ -76,6 +76,11 @@ class CourseChapterController extends Controller
 
         $courseChapter = CourseChapter::create($data);
 
+        // 更新课程时间
+        $duration = CourseChapter::query()->where('course_id', $data['course_id'])->sum('duration');
+
+        Course::query()->where('id', $data['course_id'])->update(['duration' => $duration]);
+
         return response()->json($courseChapter);
     }
 
@@ -135,6 +140,12 @@ class CourseChapterController extends Controller
         }
 
         $courseChapter->update($data);
+
+        if (isset($data['duration'])) {
+            $duration = CourseChapter::query()->where('course_id', $courseChapter['course_id'])->sum('duration');
+
+            Course::query()->where('id', $courseChapter['course_id'])->update(['duration' => $duration]);
+        }
 
         return response()->json($courseChapter);
     }
