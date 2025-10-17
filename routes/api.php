@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\VideoController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\CourseController;
+use App\Http\Controllers\Api\CourseLikeController;
+use App\Http\Controllers\Api\CourseCollectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,5 +62,11 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
 
         // 更新用户信息
         Route::put('userinfos', [UserController::class, 'update']);
+
+        // 喜欢课程
+        Route::post('courses/like', [CourseLikeController::class, 'store']);
+
+        // 收藏课程
+        Route::post('courses/collect', [CourseCollectController::class, 'store']);
     });
 });

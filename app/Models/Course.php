@@ -8,7 +8,7 @@ class Course extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'title', 'duration', 'category', 'difficulty', 'description', 'cover', 'tutor_id', 'status'];
+    protected $fillable = ['user_id', 'title', 'duration', 'category', 'difficulty', 'description', 'cover', 'tutor_id', 'status', 'like_count', 'collect_count'];
 
     protected $appends = ['category_str', 'difficulty_str', 'status_str'];
 

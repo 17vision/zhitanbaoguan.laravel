@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\CourseCollect;
+use App\Models\CourseLike;
 use Illuminate\Support\ServiceProvider;
 use App\Models\User;
+use App\Observers\CourseCollectObserver;
+use App\Observers\CourseLikeObserver;
 use App\Observers\UserObserver;
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,5 +25,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         User::observe(UserObserver::class);
+
+        CourseLike::observe(CourseLikeObserver::class);
+
+        CourseCollect::observe(CourseCollectObserver::class);
     }
 }
