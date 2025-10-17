@@ -20,12 +20,10 @@ class UserController extends Controller
             'code' => 'required_without:openid|string',
             'openid' => 'required_without:code|string',
             'nickname' => 'required_without:code|string',
-            'avatar' => 'required_without:code|string',
         ], [], [
             'code' => 'code',
             'openid' => 'openid',
             'nickname' => '昵称',
-            'avatar' => '头像'
         ]);
 
         $code = $request->code;
@@ -68,7 +66,6 @@ class UserController extends Controller
         } else {
             $openid = $request->openid;
             $nickname = $request->nickname;
-            $avatar = $request->avatar;
 
             $key = self::WXMINI_SESSION_KEY . '_' . $openid;
             $session_key = Cache::get($key);
@@ -80,7 +77,6 @@ class UserController extends Controller
             $data = [
                 'wxmini_openid' => $openid,
                 'nickname' => $nickname,
-                'avatar' => reverseStorageUrl($avatar),
                 'wxmini_session_key' => $session_key,
                 'register_ip' => $request->getClientIp()
             ];
@@ -88,5 +84,36 @@ class UserController extends Controller
             $user = User::create($data);
         }
         return response()->json($this->auth($user['id']));
+    }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'nickname' => 'filled|string',
+            'gender' => 'filled|in:1,2',
+            'avatar' => 'filled|string',
+            'signature' => 'filled|string',
+        ], [], [
+            'nickname' => '昵称',
+            'gender' => '性别',
+            'avatar' => '头像',
+            'signature' => '签名',
+        ]);
+
+        $data = $request->only(['nickname', 'gender', 'avatar', 'signature']);
+
+        $user = $request->user();
+
+        if (empty($data)) {
+            return response()->json(['message' => '请提交数据'], 403);
+        }
+
+        if (isset($data['avatar'])) {
+            $data['avatar'] = reverseStorageUrl($data['avatar']);
+        }
+
+        $user->update($data);
+
+        return response()->json($user);
     }
 }
