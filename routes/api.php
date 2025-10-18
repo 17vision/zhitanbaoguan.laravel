@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\CourseLikeController;
 use App\Http\Controllers\Api\CourseCollectController;
+use App\Http\Controllers\Api\UserCourseHomeworkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,5 +69,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
 
         // 收藏课程
         Route::post('courses/collect', [CourseCollectController::class, 'store']);
+
+        // 课程作业
+        Route::post('user_course_homework', [CourseCollectController::class, 'store']);
     });
 });
