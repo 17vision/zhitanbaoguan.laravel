@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\FileController;
 use App\Http\Controllers\Admin\CourseChapterController;
+use App\Http\Controllers\Admin\CourseHomeworkController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\TutorController;
 use App\Http\Controllers\Admin\ResourceController;
@@ -136,6 +137,17 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::put('course_chapters', [CourseChapterController::class, 'update'])->middleware('permission:course.update');
 
                 Route::delete('course_chapters', [CourseChapterController::class, 'delete'])->middleware('permission:course.delete');
+
+                // 课程作业
+                Route::get('course_homework', [CourseHomeworkController::class, 'index'])->middleware('permission:course.index');
+
+                Route::get('course_homework/{id}', [CourseHomeworkController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:course.detail');
+
+                Route::post('course_homework', [CourseHomeworkController::class, 'store'])->middleware('permission:course.create');
+
+                Route::put('course_homework', [CourseHomeworkController::class, 'update'])->middleware('permission:course.update');
+
+                Route::delete('course_homework', [CourseHomeworkController::class, 'delete'])->middleware('permission:course.delete');
             });
 
             // 导师管理

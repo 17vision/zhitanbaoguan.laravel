@@ -27,7 +27,7 @@ class CourseController extends Controller
 
         $title = $request->title;
 
-        $query = Course::query()->with(['chapters', 'tutor']);
+        $query = Course::query()->with(['chapters.resource', 'tutor', 'homeworks']);
 
         if (isset($request->status)) {
             $query->where('status', $request->status);
@@ -44,7 +44,7 @@ class CourseController extends Controller
 
     public function detail(Request $request, $id)
     {
-        $role = Course::where('id', $id)->with(['chapters', 'tutor'])->first();
+        $role = Course::where('id', $id)->with(['chapters.resource', 'tutor', 'homeworks'])->first();
 
         return response()->json($role);
     }

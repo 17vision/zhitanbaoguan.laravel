@@ -54,7 +54,7 @@ class CourseController extends Controller
     {
         $user = $request->user();
 
-        $course = Course::query()->where('id', $id)->where('status', 1)->with(['chapters.resource', 'tutor'])->first();
+        $course = Course::query()->where('id', $id)->where('status', 1)->with(['chapters.resource', 'tutor', 'homeworks'])->first();
 
         if ($user) {
             $course['liked'] = CourseLike::query()->where('course_id', $course->id)->where('user_id', $user->id)->exists();

@@ -20,16 +20,16 @@ class CourseChapterController extends Controller
 
         $course_id = $request->course_id;
 
-        $courses = CourseChapter::query()->where('course_id', $course_id)->with(['resource'])->orderByDesc('index')->get();
+        $courseChapters = CourseChapter::query()->where('course_id', $course_id)->with(['resource'])->orderByDesc('index')->get();
 
-        return response()->json($courses);
+        return response()->json($courseChapters);
     }
 
     public function detail(Request $request, $id)
     {
-        $role = CourseChapter::where('id', $id)->with(['resource'])->first();
+        $courseChapter = CourseChapter::where('id', $id)->with(['resource'])->first();
 
-        return response()->json($role);
+        return response()->json($courseChapter);
     }
 
     public function store(Request $request)

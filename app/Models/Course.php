@@ -55,4 +55,9 @@ class Course extends Model
     {
         return $this->hasOne(Tutor::class, 'id', 'tutor_id');
     }
+
+    public function homeworks()
+    {
+        return $this->hasMany(CourseHomework::class);
+    }
 }
