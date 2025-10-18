@@ -18,7 +18,7 @@ class CourseHomeworkController extends Controller
 
         $course_id = $request->course_id;
 
-        $courseHomeworks = CourseHomework::query()->where('course_id', $course_id)->orderByDesc('index')->get();
+        $courseHomeworks = CourseHomework::query()->where('course_id', $course_id)->get();
 
         return response()->json($courseHomeworks);
     }
