@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\CourseCollect;
 use App\Models\CourseLike;
+use App\Models\UserCourseHomework;
 
 class CourseController extends Controller
 {
@@ -59,9 +60,11 @@ class CourseController extends Controller
         if ($user) {
             $course['liked'] = CourseLike::query()->where('course_id', $course->id)->where('user_id', $user->id)->exists();
             $course['collected'] = CourseCollect::query()->where('course_id', $course->id)->where('user_id', $user->id)->exists();
+            $course['mine_homeworks'] = UserCourseHomework::query()->where('course_id', $course->id)->where('user_id', $user->id)->get();
         } else {
             $course['liked'] = false;
             $course['collected'] = false;
+            $course['mine_homeworks'] = [];
         }
 
         return response()->json($course);
