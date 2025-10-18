@@ -71,6 +71,6 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
         Route::post('courses/collect', [CourseCollectController::class, 'store']);
 
         // 课程作业
-        Route::post('user_course_homework', [CourseCollectController::class, 'store']);
+        Route::post('user_course_homework', [UserCourseHomeworkController::class, 'store']);
     });
 });
