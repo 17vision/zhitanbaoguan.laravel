@@ -53,6 +53,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
     // 获取作业
     Route::get('homeworks', [CourseHomeworkController::class, 'index']);
 
+    // 获取作业详情
+    Route::get('homeworks/{id}', [CourseHomeworkController::class, 'detail'])->where('id', '^[1-9]\d*$');
+
     // 下边需要授权才可以
     Route::middleware(['auth:api'])->group(function () {
         // 小程序授权管理后台登录

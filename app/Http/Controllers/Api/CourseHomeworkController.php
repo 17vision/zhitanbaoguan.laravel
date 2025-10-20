@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CourseHomework;
+use App\Models\UserCourseHomework;
 
 class CourseHomeworkController extends Controller
 {
@@ -25,5 +26,24 @@ class CourseHomeworkController extends Controller
         $homeworks = $query->simplePaginate($limit);
 
         return response()->json($homeworks);
+    }
+
+    // 详情
+    public function detail(Request $request, $id)
+    {
+        $courseHomework = CourseHomework::query()->where('id', $id)->first();
+
+        $user = $request->user();
+
+        if (!$courseHomework) {
+            return response()->json(['message' => '作业不存在'], 403);
+        }
+
+        if ($user) {
+            $courseHomework['did_homeworks'] = UserCourseHomework::query()->where('user_id', $user->id)->where('course_homework_id', $courseHomework->id)->first();
+        } else {
+            $courseHomework['did_homeworks'] = null;
+        }
+        return response()->json($courseHomework);
     }
 }
