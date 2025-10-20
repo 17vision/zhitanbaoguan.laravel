@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\CourseLikeController;
 use App\Http\Controllers\Api\CourseCollectController;
 use App\Http\Controllers\Api\UserCourseHomeworkController;
+use App\Http\Controllers\Api\CourseHomeworkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +50,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
     // 获取课程详情
     Route::get('courses/{id}', [CourseController::class, 'detail'])->where('id', '^[1-9]\d*$');
 
+    // 获取作业
+    Route::get('homeworks', [CourseHomeworkController::class, 'index']);
 
     // 下边需要授权才可以
     Route::middleware(['auth:api'])->group(function () {
