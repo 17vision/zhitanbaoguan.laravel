@@ -13,6 +13,8 @@ use App\Http\Controllers\Admin\FileController;
 use App\Http\Controllers\Admin\CourseChapterController;
 use App\Http\Controllers\Admin\CourseHomeworkController;
 use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\HomeworkController;
+use App\Http\Controllers\Admin\HomeworkGroupController;
 use App\Http\Controllers\Admin\TutorController;
 use App\Http\Controllers\Admin\ResourceController;
 use App\Http\Controllers\Admin\ResourceGroupController;
@@ -160,6 +162,32 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::put('tutors', [TutorController::class, 'update'])->middleware('permission:tutor.create');
 
                 Route::delete('tutors', [TutorController::class, 'delete'])->middleware('permission:tutor.delete');
+            });
+
+            
+            // 作业管理
+            Route::group(['middleware' => 'permission:homework'], function () {
+                // 作业
+                Route::get('homework', [HomeworkController::class, 'index'])->middleware('permission:homework.index');
+
+                Route::get('homework/{id}', [HomeworkController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:homework.detail');
+
+                Route::post('homework', [HomeworkController::class, 'store'])->middleware('permission:homework.create');
+
+                Route::put('homework', [HomeworkController::class, 'update'])->middleware('permission:homework.create');
+
+                Route::delete('homework', [HomeworkController::class, 'delete'])->middleware('permission:homework.delete');
+
+                // 作业分组
+                Route::get('homework_groups', [HomeworkGroupController::class, 'index'])->middleware('permission:homework.index');
+
+                Route::post('homework_groups', [HomeworkGroupController::class, 'store'])->middleware('permission:homework.create');
+
+                Route::put('homework_groups', [HomeworkGroupController::class, 'update'])->middleware('permission:homework.create');
+
+                Route::delete('homework_groups', [HomeworkGroupController::class, 'delete'])->middleware('permission:homework.delete');
+
+                // 作业分配
             });
 
             // 资源管理
