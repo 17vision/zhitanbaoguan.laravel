@@ -19,11 +19,20 @@ class CourseHomeworkController extends Controller
             'limit' => '单页显示条数',
         ]);
 
+        $user = $request->user();
+
         $limit = $request->input('limit', 30);
 
-        $query = CourseHomework::query();
+        $homeworks = CourseHomework::query()->simplePaginate($limit);
 
-        $homeworks = $query->simplePaginate($limit);
+        $homeworks->getCollection()->transform(function ($homework) use ($user) {
+            if ($user) {
+                $homework['did'] = UserCourseHomework::query()->where('user_id', $user->id)->where('course_homework_id', $homework->id)->exists();
+            } else {
+                $homework['did'] = false;
+            }
+            return $homework;
+        });
 
         return response()->json($homeworks);
     }
