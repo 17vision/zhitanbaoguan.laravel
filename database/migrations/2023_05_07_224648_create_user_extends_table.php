@@ -14,6 +14,8 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->unique();
             $table->string('admin_role', 20)->nullable()->comment('后台角色，用户可自由切换');
             $table->string('admin_lock', 64)->nullable()->comment('后台设置的锁屏密码');
+            $table->unsignedInteger('course_like_count')->default(0)->comment('喜欢个数');
+            $table->unsignedInteger('course_collect_count')->default(0)->comment('收藏个数');
             $table->string('introduction')->nullable()->comment('自我介绍');
             $table->timestamps();
         });
