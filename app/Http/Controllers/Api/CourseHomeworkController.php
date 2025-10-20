@@ -40,9 +40,9 @@ class CourseHomeworkController extends Controller
         }
 
         if ($user) {
-            $courseHomework['did_homeworks'] = UserCourseHomework::query()->where('user_id', $user->id)->where('course_homework_id', $courseHomework->id)->first();
+            $courseHomework['did_homework'] = UserCourseHomework::query()->where('user_id', $user->id)->where('course_homework_id', $courseHomework->id)->first();
         } else {
-            $courseHomework['did_homeworks'] = null;
+            $courseHomework['did_homework'] = null;
         }
         return response()->json($courseHomework);
     }
