@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title')->comment('标题');
             $table->string('content')->nullable()->comment('内容');
             $table->text('config')->nullable()->comment('配置');
+            $table->unsignedBigInteger('resource_id')->index()->nullable()->comment('资源 id。对应音频或视频');
             $table->unsignedTinyInteger('status')->default(0)->comment('发布状态 0 待发布 1 已发布');
             $table->timestamps();
         });

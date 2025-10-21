@@ -64,19 +64,27 @@ class HomeworkController extends Controller
             'config' => 'required|json|max:999',
             'status' => 'filled|in:0,1',
             'homework_group_id' => 'filled|integer|min:1',
+            'resource_id' =>  'filled|integer',
         ], [], [
             'homework_group_id' => '分组 id',
             'title' => '课程 id',
             'content' => '内容',
             'config' => '配置',
-            'status' => '状态'
+            'status' => '状态',
+            'resource_id' => '资源 id',
         ]);
 
         $user = $request->user();
 
-        $data = $request->only(['homework_group_id', 'title', 'content', 'config', 'status']);
+        $data = $request->only(['homework_group_id', 'title', 'content', 'config', 'resource_id', 'status']);
 
         $data['user_id'] = $user->id;
+
+        if (isset($data['resource_id']) && !Homework::query()->where('id', $data['resource_id'])->exists()) {
+            return response()->json([
+                'message' => '资源不存在'
+            ]);
+        }
 
         $homework = Homework::create($data);
 
@@ -92,27 +100,34 @@ class HomeworkController extends Controller
             'config' => 'filled|json|max:999',
             'status' => 'filled|in:0,1',
             'homework_group_id' => 'filled|integer|min:1',
+            'resource_id' =>  'filled|integer',
         ], [], [
             'id' => '作业 id',
             'homework_group_id' => '分组 id',
             'title' => '课程 id',
             'content' => '内容',
             'config' => '配置',
-            'status' => '状态'
+            'status' => '状态',
+            'resource_id' => '资源 id',
         ]);
-
 
         $user = $request->user();
 
         $id = $request->id;
 
-        $data = $request->only(['homework_group_id', 'title', 'content', 'config', 'status']);
+        $data = $request->only(['homework_group_id', 'title', 'content', 'config', 'resource_id', 'status']);
 
         $data['user_id'] = $user->id;
 
         $homework = Homework::query()->where('id', $id)->first();
         if (!$homework) {
             return response()->json(['message' => '作业不存在'], 403);
+        }
+
+        if (isset($data['resource_id']) && !Homework::query()->where('id', $data['resource_id'])->exists()) {
+            return response()->json([
+                'message' => '资源不存在'
+            ]);
         }
 
         $homework->update($data);

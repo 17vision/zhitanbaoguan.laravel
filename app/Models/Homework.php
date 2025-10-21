@@ -8,7 +8,7 @@ class Homework extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'homework_group_id', 'title', 'content', 'config', 'status'];
+    protected $fillable = ['user_id', 'homework_group_id', 'title', 'content', 'config', 'resource_id', 'status'];
 
     public function getConfigAttribute()
     {
@@ -22,5 +22,10 @@ class Homework extends Model
     public function group()
     {
         return $this->belongsTo(HomeworkGroup::class);
+    }
+
+    public function resource()
+    {
+        return $this->belongsTo(Resource::class);
     }
 }

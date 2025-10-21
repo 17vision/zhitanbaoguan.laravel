@@ -6,16 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    // 用户的作业
     public function up(): void
     {
-        Schema::create('user_course_homework', function (Blueprint $table) {
+        Schema::create('user_homework', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->index()->comment('作业人');
-            $table->unsignedBigInteger('course_id')->index()->comment('课程 id');
-            $table->unsignedBigInteger('course_homework_id')->index()->comment('课程作业 id');
+            $table->unsignedBigInteger('homework_id')->index()->comment('作业 id');
             $table->text('content')->comment('作业内容，根据作业生成对应的json');
             $table->decimal('score')->nullable()->comment('分数');
             $table->string('evaluation')->nullable()->comment('评审');
+            $table->dateTime('end_at')->nullable()->comment('结束时间');
+            $table->dateTime('completed_at')->nullable()->comment('完成时间');
+            $table->unsignedTinyInteger('status')->default(0)->comment('发布状态 0 待完成 1 已完成 2 未完成');
             $table->timestamps();
         });
     }
