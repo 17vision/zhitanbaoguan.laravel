@@ -15,10 +15,12 @@ class GradeUserController extends Controller
         $request->validate([
             'page' => 'required|integer|min:1',
             'limit' => 'filled|integer',
+            'grade_id' =>  'required|integer|min:1',
             'name' => 'filled|string',
         ], [], [
             'page' => '当前页',
             'limit' => '单页显示条数',
+            'grade_id' =>  'required|integer|min:1',
             'name' => '名称',
         ]);
 
@@ -26,10 +28,12 @@ class GradeUserController extends Controller
 
         $name = $request->name;
 
-        $query = GradeUser::query()->with(['user']);
+        $grade_id = $request->grade_id;
+
+        $query = GradeUser::query()->with(['user'])->where('grade_id', $grade_id);
 
         if ($name) {
-            $query->whereHas('name', function($query) use($name) {
+            $query->whereHas('name', function ($query) use ($name) {
                 $query->where('nickname', 'like', '%' . $name . '%');
             });
         }
@@ -50,30 +54,36 @@ class GradeUserController extends Controller
     {
         $request->validate([
             'grade_id' =>  'required|integer|min:1',
-            'user_id' =>  'required|integer|min:1',
+            'user_ids' =>  'required:user_id|string',
         ], [], [
             'grade_id' => '班级 id',
-            'user_id' => '用户 id'
+            'user_ids' => '用户 id 列表',
         ]);
 
-        $data = $request->only(['grade_id', 'user_id']);
+        $data = $request->only(['grade_id']);
+
+        $user_ids = $request->user_ids;
 
         if (!Grade::query()->where('id',  $data['grade_id'])->exists()) {
             return response()->json(['message' => '班级不存在'], 403);
         }
 
-        if (!User::query()->where('id',  $data['user_id'])->exists()) {
-            return response()->json(['message' => '用户不存在'], 403);
+        $user_ids = explode(',', $user_ids);
+
+        $exitUids = GradeUser::query()->where('grade_id', $data['grade_id'])->whereIn('user_id', $user_ids)->pluck('user_id')->toArray();
+
+        $createUids = array_diff($user_ids, $exitUids);
+
+        if (empty($createUids)) {
+            return response()->json(['message' => '这些用户已经在班级里了'], 403);
         }
 
-        $grade = GradeUser::query()->where($data)->first();
-        if ($grade) {
-            return response()->json(['message' => '班级用户已存在'], 403);
+        $creates = [];
+        foreach ($createUids as $uid) {
+            $data['user_id'] = $uid;
+            $creates[] = GradeUser::create($data);
         }
-
-        $gradeUser = GradeUser::create($data);
-
-        return response()->json($gradeUser);
+        return response()->json($creates);
     }
 
     public function delete(Request $request)
