@@ -30,7 +30,7 @@ class UserHomeworkController extends Controller
 
     public function detail(Request $request, $id)
     {
-        $userHomework = UserHomework::query()->where('id', $id)->with(['homework'])->first();
+        $userHomework = UserHomework::query()->where('id', $id)->with(['homework.group.parents'])->first();
 
         return response()->json($userHomework);
     }
