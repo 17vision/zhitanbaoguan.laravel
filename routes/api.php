@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\CourseLikeController;
 use App\Http\Controllers\Api\CourseCollectController;
+use App\Http\Controllers\Api\CourseStatisticsController;
 use App\Http\Controllers\Api\UserHomeworkController;
 
 /*
@@ -79,5 +80,11 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
         Route::get('homework/{id}', [UserHomeworkController::class, 'detail'])->where('id', '^[1-9]\d*$');
 
         Route::post('homework', [UserHomeworkController::class, 'store']);
+
+        // 统计课程
+        Route::post('course_statistics', [CourseStatisticsController::class, 'store']);
+
+        // 更新课程统计
+        Route::put('course_statistics', [CourseStatisticsController::class, 'update']);
     });
 });
