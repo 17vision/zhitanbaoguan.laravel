@@ -20,6 +20,7 @@ class Course extends Model
 
         return $array[$value] ?? '';
     }
+
     public function getDifficultyStrAttribute()
     {
         $value = $this->attributes['difficulty'] ?? 0;

@@ -4,12 +4,40 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\GradeUser;
+use App\Models\Homework;
 use App\Models\UserHomework;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class UserHomeworkController extends Controller
 {
+    public function index(Request $request)
+    {
+        $request->validate([
+            'page' => 'required|integer|min:1',
+            'limit' => 'filled|integer',
+            'homework_id' => 'filled|integer',
+        ], [], [
+            'page' => '当前页',
+            'limit' => '单页显示条数',
+            'homework_id' => '作业 id',
+        ]);
+
+        $limit = $request->input('limit', 30);
+
+        $homework_id = $request->homework_id;
+
+        $query = UserHomework::query()->with(['homework', 'user:id,nickname']);
+
+        if ($homework_id) {
+            $query->where('homework_id', $homework_id);
+        }
+
+        $userHomeworks = $query->paginate($limit);
+
+        return response()->json($userHomeworks);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -30,10 +58,14 @@ class UserHomeworkController extends Controller
 
         $grade_id = $request->grade_id;
 
-        if (Carbon::now()->addHours(1)->lte($data['end_at'])) {
+        if (!Carbon::now()->addHours(1)->lte($data['end_at'])) {
             return response()->json(['message' => '结束时间必须大于当前时间 1 小时'], 403);
         }
-    
+
+        if (!Homework::query()->where('id', $data['homework_id'])->exists()) {
+            return response()->json(['message' => '作业不存在'], 403);
+        }
+
         if ($user_id) {
             if (UserHomework::query()->where('homework_id', $data['homework_id'])->where('user_id', $user_id)->exists()) {
                 return response()->json(['message' => '该用户已分配该作业'], 403);
@@ -47,9 +79,9 @@ class UserHomeworkController extends Controller
             $uids = array_diff($uids, $exitUids);
 
             $updates = UserHomework::query()->where('homework_id', $data['homework_id'])->whereIn('user_id', $exitUids)->update(['end_at' => $data['end_at']]);
-            
+
             if (empty($uids)) {
-                return response()->json(['message' => '班级不存在或班级没有成员'], 403);
+                return response()->json(['message' => '班级不存在或班级没有成员没分配'], 403);
             }
         }
 

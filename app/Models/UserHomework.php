@@ -10,6 +10,8 @@ class UserHomework extends Model
 
     protected $fillable = ['user_id', 'homework_id', 'content', 'score', 'evaluation', 'end_at', 'completed_at', 'status'];
 
+    protected $appends = ['status_str'];
+
     public function getContentAttribute()
     {
         $content = $this->attributes['content'] ?? '';
@@ -26,5 +28,14 @@ class UserHomework extends Model
         $array = ['待完成', '已完成', '未完成'];
 
         return $array[$value] ?? '';
+    }
+
+    public function homework()
+    {
+        return $this->belongsTo(Homework::class);
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class);
     }
 }

@@ -191,6 +191,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::delete('homework_groups', [HomeworkGroupController::class, 'delete'])->middleware('permission:homework_group.delete');
                 
                 // 给某个班级或某个人分配作业
+                Route::get('user_homework', [UserHomeworkController::class, 'index'])->middleware('permission:homework.create');
+                
                 Route::post('user_homework', [UserHomeworkController::class, 'store'])->middleware('permission:homework.create');
 
                 // 删除某人的作业
