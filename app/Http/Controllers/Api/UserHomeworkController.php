@@ -28,14 +28,13 @@ class UserHomeworkController extends Controller
         $groups = [];
 
         foreach ($userHomeworks as $userHomework) {
-            foreach ($userHomework['homework']['group'] as $item) {
-                if (!isset($groups[$item['id']])) {
-                    $groups[$item['id']] = [
-                        'name' => $item['name'],
-                        'description' => $item['description'],
-                        'id' => $item['id']
-                    ];
-                }
+            $item = $userHomework['homework']['group'];
+            if (!isset($groups[$item['id']])) {
+                $groups[$item['id']] = [
+                    'name' => $item['name'],
+                    'description' => $item['description'],
+                    'id' => $item['id']
+                ];
             }
         }
         return response()->json(array_values($groups));
