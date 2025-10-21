@@ -17,8 +17,8 @@ class UserController extends Controller
     public function getUserInfo(Request $request)
     {
         $user = $request->user();
-
-        return response()->json($this->auth($user['id']), false);
+        
+        return response()->json($this->auth($user['id'], false));
     }
 
     public function wxminiLogin(Request $request)
