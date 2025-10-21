@@ -50,7 +50,7 @@ class UserHomeworkController extends Controller
             $query->where('homework_group_id', $id);
         });
 
-        $userHomeworks = $query->get();
+        $userHomeworks = $query->orderBy('end_at', 'asc')->get();
 
         return response()->json($userHomeworks);
     }
