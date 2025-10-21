@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Homework;
+use App\Models\Resource;
 use Illuminate\Http\Request;
 
 class HomeworkController extends Controller
@@ -80,7 +81,7 @@ class HomeworkController extends Controller
 
         $data['user_id'] = $user->id;
 
-        if (isset($data['resource_id']) && !Homework::query()->where('id', $data['resource_id'])->exists()) {
+        if (isset($data['resource_id']) && !Resource::query()->where('id', $data['resource_id'])->exists()) {
             return response()->json([
                 'message' => '资源不存在'
             ]);
@@ -124,7 +125,7 @@ class HomeworkController extends Controller
             return response()->json(['message' => '作业不存在'], 403);
         }
 
-        if (isset($data['resource_id']) && !Homework::query()->where('id', $data['resource_id'])->exists()) {
+        if (isset($data['resource_id']) && !Resource::query()->where('id', $data['resource_id'])->exists()) {
             return response()->json([
                 'message' => '资源不存在'
             ]);
