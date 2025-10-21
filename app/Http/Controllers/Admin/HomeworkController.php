@@ -30,7 +30,7 @@ class HomeworkController extends Controller
 
         $homework_group_id = $request->homework_group_id;
 
-        $query = Homework::query();
+        $query = Homework::query()->with(['resource']);
 
         if ($homework_group_id) {
             $query->where('homework_group_id', $homework_group_id);
@@ -51,7 +51,7 @@ class HomeworkController extends Controller
 
     public function detail(Request $request, $id)
     {
-        $homework = Homework::where('id', $id)->first();
+        $homework = Homework::where('id', $id)->with(['resource'])->first();
 
         return response()->json($homework);
     }
