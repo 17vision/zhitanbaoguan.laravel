@@ -44,7 +44,7 @@ class UserHomeworkController extends Controller
     {
         $user = $request->user();
 
-        $query = UserHomework::query()->with(['homework']);
+        $query = UserHomework::query()->with(['homework.group']);
 
         $query->where('user_id', $user->id)->whereHas('homework', function ($query) use ($id) {
             $query->where('homework_group_id', $id);
