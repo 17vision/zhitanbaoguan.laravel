@@ -3,45 +3,69 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\CourseHomework;
+use App\Models\UserHomework;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\UserCourseHomework;
 
 class UserHomeworkController extends Controller
 {
+    public function index(Request $request)
+    {
+        $request->validate([
+            'page' => 'required|integer|min:1',
+            'limit' => 'filled|integer',
+        ], [], [
+            'limit' => '单页显示条数',
+            'page' => '当前页',
+        ]);
+
+        $limit = $request->input('limit', 20);
+
+        $user = $request->user();
+
+        $userHomeworks = UserHomework::query()->where('user_id', $user->id)->with(['homework'])->simplePaginate($limit);
+
+        return response()->json($userHomeworks);
+    }
+
+    public function detail(Request $request, $id)
+    {
+        $userHomework = UserHomework::query()->where('id', $id)->with(['homework'])->first();
+
+        return response()->json($userHomework);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
-            // 'course_id' => 'required|integer|min:1',
-            'course_homework_id' => 'required|integer|min:1',
-            'content' => 'required|json|max:999',
+            'id' => 'required|integer|min:1',
+            'content' => 'required|json',
         ], [], [
-            // 'course_id' => '课程 id',
-            'course_homework_id' => '作业 id',
-            'content' => '内容',
+            'id' => '用户作业 id',
+            'content' => '作业',
         ]);
 
         $user = $request->user();
 
-        $data = $request->only(['course_homework_id', 'content']);
-
-        $data['user_id'] = $user->id;
-
-        $courseHomework = CourseHomework::query()->where('id', $data['course_homework_id'])->first();
-        if (!$courseHomework) {
-            return response()->json(['message' => '作业不存在'], 403);
+        $userHomework = UserHomework::query()->where('id', $request->id)->first();
+        if (!$userHomework) {
+            return response()->json(['message' => '作业不存在']);
         }
 
-        if ($courseHomework['course_id']) {
-            $data['course_id'] = $courseHomework['course_id'];
+        if ($userHomework->user_id != $user->id) {
+            return response()->json(['message' => '只有自己才能提交作业']);
         }
 
-        if (UserCourseHomework::query()->where('user_id', $user->id)->where('course_homework_id', $data['course_homework_id'])->exists()) {
-            return response()->json(['message' => '您的作业已做过'], 403);
+        if ($userHomework->status != 0) {
+            return response()->json(['message' => '作业状态不正确']);
         }
 
-        $courseHomework = UserCourseHomework::create($data);
+        $userHomework->update([
+            'content' => $request->content,
+            'completed_at' => Carbon::now()->toDateTimeString(),
+            'status' => 1
+        ]);
 
-        return response()->json($courseHomework);
+        return response()->json($userHomework);
     }
 }

@@ -9,8 +9,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\CourseLikeController;
 use App\Http\Controllers\Api\CourseCollectController;
-use App\Http\Controllers\Api\UserCourseHomeworkController;
-use App\Http\Controllers\Api\CourseHomeworkController;
+use App\Http\Controllers\Api\UserHomeworkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,12 +49,6 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
     // 获取课程详情
     Route::get('courses/{id}', [CourseController::class, 'detail'])->where('id', '^[1-9]\d*$');
 
-    // 获取作业
-    Route::get('homeworks', [CourseHomeworkController::class, 'index']);
-
-    // 获取作业详情
-    Route::get('homeworks/{id}', [CourseHomeworkController::class, 'detail'])->where('id', '^[1-9]\d*$');
-
     // 下边需要授权才可以
     Route::middleware(['auth:api'])->group(function () {
         // 小程序授权管理后台登录
@@ -66,6 +59,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
 
         // 上传视频
         Route::post('videos', [VideoController::class, 'uploadVideo']);
+        
+        // 获取当前用户的信息
+        Route::get('userinfos', [UserController::class, 'getUserInfo']);
 
         // 更新用户信息
         Route::put('userinfos', [UserController::class, 'update']);
@@ -76,7 +72,12 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
         // 收藏课程
         Route::post('courses/collect', [CourseCollectController::class, 'store']);
 
-        // 课程作业
-        Route::post('user_course_homework', [UserCourseHomeworkController::class, 'store']);
+        // 获取作业
+        Route::get('homework', [UserHomeworkController::class, 'index']);
+
+        // 获取作业详情
+        Route::get('homework/{id}', [UserHomeworkController::class, 'detail'])->where('id', '^[1-9]\d*$');
+
+        Route::post('homework', [UserHomeworkController::class, 'store']);
     });
 });

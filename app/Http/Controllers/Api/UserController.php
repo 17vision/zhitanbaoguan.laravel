@@ -14,6 +14,13 @@ class UserController extends Controller
 
     const WXMINI_SESSION_KEY = 'wxmini_session_key';
 
+    public function getUserInfo(Request $request)
+    {
+        $user = $request->user();
+
+        return response()->json($this->auth($user['id']), false);
+    }
+
     public function wxminiLogin(Request $request)
     {
         $request->validate([

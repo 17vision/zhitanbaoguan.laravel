@@ -81,7 +81,7 @@ class GradeUserController extends Controller
         $count = User::query()->whereIn('id', $createUids)->count();
 
         if (count($createUids) != $count) {
-            return response()->json(['message' => '用户补存在'], 403);
+            return response()->json(['message' => '用户不存在'], 403);
         }
 
         $creates = [];
