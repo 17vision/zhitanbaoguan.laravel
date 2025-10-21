@@ -23,7 +23,7 @@ class UserHomeworkController extends Controller
 
         $user = $request->user();
 
-        $userHomeworks = UserHomework::query()->where('user_id', $user->id)->with(['homework'])->simplePaginate($limit);
+        $userHomeworks = UserHomework::query()->where('user_id', $user->id)->with(['homework.group.parents'])->simplePaginate($limit);
 
         return response()->json($userHomeworks);
     }
