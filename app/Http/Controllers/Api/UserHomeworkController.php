@@ -60,10 +60,16 @@ class UserHomeworkController extends Controller
             return response()->json(['message' => '作业状态不正确']);
         }
 
+        if (Carbon::now()->lt($userHomework->end_at)) {
+            $status = 1;
+        } else {
+            $status = 2;
+        }
+
         $userHomework->update([
             'content' => $request->content,
             'completed_at' => Carbon::now()->toDateTimeString(),
-            'status' => 1
+            'status' => $status
         ]);
 
         return response()->json($userHomework);

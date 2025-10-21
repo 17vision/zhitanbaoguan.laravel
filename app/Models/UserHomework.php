@@ -25,7 +25,7 @@ class UserHomework extends Model
     {
         $value = $this->attributes['status'] ?? 100;
 
-        $array = ['待完成', '已完成', '未完成'];
+        $array = ['待完成', '已完成', '逾期完成', '未完成'];
 
         return $array[$value] ?? '';
     }
