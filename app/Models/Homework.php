@@ -21,7 +21,7 @@ class Homework extends Model
 
     public function group()
     {
-        return $this->belongsTo(HomeworkGroup::class);
+        return $this->belongsTo(HomeworkGroup::class, 'homework_group_id', 'id');
     }
 
     public function resource()
