@@ -13,8 +13,11 @@ use App\Http\Controllers\Admin\FileController;
 use App\Http\Controllers\Admin\CourseChapterController;
 use App\Http\Controllers\Admin\CourseHomeworkController;
 use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\GradeController;
+use App\Http\Controllers\Admin\GradeUserController;
 use App\Http\Controllers\Admin\HomeworkController;
 use App\Http\Controllers\Admin\HomeworkGroupController;
+use App\Http\Controllers\Admin\UserHomeworkController;
 use App\Http\Controllers\Admin\TutorController;
 use App\Http\Controllers\Admin\ResourceController;
 use App\Http\Controllers\Admin\ResourceGroupController;
@@ -179,15 +182,42 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::delete('homework', [HomeworkController::class, 'delete'])->middleware('permission:homework.delete');
 
                 // 作业分组
-                Route::get('homework_groups', [HomeworkGroupController::class, 'index'])->middleware('permission:homework.index');
+                Route::get('homework_groups', [HomeworkGroupController::class, 'index'])->middleware('permission:homework_group.index');
 
-                Route::post('homework_groups', [HomeworkGroupController::class, 'store'])->middleware('permission:homework.create');
+                Route::post('homework_groups', [HomeworkGroupController::class, 'store'])->middleware('permission:homework_group.create');
 
-                Route::put('homework_groups', [HomeworkGroupController::class, 'update'])->middleware('permission:homework.create');
+                Route::put('homework_groups', [HomeworkGroupController::class, 'update'])->middleware('permission:homework_group.create');
 
-                Route::delete('homework_groups', [HomeworkGroupController::class, 'delete'])->middleware('permission:homework.delete');
+                Route::delete('homework_groups', [HomeworkGroupController::class, 'delete'])->middleware('permission:homework_group.delete');
+                
+                // 给某个班级或某个人分配作业
+                Route::post('user_homework', [UserHomeworkController::class, 'store'])->middleware('permission:homework.create');
 
-                // 作业分配
+                // 删除某人的作业
+                Route::delete('user_homework', [UserHomeworkController::class, 'delete'])->middleware('permission:homework.delete');
+            });
+
+            // 班级管理
+            Route::group(['middleware' => 'permission:grade'], function () {
+                // 班级
+                Route::get('grades', [GradeController::class, 'index'])->middleware('permission:grade.index');
+
+                Route::get('grades/{id}', [GradeController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:grade.detail');
+
+                Route::post('grades', [GradeController::class, 'store'])->middleware('permission:grade.create');
+
+                Route::put('grades', [GradeController::class, 'update'])->middleware('permission:grade.create');
+
+                Route::delete('grades', [GradeController::class, 'delete'])->middleware('permission:grade.delete');
+
+                // 班级用户
+                Route::get('grade_users', [GradeUserController::class, 'index'])->middleware('permission:grade_user.index');
+
+                Route::get('grade_users/{id}', [GradeUserController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:grade_user.index');
+
+                Route::post('grade_users', [GradeUserController::class, 'store'])->middleware('permission:grade_user.create');
+
+                Route::delete('grade_users', [GradeUserController::class, 'delete'])->middleware('permission:grade_user.delete');
             });
 
             // 资源管理
@@ -202,7 +232,7 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::delete('resources', [ResourceController::class, 'delete'])->middleware('permission:resource.delete');
             });
 
-            // 分组管理
+            // 资源分组管理
             Route::group(['middleware' => 'permission:resource_group'], function () {
 
                 Route::get('resource_groups', [ResourceGroupController::class, 'index'])->middleware('permission:resource_group.index');

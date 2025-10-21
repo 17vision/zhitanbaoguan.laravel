@@ -7,7 +7,7 @@ use App\Models\CourseHomework;
 use Illuminate\Http\Request;
 use App\Models\UserCourseHomework;
 
-class UserCourseHomeworkController extends Controller
+class UserHomeworkController extends Controller
 {
     public function store(Request $request)
     {

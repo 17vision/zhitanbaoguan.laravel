@@ -11,21 +11,24 @@ return new class extends Migration
     {
         Schema::create('user_homework', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->index()->comment('作业人');
             $table->unsignedBigInteger('homework_id')->index()->comment('作业 id');
-            $table->text('content')->comment('作业内容，根据作业生成对应的json');
-            $table->decimal('score')->nullable()->comment('分数');
+            $table->unsignedBigInteger('user_id')->index()->comment('作业人');
+            $table->unique(['homework_id', 'user_id']);
+            $table->text('content')->nullable()->comment('作业内容，根据作业生成对应的json');
+            $table->decimal('score', 4, 1)->nullable()->comment('得分 0-100');
             $table->string('evaluation')->nullable()->comment('评审');
             $table->dateTime('end_at')->nullable()->comment('结束时间');
             $table->dateTime('completed_at')->nullable()->comment('完成时间');
             $table->unsignedTinyInteger('status')->default(0)->comment('发布状态 0 待完成 1 已完成 2 未完成');
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('homework_id')->references('id')->on('homework')->cascadeOnDelete();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('user_course_homework');
+        Schema::dropIfExists('user_homework');
     }
 };
 
