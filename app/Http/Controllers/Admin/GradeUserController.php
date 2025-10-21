@@ -78,6 +78,12 @@ class GradeUserController extends Controller
             return response()->json(['message' => '这些用户已经在班级里了'], 403);
         }
 
+        $count = User::query()->whereIn('id', $createUids)->count();
+
+        if (count($createUids) != $count) {
+            return response()->json(['message' => '用户补存在'], 403);
+        }
+
         $creates = [];
         foreach ($createUids as $uid) {
             $data['user_id'] = $uid;
