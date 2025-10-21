@@ -42,9 +42,11 @@ class UserHomeworkController extends Controller
 
     public function detail(Request $request, $id)
     {
+        $user = $request->user();
+
         $query = UserHomework::query()->with(['homework']);
 
-        $query->whereHas('homework', function ($query) use ($id) {
+        $query->where('user_id', $user->id)->whereHas('homework', function ($query) use ($id) {
             $query->where('homework_group_id', $id);
         });
 
