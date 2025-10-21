@@ -52,7 +52,7 @@ class HomeworkController extends Controller
 
     public function detail(Request $request, $id)
     {
-        $homework = Homework::where('id', $id)->with(['resource'])->first();
+        $homework = Homework::where('id', $id)->with(['resource', 'group'])->first();
 
         return response()->json($homework);
     }
