@@ -25,14 +25,33 @@ class UserHomeworkController extends Controller
 
         $userHomeworks = UserHomework::query()->where('user_id', $user->id)->with(['homework.group.parents'])->simplePaginate($limit);
 
-        return response()->json($userHomeworks);
+        $groups = [];
+
+        foreach ($userHomeworks as $userHomework) {
+            foreach ($userHomework['homework']['group'] as $item) {
+                if (!isset($groups[$item['id']])) {
+                    $groups[$item['id']] = [
+                        'name' => $item['name'],
+                        'description' => $item['description'],
+                        'id' => $item['id']
+                    ];
+                }
+            }
+        }
+        return response()->json(array_values($groups));
     }
 
     public function detail(Request $request, $id)
     {
-        $userHomework = UserHomework::query()->where('id', $id)->with(['homework.group.parents'])->first();
+        $query = UserHomework::query()->with(['homework']);
 
-        return response()->json($userHomework);
+        $query->whereHas('homework', function ($query) use ($id) {
+            $query->where('homework_group_id', $id);
+        });
+
+        $userHomeworks = $query->get();
+
+        return response()->json($userHomeworks);
     }
 
     public function store(Request $request)
