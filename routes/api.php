@@ -90,5 +90,10 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
 
         // 更新课程统计
         Route::put('course_statistics', [CourseStatisticsController::class, 'update']);
+
+        // 获取统计记录
+        Route::get('course_statistics/course_history', [CourseStatisticsController::class, 'courseHistory']);
+
+        Route::get('course_statistics/practise_history', [CourseStatisticsController::class, 'practiseHistory']);
     });
 });

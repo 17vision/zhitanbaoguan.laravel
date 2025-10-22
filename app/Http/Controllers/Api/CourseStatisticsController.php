@@ -72,4 +72,54 @@ class CourseStatisticsController extends Controller
 
         return response()->json($courseStatistics);
     }
+
+    public function courseHistory(Request $request)
+    {
+        $request->validate([
+            'page' => 'required|integer|min:1',
+            'limit' => 'filled|integer',
+        ], [], [
+            'limit' => '单页显示条数',
+            'page' => '当前页',
+        ]);
+
+        $limit = $request->input('limit', 20);
+
+        $query = CourseStatistics::query()->with(['course', 'course_chapter']);
+
+        $query->whereHas('course', function ($query) {
+            $query->where('category', '!=', 4);
+        });
+
+        $user = $request->user();
+
+        $courseStatistics = $query->where('user_id', $user->id)->orderByDesc('updated_at')->simplePaginate($limit);
+
+        return response()->json($courseStatistics);
+    }
+
+    public function practiseHistory(Request $request)
+    {
+        $request->validate([
+            'page' => 'required|integer|min:1',
+            'limit' => 'filled|integer',
+        ], [], [
+            'limit' => '单页显示条数',
+            'page' => '当前页',
+        ]);
+
+        $limit = $request->input('limit', 20);
+
+        $query = CourseStatistics::query()->with(['course', 'course_chapter']);
+
+        $query->whereHas('course', function ($query) {
+            $query->where('category', 4);
+        });
+
+        $user = $request->user();
+
+        $courseStatistics = $query->where('user_id', $user->id)->orderByDesc('updated_at')->simplePaginate($limit);
+
+        return response()->json($courseStatistics);
+    }
 }
