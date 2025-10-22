@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\CourseLikeController;
 use App\Http\Controllers\Api\CourseCollectController;
 use App\Http\Controllers\Api\CourseStatisticsController;
 use App\Http\Controllers\Api\UserHomeworkController;
+use App\Http\Controllers\Api\ConfigController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
 
     // 小程序登录
     Route::post('wxmini-login', [UserController::class, 'wxminiLogin']);
+
+    // 配置
+    Route::get('config', [ConfigController::class, 'show']);
 });
 
 // 非登录注册相关
