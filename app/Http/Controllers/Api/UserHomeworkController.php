@@ -33,8 +33,15 @@ class UserHomeworkController extends Controller
                 $groups[$item['id']] = [
                     'name' => $item['name'],
                     'description' => $item['description'],
-                    'id' => $item['id']
+                    'id' => $item['id'],
+                    'status' => $userHomework['status'],
+                    'status_str' => $userHomework['status_str']
                 ];
+            } else {
+                if ($groups[$item['id']]['status'] > $userHomework['status']) {
+                    $groups[$item['id']]['status'] = $userHomework['status'];
+                    $groups[$item['id']]['status_str'] = $userHomework['status_str'];
+                }
             }
         }
         return response()->json(array_values($groups));
