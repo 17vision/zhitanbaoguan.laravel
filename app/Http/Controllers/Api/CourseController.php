@@ -15,7 +15,7 @@ class CourseController extends Controller
         $request->validate([
             'page' => 'required|integer|min:1',
             'limit' => 'filled|integer',
-            'category' => 'filled|in:1,2,3,4'
+            'category' => 'filled|string'
         ], [], [
             'page' => '当前页',
             'limit' => '单页显示条数',
@@ -31,7 +31,12 @@ class CourseController extends Controller
         $query = Course::query()->where('status', 1);
 
         if ($category) {
-            $query->where('category', $category);
+            $categories = explode(',', $category);
+            if (count($categories) > 1) {
+                $query->whereIn('category', $categories);
+            } else {
+                $query->where('category', $categories[0]);
+            }
         }
 
         $courses = $query->orderByDesc('id')->simplePaginate($limit);
