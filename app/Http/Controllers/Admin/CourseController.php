@@ -54,7 +54,7 @@ class CourseController extends Controller
         $request->validate([
             'title' => 'required|string|min:1|max:64',
             // 'duration' => 'required|integer',
-            'category' => 'required|in:1,2,3',
+            'category' => 'required|in:1,2,3,4',
             'difficulty' => 'required|in:1,2,3',
             'description' => 'filled|string|max:999',
             'cover' => 'filled|string',
@@ -98,7 +98,7 @@ class CourseController extends Controller
             'id' => 'required|integer',
             'title' => 'filled|string|min:1|max:64',
             'duration' => 'filled|integer',
-            'category' => 'filled|in:1,2,3',
+            'category' => 'filled|in:1,2,3,4',
             'difficulty' => 'filled|in:1,2,3',
             'description' => 'filled|string|max:999',
             'cover' => 'filled|string',

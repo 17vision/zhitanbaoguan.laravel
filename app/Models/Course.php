@@ -16,7 +16,7 @@ class Course extends Model
     {
         $value = $this->attributes['category'] ?? 0;
 
-        $array = ['', '睡眠', '专注', '减压'];
+        $array = ['', '睡眠', '专注', '减压', '练习'];
 
         return $array[$value] ?? '';
     }

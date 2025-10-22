@@ -34,16 +34,64 @@ class UserHomeworkController extends Controller
                     'name' => $item['name'],
                     'description' => $item['description'],
                     'id' => $item['id'],
+                    'status' => [
+                        [
+                            'status' => $userHomework['status'],
+                            'status_str' => $userHomework['status_str']
+                        ]
+                    ]
+                ];
+            } else {
+                $groups[$item['id']]['status'][] = [
                     'status' => $userHomework['status'],
                     'status_str' => $userHomework['status_str']
                 ];
-            } else {
-                if ($groups[$item['id']]['status'] > $userHomework['status']) {
-                    $groups[$item['id']]['status'] = $userHomework['status'];
-                    $groups[$item['id']]['status_str'] = $userHomework['status_str'];
-                }
             }
         }
+
+        // 待完成 完成中 已完成 逾期完成
+
+        foreach ($groups as &$group) {
+            $status0 = 0;
+            $status1 = 0;
+            $status2 = 0;
+
+            foreach ($group['status'] as $status) {
+                if ($status['status'] == 0) {
+                    $status0++;
+                }
+
+                if ($status['status'] == 1) {
+                    $status1++;
+                }
+
+                if ($status['status'] == 2) {
+                    $status2++;
+                }
+            }
+
+            if ($status0 == count($group['status'])) {
+                $group['status'] = 0;
+                $group['status_str'] = '待完成';
+                continue;
+            }
+
+            if ($status1 == count($group['status'])) {
+                $group['status'] = 2;
+                $group['status_str'] = '已完成';
+                continue;
+            }
+
+            if($status0 > 0) {
+                $group['status'] = 1;
+                $group['status_str'] = '完成中';
+                continue;
+            }
+
+            $group['status'] = 3;
+            $group['status_str'] = '逾期完成';
+        }
+
         return response()->json(array_values($groups));
     }
 
