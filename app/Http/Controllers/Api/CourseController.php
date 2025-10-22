@@ -15,17 +15,26 @@ class CourseController extends Controller
         $request->validate([
             'page' => 'required|integer|min:1',
             'limit' => 'filled|integer',
+            'category' => 'filled|in:1,2,3,4'
         ], [], [
             'page' => '当前页',
             'limit' => '单页显示条数',
+            'category' => '课程分类'
         ]);
 
         $limit = $request->input('limit', 30);
 
+        $category = $request->category;
+
         $user = $request->user();
 
-        $courses = Course::query()->where('status', 1)->orderByDesc('id')->simplePaginate($limit);
+        $query = Course::query()->where('status', 1);
 
+        if ($category) {
+            $query->where('category', $category);
+        }
+
+        $courses = $query->orderByDesc('id')->simplePaginate($limit);
         if ($user) {
             $ids = [];
             foreach ($courses as $course) {
