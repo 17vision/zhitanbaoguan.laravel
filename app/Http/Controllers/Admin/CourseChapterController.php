@@ -37,7 +37,7 @@ class CourseChapterController extends Controller
         $request->validate([
             'course_id' => 'required|integer|min:1',
             'title' => 'required|string|min:1|max:64',
-            'description' => 'filled|string|max:999',
+            'description' => 'filled|string|max:2500',
             'duration' => 'required|integer',
             'background' => 'required|string',
             'resource_id' =>  'filled|integer',
@@ -90,7 +90,7 @@ class CourseChapterController extends Controller
             'id' => 'required|integer|min:1',
             'course_id' => 'filled|integer|min:1',
             'title' => 'filled|string|min:1|max:64',
-            'description' => 'filled|string|max:999',
+            'description' => 'filled|string|max:2500',
             'duration' => 'filled|integer',
             'background' => 'filled|string',
             'resource_id' =>  'filled|integer',
