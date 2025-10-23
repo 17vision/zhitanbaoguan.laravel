@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\CourseCollectController;
 use App\Http\Controllers\Api\CourseStatisticsController;
 use App\Http\Controllers\Api\UserHomeworkController;
 use App\Http\Controllers\Api\ConfigController;
+use App\Http\Controllers\Api\GradeUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -95,5 +96,11 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
         Route::get('course_statistics/course_history', [CourseStatisticsController::class, 'courseHistory']);
 
         Route::get('course_statistics/practise_history', [CourseStatisticsController::class, 'practiseHistory']);
+
+        // 获取自己的班级
+        Route::get('grade_users', [GradeUserController::class, 'index']);
+
+        // 加入班级
+        Route::post('grade_users', [GradeUserController::class, 'store']);
     });
 });

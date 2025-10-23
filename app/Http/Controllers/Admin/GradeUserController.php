@@ -54,7 +54,7 @@ class GradeUserController extends Controller
     {
         $request->validate([
             'grade_id' =>  'required|integer|min:1',
-            'user_ids' =>  'required:user_id|string',
+            'user_ids' =>  'required|string',
         ], [], [
             'grade_id' => '班级 id',
             'user_ids' => '用户 id 列表',
