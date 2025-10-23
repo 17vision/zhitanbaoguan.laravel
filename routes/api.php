@@ -55,6 +55,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
     // 获取课程详情
     Route::get('courses/{id}', [CourseController::class, 'detail'])->where('id', '^[1-9]\d*$');
 
+    // 获取班级信息
+    Route::get('grades', [GradeUserController::class, 'grade']);
+
     // 下边需要授权才可以
     Route::middleware(['auth:api'])->group(function () {
         // 小程序授权管理后台登录

@@ -18,6 +18,30 @@ class GradeUserController extends Controller
         return response()->json($gradeUsers);
     }
 
+    public function grade(Request $request)
+    {
+        $request->validate([
+            'grade_id' =>  'required|integer|min:1',
+        ], [], [
+            'grade_id' => '班级 id',
+        ]);
+
+        $user = $request->user();
+
+        $grade = Grade::query()->where('id', $request->grade_id)->first();
+
+        if (!$grade) {
+            return response()->json(['message' => '班级不存在'], 403);
+        }
+
+        if ($user) {
+            $grade['is_member'] = GradeUser::query()->where('grade_id', $grade->id)->whereIn('user_id', $user->id)->exists();
+        } else {
+            $grade['is_member'] = false;
+        }
+        return response()->json($grade);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
