@@ -35,7 +35,7 @@ class GradeUserController extends Controller
         }
 
         if ($user) {
-            $grade['is_member'] = GradeUser::query()->where('grade_id', $grade->id)->whereIn('user_id', $user->id)->exists();
+            $grade['is_member'] = GradeUser::query()->where('grade_id', $grade->id)->where('user_id', $user->id)->exists();
         } else {
             $grade['is_member'] = false;
         }
@@ -61,7 +61,7 @@ class GradeUserController extends Controller
             return response()->json(['message' => '班级不存在'], 403);
         }
 
-        $gradeUser = GradeUser::query()->where('grade_id', $data['grade_id'])->whereIn('user_id', $data['user_id'])->first();
+        $gradeUser = GradeUser::query()->where('grade_id', $data['grade_id'])->where('user_id', $data['user_id'])->first();
         if ($gradeUser) {
             return response()->json(['message' => '您已经在班级里了'], 403);
         }
