@@ -33,7 +33,7 @@ class CourseStatisticsController extends Controller
         }
 
         $courseStatistics = CourseStatistics::query()->where('course_chapter_id', $data['course_chapter_id'])->where('user_id', $data['user_id'])->first();
-        if ($courseChapter) {
+        if ($courseStatistics) {
             $data['duration'] = $courseStatistics['duration'] + $data['duration'];
             $courseStatistics->update($data);
         } else {
