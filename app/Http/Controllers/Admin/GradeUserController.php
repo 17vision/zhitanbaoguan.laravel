@@ -70,11 +70,12 @@ class GradeUserController extends Controller
 
         $user_ids = explode(',', $user_ids);
 
-        $exitUids = GradeUser::query()->where('grade_id', $data['grade_id'])->whereIn('user_id', $user_ids)->pluck('user_id')->toArray();
+        $exitUids = GradeUser::query()->where('grade_id', $data['grade_id'])->pluck('user_id')->toArray();
 
-        $createUids = array_diff($user_ids, $exitUids);
+        $createUids = array_values(array_diff($user_ids, $exitUids));
 
-        $delUids = array_diff($exitUids, $user_ids);
+        $delUids = array_values(array_diff($exitUids, $user_ids));
+
         if (!empty($delUids)) {
             GradeUser::query()->where('grade_id', $data['grade_id'])->whereIn('user_id', $delUids)->delete();
         }
