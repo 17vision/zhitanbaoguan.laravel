@@ -95,6 +95,7 @@ class UserHomeworkController extends Controller
             if (!empty($createUids)) {
                 foreach ($createUids as $uid) {
                     $data['user_id'] = $uid;
+                    $data['grade_id'] = $grade_id;
                     $create[] = UserHomework::create($data);
                 }
                 $createNum = count($createUids);
