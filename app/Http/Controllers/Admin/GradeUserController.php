@@ -7,6 +7,7 @@ use App\Models\Grade;
 use Illuminate\Http\Request;
 use App\Models\GradeUser;
 use App\Models\User;
+use App\Models\UserHomework;
 
 class GradeUserController extends Controller
 {
@@ -95,6 +96,31 @@ class GradeUserController extends Controller
             $data['user_id'] = $uid;
             $creates[] = GradeUser::create($data);
         }
+
+        // 触发自动分配作业
+        if (!empty($createUids)) {
+            $userHomeworks = UserHomework::query()->where('grade_id', $data['grade_id'])->get()->toArray();
+            $homeworks = [];
+            foreach ($userHomeworks as $userHomework) {
+                if (isset($homeworks[$userHomework['homework_id']])) {
+                    continue;
+                }
+                $homeworks[$userHomework['homework_id']] = $userHomework;
+            }
+            $userHomeworks = array_values($homeworks);
+    
+            foreach ($userHomeworks as $userHomework) {
+                foreach ($createUids as $uid) {
+                    $data = [
+                        'user_id' => $uid,
+                        'homework_id' => $userHomework['homework_id'],
+                        'grade_id' => $userHomework['grade_id'],
+                        'end_at' => $userHomework['end_at']
+                    ];
+                }
+            }
+        }
+
         return response()->json($creates);
     }
 

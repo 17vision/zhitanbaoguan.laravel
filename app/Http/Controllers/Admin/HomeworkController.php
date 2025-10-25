@@ -94,7 +94,7 @@ class HomeworkController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'id' => 'required|integer',
             'title' => 'filled|string|max:64',
             'content' => 'filled|string|max:200',
@@ -112,12 +112,10 @@ class HomeworkController extends Controller
             'resource_id' => '资源 id',
         ]);
 
-        $user = $request->user();
-
         $id = $request->id;
-
-        $data = $request->only(['homework_group_id', 'title', 'content', 'config', 'resource_id', 'status']);
-
+        
+        $user = $request->user();
+        
         $data['user_id'] = $user->id;
 
         $homework = Homework::query()->where('id', $id)->first();

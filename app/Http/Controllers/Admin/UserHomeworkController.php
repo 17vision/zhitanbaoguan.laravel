@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use App\Models\GradeUser;
 use App\Models\Homework;
 use App\Models\UserHomework;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Exception;
 
 class UserHomeworkController extends Controller
 {
@@ -42,21 +44,17 @@ class UserHomeworkController extends Controller
     {
         $request->validate([
             'homework_id' => 'required|integer|min:1',
-            'user_id' => 'required_without:grade_id|integer|min:1',
-            'grade_id' => 'required_without:user_id|integer|min:1',
+            'grade_id' => 'required:user_id|integer|min:1',
             'end_at' => 'required|date',
         ], [], [
             'homework_id' => '作业 id',
-            'user_id' => '用户 id',
             'grade_id' => '班级 id',
             'end_at' => '结束时间',
         ]);
 
-        $data = $request->only(['homework_id', 'end_at']);
-
-        $user_id = $request->user_id;
-
         $grade_id = $request->grade_id;
+
+        $data = $request->only(['homework_id', 'end_at']);
 
         if (!Carbon::now()->addHours(1)->lte($data['end_at'])) {
             return response()->json(['message' => '结束时间必须大于当前时间 1 小时'], 403);
@@ -66,32 +64,46 @@ class UserHomeworkController extends Controller
             return response()->json(['message' => '作业不存在'], 403);
         }
 
-        if ($user_id) {
-            if (UserHomework::query()->where('homework_id', $data['homework_id'])->where('user_id', $user_id)->exists()) {
-                return response()->json(['message' => '该用户已分配该作业'], 403);
+        $gradeUids = GradeUser::query()->where('grade_id', $grade_id)->pluck('user_id')->toArray();
+
+        $exitUids = UserHomework::query()->where('grade_id', $grade_id)->where('homework_id', $data['homework_id'])->pluck('user_id')->toArray();
+
+        $delUids = array_diff($exitUids, $gradeUids);
+
+        $createUids = array_diff($gradeUids, $exitUids);
+
+        $updateUids = array_intersect($gradeUids, $exitUids);
+
+        DB::beginTransaction();
+
+        try {
+            $updateNum = 0;
+            $delNum = 0;
+            $createNum = 0;
+
+            if (!empty($updateUids)) {
+                $updateNum = UserHomework::query()->where('grade_id', $grade_id)->where('homework_id', $data['homework_id'])->whereIn('user_id', $updateUids)->update([
+                    'end_at' => $data['end_at']
+                ]);
             }
-            $uids = [$user_id];
-        } else {
-            $uids = GradeUser::query()->where('grade_id', $grade_id)->pluck('user_id')->toArray();
 
-            $exitUids = UserHomework::query()->where('homework_id', $data['homework_id'])->whereIn('user_id', $uids)->pluck('user_id')->toArray();
-
-            $uids = array_diff($uids, $exitUids);
-
-            $updates = UserHomework::query()->where('homework_id', $data['homework_id'])->whereIn('user_id', $exitUids)->update(['end_at' => $data['end_at']]);
-
-            if (empty($uids)) {
-                return response()->json(['message' => '班级不存在或班级没有成员没分配'], 403);
+            if (!empty($delUids)) {
+                $delNum = UserHomework::query()->where('grade_id', $grade_id)->where('homework_id', $data['homework_id'])->whereIn('user_id', $delUids)->delete();
             }
-        }
 
-        $create = [];
-        foreach ($uids as $uid) {
-            $data['user_id'] = $uid;
-            $create[] = UserHomework::create($data);
+            if (!empty($createUids)) {
+                foreach ($createUids as $uid) {
+                    $data['user_id'] = $uid;
+                    $create[] = UserHomework::create($data);
+                }
+                $createNum = count($createUids);
+            }
+            DB::commit();
+            return response()->json(['delNum' => $delNum, 'updateNum' => $updateNum, 'createNum' => $createNum]);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => '作业分配失败'], 403);
         }
-
-        return response()->json(['create' => $create, 'updates' => $updates ?? null]);
     }
 
     public function delete(Request $request)
