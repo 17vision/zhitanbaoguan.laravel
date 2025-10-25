@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 use App\Models\Grade;
 use Illuminate\Http\Request;
 use App\Models\GradeUser;
@@ -98,6 +99,7 @@ class GradeUserController extends Controller
         }
 
         // 触发自动分配作业
+        Log::channel('error')->error('自动分配作业', ['createUids' => $createUids]);
         if (!empty($createUids)) {
             $userHomeworks = UserHomework::query()->where('grade_id', $data['grade_id'])->get()->toArray();
             $homeworks = [];
@@ -108,7 +110,7 @@ class GradeUserController extends Controller
                 $homeworks[$userHomework['homework_id']] = $userHomework;
             }
             $userHomeworks = array_values($homeworks);
-    
+
             foreach ($userHomeworks as $userHomework) {
                 foreach ($createUids as $uid) {
                     $data = [
@@ -117,6 +119,7 @@ class GradeUserController extends Controller
                         'grade_id' => $userHomework['grade_id'],
                         'end_at' => $userHomework['end_at']
                     ];
+                    UserHomework::create($data);
                 }
             }
         }
