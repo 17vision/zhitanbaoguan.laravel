@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\GradeUser;
 use App\Models\Homework;
 use App\Models\UserHomework;
@@ -102,6 +103,7 @@ class UserHomeworkController extends Controller
             return response()->json(['delNum' => $delNum, 'updateNum' => $updateNum, 'createNum' => $createNum]);
         } catch (Exception $e) {
             DB::rollBack();
+            Log::channel('error')->error('分配作业失败', ['line' => $e->getLine(), 'message' => $e->getMessage(), 'trace' => $e->getTrace()]);
             return response()->json(['message' => '作业分配失败'], 403);
         }
     }
