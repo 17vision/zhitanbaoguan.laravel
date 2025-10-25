@@ -8,7 +8,7 @@ class UserHomework extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'homework_id', 'content', 'score', 'evaluation', 'end_at', 'completed_at', 'status'];
+    protected $fillable = ['user_id', 'homework_id', 'grade_id', 'content', 'score', 'evaluation', 'end_at', 'completed_at', 'status'];
 
     protected $appends = ['status_str'];
 

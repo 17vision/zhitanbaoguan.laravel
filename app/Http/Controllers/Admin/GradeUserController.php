@@ -74,8 +74,13 @@ class GradeUserController extends Controller
 
         $createUids = array_diff($user_ids, $exitUids);
 
+        $delUids = array_diff($exitUids, $user_ids);
+        if (!empty($delUids)) {
+            GradeUser::query()->where('grade_id', $data['grade_id'])->whereIn('user_id', $delUids)->delete();
+        }
+
         if (empty($createUids)) {
-            return response()->json(['message' => '这些用户已经在班级里了'], 403);
+            return response()->json(['message' => '这些用户已经在班级里了']);
         }
 
         $count = User::query()->whereIn('id', $createUids)->count();

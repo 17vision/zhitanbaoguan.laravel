@@ -12,12 +12,13 @@ return new class extends Migration
         Schema::create('grades', function (Blueprint $table) {
             $table->id();
             $table->string('name')->comment('名称');
+            $table->string('cover')->nullable()->comment('封面');
             $table->text('description')->nullable()->comment('描述');
+            $table->unsignedMediumInteger('number')->default(0)->comment('班级人数');
+            $table->string('qrcode')->nullable()->comment('小程序码');
+            $table->string('poster')->nullable()->comment('海报');
             $table->unsignedBigInteger('user_id')->nullable()->index()->comment('负责人 id');
-            // 毕业时间
-            // 班级小程序码
-            // 班级总人数
-            // 班级封面
+            $table->datetime('graduation_at')->nullable()->comment('毕业时间');
             $table->timestamps();
         });
     }

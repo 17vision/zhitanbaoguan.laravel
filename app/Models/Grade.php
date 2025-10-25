@@ -8,5 +8,5 @@ class Grade extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'user_id'];
+    protected $fillable = ['name', 'cover', 'description', 'number', 'qrcode', 'poster', 'user_id', 'graduation_at'];
 }

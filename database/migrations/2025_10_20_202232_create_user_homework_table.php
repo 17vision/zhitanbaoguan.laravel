@@ -11,9 +11,10 @@ return new class extends Migration
     {
         Schema::create('user_homework', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('homework_id')->index()->comment('作业 id');
             $table->unsignedBigInteger('user_id')->index()->comment('作业人');
-            $table->unique(['homework_id', 'user_id']);
+            $table->unsignedBigInteger('homework_id')->index()->comment('作业 id');
+            $table->unsignedBigInteger('grade_id')->index()->comment('班级 id');
+            $table->unique(['user_id', 'homework_id', 'grade_id']);
             $table->text('content')->nullable()->comment('作业内容，根据作业生成对应的json');
             $table->decimal('score', 4, 1)->nullable()->comment('得分 0-100');
             $table->string('evaluation')->nullable()->comment('评审');

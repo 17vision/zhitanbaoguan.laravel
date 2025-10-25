@@ -101,7 +101,7 @@ class HomeworkController extends Controller
             'config' => 'filled|json|max:999',
             'status' => 'filled|in:0,1',
             'homework_group_id' => 'filled|integer|min:1',
-            'resource_id' =>  'filled|integer',
+            'resource_id' =>  'nullable|integer',
         ], [], [
             'id' => '作业 id',
             'homework_group_id' => '分组 id',

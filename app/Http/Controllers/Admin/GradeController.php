@@ -49,18 +49,38 @@ class GradeController extends Controller
             'name' => 'required|string|min:1|max:64',
             'description' => 'filled|string|max:250',
             'user_id' =>  'filled|integer',
+            'cover' =>  'filled|string',
+            'qrcode' =>  'filled|string',
+            'poster' =>  'filled|string',
+            'graduation_at' =>  'filled|date',
         ], [], [
             'name' => '名称',
             'description' => '描述',
-            'user_id' => '负责人'
+            'user_id' => '负责人',
+            'cover' =>  '封面',
+            'qrcode' =>  '小程序码',
+            'poster' =>  '海报',
+            'graduation_at' =>  '毕业时间',
         ]);
 
-        $data = $request->only(['name', 'description', 'user_id']);
+        $data = $request->only(['name', 'description', 'user_id', 'cover', 'qrcode', 'poster', 'graduation_at']);
 
         if (isset($data['user_id']) && $data['user_id']) {
             if (!User::query()->where('id',  $data['user_id'])->exists()) {
                 return response()->json(['message' => '负责人不存在'], 403);
             }
+        }
+
+        if (isset($data['cover']) && $data['cover']) {
+            $data['cover'] = reverseStorageUrl($data['cover']);
+        }
+
+        if (isset($data['qrcode']) && $data['qrcode']) {
+            $data['qrcode'] = reverseStorageUrl($data['qrcode']);
+        }
+
+        if (isset($data['poster']) && $data['poster']) {
+            $data['poster'] = reverseStorageUrl($data['poster']);
         }
 
         $grade = Grade::create($data);
@@ -70,21 +90,27 @@ class GradeController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'id' => 'required|integer',
             'name' => 'required|string|min:1|max:64',
             'description' => 'filled|string|max:250',
             'user_id' =>  'filled|integer',
+            'cover' =>  'nullable|string',
+            'qrcode' =>  'nullable|string',
+            'poster' =>  'nullable|string',
+            'graduation_at' =>  'nullable|date',
         ], [], [
             'id' => '班级 id',
             'name' => '名称',
             'description' => '描述',
-            'user_id' => '负责人'
+            'user_id' => '负责人',
+            'cover' =>  '封面',
+            'qrcode' =>  '小程序码',
+            'poster' =>  '海报',
+            'graduation_at' =>  '毕业时间',
         ]);
 
         $id = $request->id;
-
-        $data = $request->only(['name', 'description', 'user_id']);
 
         if (empty($data)) {
             return response()->json(['message' => '请提交有效数据'], 403);
@@ -94,6 +120,18 @@ class GradeController extends Controller
             if (!User::query()->where('id',  $data['user_id'])->exists()) {
                 return response()->json(['message' => '负责人不存在'], 403);
             }
+        }
+
+        if (isset($data['cover']) && $data['cover']) {
+            $data['cover'] = reverseStorageUrl($data['cover']);
+        }
+
+        if (isset($data['qrcode']) && $data['qrcode']) {
+            $data['qrcode'] = reverseStorageUrl($data['qrcode']);
+        }
+
+        if (isset($data['poster']) && $data['poster']) {
+            $data['poster'] = reverseStorageUrl($data['poster']);
         }
 
         $grade = Grade::query()->where('id', $id)->first();
