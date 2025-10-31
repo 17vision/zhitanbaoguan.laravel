@@ -62,6 +62,8 @@ class CourseMessageController extends Controller
 
         $courseMessage = CourseMessage::create($data);
 
+        Course::query()->where('id', $data['course_id'])->increment('message_count', 1);
+
         return response()->json($courseMessage);
     }
 
@@ -89,7 +91,8 @@ class CourseMessageController extends Controller
             $data['content'] = reverseStorageUrl($data['content']);
         }
 
-        if (!CourseMessage::query()->where('id', $data['course_message_id'])->exists()) {
+        $courseMessage = CourseMessage::query()->where('id', $data['course_message_id'])->first();
+        if (!$courseMessage) {
             return response()->json(['message' => '消息不存在'], 403);
         }
 
@@ -109,7 +112,9 @@ class CourseMessageController extends Controller
         try {
             $courseMessageReply = CourseMessageReply::create($data);
 
-            CourseMessage::where('id', $data['course_message_id'])->increment('reply_nums', 1);
+            $courseMessage->increment('reply_nums', 1);
+
+            Course::query()->where('id', $courseMessage['course_id'])->increment('message_count', 1);
 
             DB::commit();
 

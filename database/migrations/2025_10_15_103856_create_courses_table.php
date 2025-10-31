@@ -22,6 +22,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('status')->default(0)->comment('发布状态 0 待发布 1 已发布');
             $table->unsignedInteger('like_count')->default(0)->comment('喜欢个数');
             $table->unsignedInteger('collect_count')->default(0)->comment('收藏个数');
+            $table->unsignedInteger('message_count')->default(0)->comment('留言个数');
             $table->timestamps();
         });
     }
