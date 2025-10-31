@@ -27,7 +27,7 @@ class CourseMessageController extends Controller
 
         $limit = $request->input('limit', 20);
 
-        $courseMessages = CourseMessage::query()->where('course_id', $request->course_id)->with(['user', 'replies.user'])->orderByDesc('id')->simplePaginate($limit);
+        $courseMessages = CourseMessage::query()->where('course_id', $request->course_id)->with(['user:id,nickname,gender,avatar', 'replies.user:id,nickname,gender,avatar'])->orderByDesc('id')->simplePaginate($limit);
 
         return response()->json($courseMessages);
     }
