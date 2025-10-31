@@ -59,6 +59,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
     // 获取班级信息
     Route::get('grades', [GradeUserController::class, 'grade']);
 
+    // 获取留言列表
+    Route::get('course_messages', [CourseMessageController::class, 'index']);
+
     // 下边需要授权才可以
     Route::middleware(['auth:api'])->group(function () {
         // 小程序授权管理后台登录
@@ -108,13 +111,16 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
         Route::post('grade_users', [GradeUserController::class, 'store']);
 
         // 课程留言
-        // 获取留言列表
-        Route::get('course_messages', [CourseMessageController::class, 'index']);
 
         // 留言
         Route::post('course_messages', [CourseMessageController::class, 'store']);
 
         // 给留言回复
         Route::post('course_message_replies', [CourseMessageController::class, 'reply']);
+
+        // 给留言点赞(取消点赞)
+         Route::post('course_messages/praise', [CourseMessageController::class, 'praise']);
     });
+
+
 });

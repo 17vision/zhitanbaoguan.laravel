@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\CourseMessage;
 use App\Models\CourseMessageReply;
+use App\Models\CourseMessagePraise;
+use App\Models\CourseMessageReplyPraise;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -118,6 +120,66 @@ class CourseMessageController extends Controller
             Log::channel('error')->error('reply-error', ['message' => $e->getMessage(), 'line' => $e->getLine(), 'trace' => $e->getTraceAsString()]);
 
             return response()->json(['message' => $e->getMessage()], 403);
+        }
+    }
+
+    // 对消息进行点赞
+    public function praise(Request $request)
+    {
+        $request->validate([
+            'course_message_id' => 'required_without:course_message_reply_id|integer|min:1',
+            'course_message_reply_id' => 'required_without:course_message_id|integer|min:1',
+        ], [], [
+            'course_message_id' => '消息 id',
+            'course_message_reply_id' => '二级消息 id'
+        ]);
+
+        $data = $request->only(['course_message_id', 'course_message_reply_id']);
+
+        $user = $request->user();
+
+        DB::beginTransaction();
+        try {
+            if (isset($data['course_message_id'])) {
+                $coursePriase = CourseMessagePraise::query()->where('course_message_id', $data['course_message_id'])->where('user_id', $user->id)->first();
+                if ($coursePriase) {
+                    CourseMessage::query()->where('id', $data['course_message_id'])->decrement('praises_nums', 1);
+
+                    $coursePriase->delete();
+                } else {
+                    CourseMessage::query()->where('id', $data['course_message_id'])->increment('praises_nums', 1);
+
+                    CourseMessagePraise::create([
+                        'course_message_id' => $data['course_message_id'],
+                        'user_id' => $user->id
+                    ]);
+                }
+            } else {
+                $courseMessageReplyPraise = CourseMessageReplyPraise::query()->where('course_message_reply_id', $data['course_message_reply_id'])->where('user_id', $user->id)->first();
+                if ($courseMessageReplyPraise) {
+                    CourseMessageReply::query()->where('id', $data['course_message_reply_id'])->decrement('praises_nums', 1);
+
+                    $courseMessageReplyPraise->delete();
+                } else {
+                    $courseMessageReply = CourseMessageReply::query()->where('id', $data['course_message_reply_id'])->first();
+
+                    CourseMessageReply::query()->where('id', $data['course_message_reply_id'])->increment('praises_nums', 1);
+
+                    CourseMessageReplyPraise::create([
+                        'course_message_id' => $courseMessageReply->course_message_id,
+                        'course_message_reply_id' => $data['course_message_reply_id'],
+                        'user_id' => $user->id
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return response()->json(['message' => '操作成功']);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::channel('error')->error('reply-error', ['message' => $e->getMessage(), 'line' => $e->getLine(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['message' => '操作失败'], 403);
         }
     }
 }
