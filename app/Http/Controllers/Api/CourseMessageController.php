@@ -31,6 +31,20 @@ class CourseMessageController extends Controller
 
         $courseMessages = CourseMessage::query()->where('course_id', $request->course_id)->with(['user:id,nickname,gender,avatar', 'replies.user:id,nickname,gender,avatar'])->orderByDesc('id')->simplePaginate($limit);
 
+        $courseMessages->getCollection()->transform(function ($courseMessage) {
+            $replies = [];
+            foreach ($courseMessage['replies'] as $reply) {
+                $replies[$reply['id']] = $reply;
+            }
+
+            foreach ($courseMessage['replies'] as &$reply) {
+                if ($reply['course_message_reply_id']) {
+                    $reply['reply_user'] = $replies[$reply['course_message_reply_id']]['user'] ?? null;
+                }
+            }
+            return $courseMessage;
+        });
+
         return response()->json($courseMessages);
     }
 
