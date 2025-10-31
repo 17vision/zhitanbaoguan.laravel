@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Course;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\CourseMessage;
@@ -53,6 +54,10 @@ class CourseMessageController extends Controller
             $data['content'] = reverseStorageUrl($data['content']);
         }
 
+        if (!Course::query()->where('id', $data['course_id'])->exists()) {
+            return response()->json(['message' => '课程不存在'], 403);
+        }
+
         $courseMessage = CourseMessage::create($data);
 
         return response()->json($courseMessage);
@@ -80,6 +85,22 @@ class CourseMessageController extends Controller
 
         if (in_array($data['type'], [2, 3])) {
             $data['content'] = reverseStorageUrl($data['content']);
+        }
+
+        if (!CourseMessage::query()->where('id', $data['course_message_id'])->exists()) {
+            return response()->json(['message' => '消息不存在'], 403);
+        }
+
+        if (isset($data['course_message_reply_id'])) {
+            $courseMessageReply = CourseMessageReply::query()->where('id', $data['course_message_reply_id'])->first();
+
+            if (!$courseMessageReply) {
+                return response()->json(['message' => '二级消息不存在'], 403);
+            }
+
+            if ($courseMessageReply->course_message_id != $data['course_message_id']) {
+                return response()->json(['message' => '二级消息必须同父级'], 403);
+            }
         }
 
         DB::beginTransaction();
