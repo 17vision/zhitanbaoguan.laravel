@@ -44,7 +44,7 @@ class CourseMessageController extends Controller
             'type' => '留言类型'
         ]);
 
-        $user = $request()->user();
+        $user = $request->user();
 
         $data = $request->only(['course_id', 'content', 'type']);
 
@@ -77,7 +77,7 @@ class CourseMessageController extends Controller
             'course_message_reply_id' => '二级消息 id'
         ]);
 
-        $user = $request()->user();
+        $user = $request->user();
 
         $data = $request->only(['course_message_id', 'content', 'type', 'course_message_reply_id']);
 
