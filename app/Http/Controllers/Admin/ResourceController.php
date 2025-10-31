@@ -148,17 +148,35 @@ class ResourceController extends Controller
     public function delete(Request $request)
     {
         $request->validate([
-            'id' => 'required_without:ids|integer',
-            'ids' => 'required_without:id|array'
+            'ids' => 'required|string'
         ], [], [
-            'id' => 'id',
-            'ids' => 'ids'
+            'ids' => '资源 id'
         ]);
-
-        $id = $request->id;
 
         $ids = $request->ids;
 
-        return response()->json(['id' => $id, 'ids' => $ids]);
+        $ids = explode(',', $ids);
+
+        $deletedResources = [];
+        foreach ($ids as $id) {
+            $resource = Resource::query()->where('id', $id)->first();
+            if (!$resource) {
+                continue;
+            }
+
+            if ($resource['path']) {
+                Storage::disk('file')->delete(reverseStorageUrl($resource['path']));
+            }
+
+            if ($resource['thumbnail']) {
+                Storage::disk('file')->delete(reverseStorageUrl($resource['thumbnail']));
+            }
+
+            $resource->delete();
+
+            $deletedResources[] = $resource;
+        }
+
+        return response()->json(['ids' => $ids, 'deletedResources' => $deletedResources]);
     }
 }
