@@ -138,14 +138,33 @@ class CourseMessageController extends Controller
 
         $user = $request->user();
 
+        if (count($data) == 2) {
+            return response()->json(['message' => '参数只能传一个'], 403);
+        }
+
+        if (isset($data['course_message_id'])) {
+            if (!CourseMessage::query()->where('id', $data['course_message_id'])->exists()) {
+                return response()->json(['message' => '消息不存在'], 403);
+            }
+        }
+
+        if (isset($data['course_message_reply_id'])) {
+            if (!CourseMessageReply::query()->where('id', $data['course_message_reply_id'])->exists()) {
+                return response()->json(['message' => '二级消息不存在'], 403);
+            }
+        }
+
         DB::beginTransaction();
         try {
+            $msg = '';
             if (isset($data['course_message_id'])) {
                 $coursePriase = CourseMessagePraise::query()->where('course_message_id', $data['course_message_id'])->where('user_id', $user->id)->first();
                 if ($coursePriase) {
                     CourseMessage::query()->where('id', $data['course_message_id'])->decrement('praises_nums', 1);
 
                     $coursePriase->delete();
+
+                    $msg = '已取消点赞';
                 } else {
                     CourseMessage::query()->where('id', $data['course_message_id'])->increment('praises_nums', 1);
 
@@ -153,6 +172,8 @@ class CourseMessageController extends Controller
                         'course_message_id' => $data['course_message_id'],
                         'user_id' => $user->id
                     ]);
+
+                    $msg = '已点赞';
                 }
             } else {
                 $courseMessageReplyPraise = CourseMessageReplyPraise::query()->where('course_message_reply_id', $data['course_message_reply_id'])->where('user_id', $user->id)->first();
@@ -160,6 +181,8 @@ class CourseMessageController extends Controller
                     CourseMessageReply::query()->where('id', $data['course_message_reply_id'])->decrement('praises_nums', 1);
 
                     $courseMessageReplyPraise->delete();
+
+                    $msg = '已取消点赞';
                 } else {
                     $courseMessageReply = CourseMessageReply::query()->where('id', $data['course_message_reply_id'])->first();
 
@@ -170,12 +193,14 @@ class CourseMessageController extends Controller
                         'course_message_reply_id' => $data['course_message_reply_id'],
                         'user_id' => $user->id
                     ]);
+
+                    $msg = '已点赞';
                 }
             }
 
             DB::commit();
 
-            return response()->json(['message' => '操作成功']);
+            return response()->json(['message' => $msg]);
         } catch (Exception $e) {
             DB::rollBack();
             Log::channel('error')->error('reply-error', ['message' => $e->getMessage(), 'line' => $e->getLine(), 'trace' => $e->getTraceAsString()]);
