@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\CourseCollectController;
 use App\Http\Controllers\Api\CourseStatisticsController;
 use App\Http\Controllers\Api\UserHomeworkController;
 use App\Http\Controllers\Api\ConfigController;
+use App\Http\Controllers\Api\CourseMessageController;
 use App\Http\Controllers\Api\GradeUserController;
 
 /*
@@ -105,5 +106,15 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
 
         // 加入班级
         Route::post('grade_users', [GradeUserController::class, 'store']);
+
+        // 课程留言
+        // 获取留言列表
+        Route::get('course_messages', [CourseMessageController::class, 'index']);
+
+        // 留言
+        Route::post('course_messages', [CourseMessageController::class, 'store']);
+
+        // 给留言回复
+        Route::post('course_message_replies', [CourseMessageController::class, 'reply']);
     });
 });
