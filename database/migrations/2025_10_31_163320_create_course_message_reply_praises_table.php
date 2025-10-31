@@ -13,7 +13,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('course_message_reply_id')->index();
             $table->unsignedBigInteger('user_id')->index();
-            $table->unique(['course_message_reply_id', 'user_id']);
+            $table->unique(['course_message_reply_id', 'user_id'], 'cmrp_reply_user_unique');
             $table->unsignedBigInteger('course_message_id');
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('course_message_reply_id')->references('id')->on('course_message_replies')->cascadeOnDelete();
