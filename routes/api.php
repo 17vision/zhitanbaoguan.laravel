@@ -72,7 +72,7 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
 
         // 上传视频
         Route::post('videos', [VideoController::class, 'uploadVideo']);
-        
+
         // 获取当前用户的信息
         Route::get('userinfos', [UserController::class, 'getUserInfo']);
 
@@ -119,8 +119,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
         Route::post('course_message_replies', [CourseMessageController::class, 'reply']);
 
         // 给留言点赞(取消点赞)
-         Route::post('course_messages/praise', [CourseMessageController::class, 'praise']);
+        Route::post('course_messages/praise', [CourseMessageController::class, 'praise']);
+
+        //  删除留言
+        Route::delete('course_messages', [CourseMessageController::class, 'delete']);
     });
-
-
 });
