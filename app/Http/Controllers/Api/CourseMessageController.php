@@ -29,11 +29,18 @@ class CourseMessageController extends Controller
 
         $limit = $request->input('limit', 20);
 
+        $user = $request->user();
+
         $courseMessages = CourseMessage::query()->where('course_id', $request->course_id)->with(['user:id,nickname,gender,avatar', 'replies.user:id,nickname,gender,avatar'])->orderByDesc('id')->simplePaginate($limit);
 
-        $courseMessages->getCollection()->transform(function ($courseMessage) {
+        $mids = [];
+        $mrids = [];
+
+        $courseMessages->getCollection()->transform(function ($courseMessage) use (&$mids, &$mrids) {
             $replies = [];
+            $mids[] = $courseMessage['id'];
             foreach ($courseMessage['replies'] as $reply) {
+                $mrids[] = $reply['id'];
                 $replies[$reply['id']] = $reply;
             }
 
@@ -44,6 +51,31 @@ class CourseMessageController extends Controller
             }
             return $courseMessage;
         });
+
+        // 已登录的用户判断才有用
+        if ($user) {
+            $mids = array_unique($mids);
+            $mrids = array_unique($mrids);
+            $mps = CourseMessagePraise::query()->where('user_id', $user->id)->whereIn('course_message_id', $mids)->pluck('course_message_id')->toArray();
+            $mrps = CourseMessageReplyPraise::query()->where('user_id', $user->id)->whereIn('course_message_reply_id', $mrids)->pluck('course_message_reply_id')->toArray();
+
+            $courseMessages->getCollection()->transform(function ($courseMessage) use ($mps, $mrps) {
+                if (in_array($courseMessage['id'], $mps)) {
+                    $courseMessage['praised'] = true;
+                } else {
+                    $courseMessage['praised'] = false;
+                }
+
+                foreach ($courseMessage['replies'] as $reply) {
+                    if (in_array($reply['id'], $mrps)) {
+                        $reply['praised'] = true;
+                    } else {
+                        $reply['praised'] = false;
+                    }
+                }
+                return $courseMessage;
+            });
+        }
 
         return response()->json($courseMessages);
     }
@@ -180,7 +212,7 @@ class CourseMessageController extends Controller
                 $msgNum = $courseMessage['reply_nums'] + 1;
 
                 Course::query()->where('message_count', '>=', $msgNum)->decrement('message_count', $msgNum);
-                
+
                 CourseMessageReply::query()->where('course_message_id', $data['course_message_id'])->delete();
 
                 $courseMessage->delete();
