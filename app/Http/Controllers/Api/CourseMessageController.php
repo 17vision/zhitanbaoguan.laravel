@@ -211,18 +211,20 @@ class CourseMessageController extends Controller
 
                 $msgNum = $courseMessage['reply_nums'] + 1;
 
-                Course::query()->where('message_count', '>=', $msgNum)->decrement('message_count', $msgNum);
+                Course::query()->where('id', $courseMessage['course_id'])->where('message_count', '>=', $msgNum)->decrement('message_count', $msgNum);
 
                 CourseMessageReply::query()->where('course_message_id', $data['course_message_id'])->delete();
 
                 $courseMessage->delete();
             } else {
 
-                $courseMessageReply = CourseMessageReply::query()->where('id', $data['course_message_reply_id'])->first();
+                $courseMessageReply = CourseMessageReply::query()->where('id', $data['course_message_reply_id'])->with(['courseMessage'])->first();
 
                 CourseMessage::query()->where('id', $courseMessageReply['course_message_id'])->decrement('reply_nums', 1);
 
                 CourseMessageReply::query()->where('course_message_reply_id', $data['course_message_reply_id'])->update(['course_message_reply_id' => null]);
+
+                Course::query()->where('id', $courseMessageReply['courseMessage']['course_id'])->where('message_count', '>=', 1)->decrement('message_count');
 
                 $courseMessageReply->delete();
             }

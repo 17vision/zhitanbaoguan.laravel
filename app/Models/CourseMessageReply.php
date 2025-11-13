@@ -26,4 +26,8 @@ class CourseMessageReply extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function courseMessage() {
+        return $this->belongsTo(CourseMessage::class);
+    }
 }
