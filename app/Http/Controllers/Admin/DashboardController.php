@@ -170,7 +170,7 @@ class DashboardController extends Controller
             $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay()]);
             if ($title) {
                 $query->selectRaw('course_id, CONCAT(YEAR(created_at), LPAD(MONTH(created_at), 2, "0")) as month, COUNT(*) as count');
-                $query->groupBy(['course_id', 'month'])->orderByDesc('week');
+                $query->groupBy(['course_id', 'month'])->orderByDesc('month');
             } else {
                 $query->selectRaw('CONCAT(YEAR(created_at), LPAD(MONTH(created_at), 2, "0")) as month, COUNT(*) as count');
                 $query->groupBy('month')->orderByDesc('month');
