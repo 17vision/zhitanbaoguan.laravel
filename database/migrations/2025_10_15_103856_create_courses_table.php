@@ -23,6 +23,7 @@ return new class extends Migration
             $table->unsignedInteger('like_count')->default(0)->comment('喜欢个数');
             $table->unsignedInteger('collect_count')->default(0)->comment('收藏个数');
             $table->unsignedInteger('message_count')->default(0)->comment('留言个数');
+            $table->unsignedInteger('view_count')->default(0)->comment('观看次数');
             $table->timestamps();
         });
     }

@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\CourseCollect;
 use App\Models\CourseLike;
 use App\Models\CourseMessage;
+use App\Models\CourseStatistics;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -85,7 +86,7 @@ class DashboardController extends Controller
     {
         $request->validate([
             'title' => 'filled|string'
-        ],[],[
+        ], [], [
             'title' => '课程名称'
         ]);
 
@@ -112,5 +113,55 @@ class DashboardController extends Controller
         });
 
         return response()->json($course);
+    }
+
+    public function viewData(Request $request)
+    {
+        $request->validate([
+            'title' => 'filled|string',
+            'type' => 'required|in:1,2,3'
+        ], [], [
+            'title' => '课程名称',
+            'type' => '类型'
+        ]);
+
+        $title = $request->title;
+        $type = $request->type;
+
+        $query = CourseStatistics::query()->with(['course']);
+        if ($title) {
+            $query->whereHas('course', function ($query) use ($title) {
+                $query->where('title', 'like', '%' . $title . '%');
+            });
+        }
+
+        // 日周月
+        // 1 日的话取 20 天内的
+        // 2 周的话取 2 个月内的
+        // 3 月的话取 6 个月内的
+
+        if ($type == 1) {
+            $endDate = Carbon::now();
+            $startDay = $endDate->clone()->addDays(-20);
+            $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay]);
+            $query->selectRaw('DATE(created_at) as date, COUNT(*) as count');
+            $query->groupBy('date')->orderByDesc('date');
+            $courseStatistics = $query->get();
+        } elseif ($type == 2) {
+            $endDate = Carbon::now();
+            $startDay = $endDate->clone()->addMonths(-2);
+            $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay]);
+            $query->selectRaw('YEARWEEK(created_at, 1) as week, COUNT(*) as count');
+            $query->groupBy('week')->orderByDesc('week');
+            $courseStatistics = $query->get();
+        } elseif ($type == 3) {
+            $endDate = Carbon::now();
+            $startDay = $endDate->clone()->addMonths(-6);
+            $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay]);
+            $query->selectRaw('CONCAT(YEAR(created_at), LPAD(MONTH(created_at), 2, "0")) as month, COUNT(*) as count');
+            $query->groupBy('month')->orderByDesc('month');
+            $courseStatistics = $query->get();
+        }
+        return response()->json($courseStatistics);
     }
 }

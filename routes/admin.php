@@ -77,6 +77,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
 
         Route::get('dashboard/single_data', [DashboardController::class, 'singleData']);
 
+        Route::get('dashboard/view_data', [DashboardController::class, 'viewData']);
+
         Route::group(['middleware' => 'permission:system'], function () {
             // 权限管理（删除权限，角色和用户拥有的权限会自动删除)
             Route::group(['middleware' => 'permission:permission'], function () {

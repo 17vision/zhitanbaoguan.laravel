@@ -78,6 +78,8 @@ class CourseController extends Controller
             $course['collected'] = false;
         }
 
+        $course->increment('view_count', 1);
+
         return response()->json($course);
     }
 }
