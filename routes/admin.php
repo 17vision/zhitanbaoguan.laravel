@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\FileController;
 use App\Http\Controllers\Admin\CourseChapterController;
 use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\GradeController;
 use App\Http\Controllers\Admin\GradeUserController;
 use App\Http\Controllers\Admin\HomeworkController;
@@ -70,6 +71,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
         Route::post('images', [ImageController::class, 'store']);
 
         Route::post('files', [FileController::class, 'store']);
+
+        // 仪表盘统计
+        Route::get('dashboard/basic_info', [DashboardController::class, 'basic_info']);
 
         Route::group(['middleware' => 'permission:system'], function () {
             // 权限管理（删除权限，角色和用户拥有的权限会自动删除)
