@@ -12,7 +12,7 @@ use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    public function basic_info()
+    public function basicInfo()
     {
         $course = Course::query()
             ->where('status', 1)
@@ -79,5 +79,36 @@ class DashboardController extends Controller
         ];
 
         return response()->json($data);
+    }
+
+    public function singleData(Request $request)
+    {
+        $request->validate([
+            'title' => 'filled|string'
+        ],[],[
+            'title' => '课程名称'
+        ]);
+
+        $title = $request->title;
+
+        $query = Course::query()->where('status', 1);
+
+        if ($title) {
+            $query->where('title', 'like', '%' . $title . '%');
+        }
+
+        $course = $query->selectRaw('id, title, COALESCE(SUM(like_count),0) as like_count, COALESCE(SUM(collect_count),0) as collect_count, COALESCE(SUM(message_count),0) as message_count')
+            ->groupBy(['id'])
+            ->get();
+
+        $course->transform(function ($item) {
+            return [
+                'id' => $item['id'],
+                'title' => $item['title'],
+                'like_count' => (int)$item['like_count'],
+                'collect_count' => (int)$item['collect_count'],
+                'message_count' => (int)$item['message_count'],
+            ];
+        });
     }
 }
