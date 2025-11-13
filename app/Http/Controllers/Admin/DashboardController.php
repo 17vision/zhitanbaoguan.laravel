@@ -134,8 +134,7 @@ class DashboardController extends Controller
                 $query->where('title', 'like', '%' . $title . '%');
             });
         }
-        $query = CourseStatistics::query();
-
+  
         // 日周月
         // 1 日的话取 20 天内的
         // 2 周的话取 2 个月内的
