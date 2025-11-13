@@ -15,6 +15,13 @@ class DashboardController extends Controller
             ->where('status', 1)
             ->first();
 
-        return response()->json($course);
+        $data = [
+            'course_count' => (int)$course['course_count'] ?? 0,
+            'like_count' => (int)$course['like_count'] ?? 0,
+            'collect_count' => (int)$course['collect_count'] ?? 0,
+            'message_count' => (int)$course['message_count'] ?? 0,
+        ];
+
+        return response()->json($data);
     }
 }
