@@ -110,5 +110,7 @@ class DashboardController extends Controller
                 'message_count' => (int)$item['message_count'],
             ];
         });
+
+        return response()->json($course);
     }
 }
