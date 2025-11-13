@@ -128,7 +128,7 @@ class DashboardController extends Controller
         $title = $request->title;
         $type = $request->type;
 
-        $query = CourseStatistics::query()->with(['course']);
+        $query = CourseStatistics::query()->with(['course:id,title']);
         if ($title) {
             $query->whereHas('course', function ($query) use ($title) {
                 $query->where('title', 'like', '%' . $title . '%');
