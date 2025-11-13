@@ -143,21 +143,21 @@ class DashboardController extends Controller
         if ($type == 1) {
             $endDate = Carbon::now();
             $startDay = $endDate->clone()->addDays(-20);
-            $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay]);
+            $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay()]);
             $query->selectRaw('DATE(created_at) as date, COUNT(*) as count');
             $query->groupBy('date')->orderByDesc('date');
             $courseStatistics = $query->get();
         } elseif ($type == 2) {
             $endDate = Carbon::now();
             $startDay = $endDate->clone()->addMonths(-2);
-            $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay]);
+            $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay()]);
             $query->selectRaw('YEARWEEK(created_at, 1) as week, COUNT(*) as count');
             $query->groupBy('week')->orderByDesc('week');
             $courseStatistics = $query->get();
         } elseif ($type == 3) {
             $endDate = Carbon::now();
             $startDay = $endDate->clone()->addMonths(-6);
-            $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay]);
+            $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay()]);
             $query->selectRaw('CONCAT(YEAR(created_at), LPAD(MONTH(created_at), 2, "0")) as month, COUNT(*) as count');
             $query->groupBy('month')->orderByDesc('month');
             $courseStatistics = $query->get();
