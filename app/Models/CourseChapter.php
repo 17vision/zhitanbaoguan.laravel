@@ -8,7 +8,7 @@ class CourseChapter extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'course_id', 'title', 'description', 'duration', 'background', 'resource_id', 'index'];
+    protected $fillable = ['user_id', 'course_id', 'title', 'description', 'description_times', 'duration', 'background', 'resource_id', 'index'];
 
     public function getBackgroundAttribute()
     {
@@ -17,7 +17,7 @@ class CourseChapter extends Model
         }
         return '';
     }
-    
+
     public function resource()
     {
         return $this->belongsTo(Resource::class);

@@ -38,6 +38,7 @@ class CourseChapterController extends Controller
             'course_id' => 'required|integer|min:1',
             'title' => 'required|string|min:1|max:64',
             'description' => 'filled|string|max:3500',
+            'description_times' => 'filled|string|max:1000',
             'duration' => 'required|integer',
             'background' => 'required|string',
             'resource_id' =>  'filled|integer',
@@ -46,6 +47,7 @@ class CourseChapterController extends Controller
             'course_id' => '课程 id',
             'title' => '标题',
             'description' => '描述',
+            'description_times' => '描述时间点',
             'duration' => '时长,单位秒',
             'background' => '背景图片',
             'resource_id' => '资源 id',
@@ -54,7 +56,7 @@ class CourseChapterController extends Controller
 
         $user = $request->user();
 
-        $data = $request->only(['course_id', 'title', 'description', 'duration', 'background', 'resource_id', 'index']);
+        $data = $request->only(['course_id', 'title', 'description', 'description_times', 'duration', 'background', 'resource_id', 'index']);
 
         $data['user_id'] = $user->id;
 
@@ -91,6 +93,7 @@ class CourseChapterController extends Controller
             'course_id' => 'filled|integer|min:1',
             'title' => 'filled|string|min:1|max:64',
             'description' => 'filled|string|max:3500',
+            'description_times' => 'filled|string|max:1000',
             'duration' => 'filled|integer',
             'background' => 'filled|string',
             'resource_id' =>  'filled|integer',
@@ -100,6 +103,7 @@ class CourseChapterController extends Controller
             'course_id' => '课程 id',
             'title' => '标题',
             'description' => '描述',
+            'description_times' => '描述时间点',
             'duration' => '时长,单位秒',
             'background' => '背景图片',
             'resource_id' => '资源 id',
@@ -110,7 +114,7 @@ class CourseChapterController extends Controller
 
         $id = $request->id;
 
-        $data = $request->only(['course_id', 'title', 'description', 'duration', 'background', 'resource_id', 'index']);
+        $data = $request->only(['course_id', 'title', 'description', 'description_times', 'duration', 'background', 'resource_id', 'index']);
 
         if (empty($data)) {
             return response()->json(['message' => '请提交有效数据'], 403);
