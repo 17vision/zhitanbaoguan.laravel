@@ -106,6 +106,10 @@ class CourseMessageController extends Controller
             return response()->json(['message' => '课程不存在'], 403);
         }
 
+        if (!msgSecCheck($data['content'], $user->id, $user->nickname)) {
+            return response()->json(['message' => '请文明发言'], 403);
+        }
+
         $courseMessage = CourseMessage::create($data);
 
         Course::query()->where('id', $data['course_id'])->increment('message_count', 1);
@@ -140,6 +144,10 @@ class CourseMessageController extends Controller
         $courseMessage = CourseMessage::query()->where('id', $data['course_message_id'])->first();
         if (!$courseMessage) {
             return response()->json(['message' => '消息不存在'], 403);
+        }
+
+        if (!msgSecCheck($data['content'], $user->id, $user->nickname)) {
+            return response()->json(['message' => '请文明发言'], 403);
         }
 
         if (isset($data['course_message_reply_id'])) {
