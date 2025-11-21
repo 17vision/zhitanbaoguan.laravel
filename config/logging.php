@@ -94,6 +94,14 @@ return [
             'days' => 365,
         ],
 
+        // 敏感词检测
+        'words_check' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/words_check/laravel.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 365,
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
