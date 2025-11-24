@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\User;
+use Carbon\Carbon;
 
 trait Authorization
 {
@@ -13,6 +14,8 @@ trait Authorization
         if ($createToken) {
             $user['token'] = $user->createToken('auth')->plainTextToken;
         }
+
+        $user['in_days'] = Carbon::now()->diffInDays($user->created_at);
 
         return $user;
     }
