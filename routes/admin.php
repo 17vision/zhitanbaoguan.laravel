@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\UserHomeworkController;
 use App\Http\Controllers\Admin\TutorController;
 use App\Http\Controllers\Admin\ResourceController;
 use App\Http\Controllers\Admin\ResourceGroupController;
+use App\Http\Controllers\Admin\ThemeController;
 
 Route::get('reset', function (Request $request) {
     defined('STDIN') or define('STDIN', fopen('php://stdin', 'r'));
@@ -163,7 +164,7 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::delete('tutors', [TutorController::class, 'delete'])->middleware('permission:tutor.delete');
             });
 
-            
+
             // 作业管理
             Route::group(['middleware' => 'permission:homework'], function () {
                 // 作业
@@ -185,10 +186,10 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::put('homework_groups', [HomeworkGroupController::class, 'update'])->middleware('permission:homework_group.create');
 
                 Route::delete('homework_groups', [HomeworkGroupController::class, 'delete'])->middleware('permission:homework_group.delete');
-                
+
                 // 给某个班级或某个人分配作业
                 Route::get('user_homework', [UserHomeworkController::class, 'index'])->middleware('permission:homework.create');
-                
+
                 Route::post('user_homework', [UserHomeworkController::class, 'store'])->middleware('permission:homework.create');
 
                 // 删除某人的作业
@@ -240,6 +241,18 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::put('resource_groups', [ResourceGroupController::class, 'update'])->middleware('permission:resource_group.create');
 
                 Route::delete('resource_groups', [ResourceGroupController::class, 'delete'])->middleware('permission:resource_group.delete');
+            });
+
+            // 主题
+            Route::group(['middleware' => 'permission:theme'], function () {
+
+                Route::get('themes', [ThemeController::class, 'index'])->middleware('permission:theme.index');
+
+                Route::post('themes', [ThemeController::class, 'store'])->middleware('permission:theme.create');
+
+                Route::put('themes', [ThemeController::class, 'update'])->middleware('permission:theme.create');
+
+                Route::delete('themes', [ThemeController::class, 'delete'])->middleware('permission:theme.delete');
             });
         });
     });
