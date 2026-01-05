@@ -104,6 +104,11 @@ class User extends Authenticatable
         static::build_viewid();
     }
 
+    public function userHealth()
+    {
+        return $this->hasOne(UserHealth::class);
+    }
+
     protected static function randomSignature()
     {
         $words = [

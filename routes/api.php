@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\UserHomeworkController;
 use App\Http\Controllers\Api\ConfigController;
 use App\Http\Controllers\Api\CourseMessageController;
 use App\Http\Controllers\Api\GradeUserController;
+use App\Http\Controllers\Api\UserHealthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,6 +79,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])-
 
         // 更新用户信息
         Route::put('userinfos', [UserController::class, 'update']);
+
+        // 提交用户的健康情况
+        Route::post('user_healths', [UserHealthController::class, 'store']);
 
         // 喜欢课程
         Route::post('courses/like', [CourseLikeController::class, 'store']);

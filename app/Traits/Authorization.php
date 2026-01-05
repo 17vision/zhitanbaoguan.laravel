@@ -9,7 +9,7 @@ trait Authorization
 {
     protected function auth($id, $createToken = true)
     {
-        $user = User::with(['userExtend:id,user_id,course_like_count,course_collect_count,introduction'])->where('id', $id)->first();
+        $user = User::with(['userExtend:id,user_id,course_like_count,course_collect_count,introduction', 'userHealth'])->where('id', $id)->first();
 
         if ($createToken) {
             $user['token'] = $user->createToken('auth')->plainTextToken;
