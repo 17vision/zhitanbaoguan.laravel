@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
+use Exception;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Tutor;
-use Illuminate\Http\Request;
+use App\Models\CourseMessage;
+use App\Models\CourseMessageReply;
 
 class CourseController extends Controller
 {
@@ -164,5 +169,104 @@ class CourseController extends Controller
         }
 
         return response()->json($course);
+    }
+
+    public function getMessages(Request $request)
+    {
+        $request->validate([
+            'course_id' => 'required|integer|min:1',
+            'page' => 'required|integer|min:1',
+            'limit' => 'filled|integer|min:1',
+        ], [], [
+            'course_id' => '课程 id',
+            'page' => '当前页',
+            'limit' => '单页显示多少',
+        ]);
+
+        $limit = $request->input('limit', 20);
+
+        $courseMessages = CourseMessage::query()->where('course_id', $request->course_id)->with(['user:id,nickname,gender,avatar', 'replies.user:id,nickname,gender,avatar'])->orderByDesc('id')->simplePaginate($limit);
+
+        $mrids = [];
+
+        $courseMessages->getCollection()->transform(function ($courseMessage) {
+            $replies = [];
+            foreach ($courseMessage['replies'] as $reply) {
+                $replies[$reply['id']] = $reply;
+            }
+
+            foreach ($courseMessage['replies'] as &$reply) {
+                if ($reply['course_message_reply_id']) {
+                    $reply['reply_user'] = $replies[$reply['course_message_reply_id']]['user'] ?? null;
+                }
+            }
+            return $courseMessage;
+        });
+
+        return response()->json($courseMessages);
+    }
+
+    public function deleteMessages(Request $request)
+    {
+        $request->validate([
+            'course_message_id' => 'required_without:course_message_reply_id|integer|min:1',
+            'course_message_reply_id' => 'required_without:course_message_id|integer|min:1',
+        ], [], [
+            'course_message_id' => '消息 id',
+            'course_message_reply_id' => '二级消息 id'
+        ]);
+
+        $data = $request->only(['course_message_id', 'course_message_reply_id']);
+
+        if (count($data) == 2) {
+            return response()->json(['message' => '参数只能传一个'], 403);
+        }
+
+        if (isset($data['course_message_id'])) {
+            if (!CourseMessage::query()->where('id', $data['course_message_id'])->exists()) {
+                return response()->json(['message' => '消息不存在'], 403);
+            }
+        }
+
+        if (isset($data['course_message_reply_id'])) {
+            if (!CourseMessageReply::query()->where('id', $data['course_message_reply_id'])->exists()) {
+                return response()->json(['message' => '二级消息不存在'], 403);
+            }
+        }
+
+        DB::beginTransaction();
+        try {
+            $msg = '消息已删除';
+            if (isset($data['course_message_id'])) {
+                $courseMessage = CourseMessage::query()->where('id', $data['course_message_id'])->first();
+
+                $msgNum = $courseMessage['reply_nums'] + 1;
+
+                Course::query()->where('id', $courseMessage['course_id'])->where('message_count', '>=', $msgNum)->decrement('message_count', $msgNum);
+
+                CourseMessageReply::query()->where('course_message_id', $data['course_message_id'])->delete();
+
+                $courseMessage->delete();
+            } else {
+
+                $courseMessageReply = CourseMessageReply::query()->where('id', $data['course_message_reply_id'])->with(['courseMessage'])->first();
+
+                CourseMessage::query()->where('id', $courseMessageReply['course_message_id'])->decrement('reply_nums', 1);
+
+                CourseMessageReply::query()->where('course_message_reply_id', $data['course_message_reply_id'])->update(['course_message_reply_id' => null]);
+
+                Course::query()->where('id', $courseMessageReply['courseMessage']['course_id'])->where('message_count', '>=', 1)->decrement('message_count');
+
+                $courseMessageReply->delete();
+            }
+
+            DB::commit();
+
+            return response()->json(['message' => $msg]);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::channel('error')->error('delete-message-error', ['message' => $e->getMessage(), 'line' => $e->getLine(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['message' => '操作失败'], 403);
+        }
     }
 }

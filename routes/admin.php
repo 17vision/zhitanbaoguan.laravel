@@ -150,6 +150,12 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::put('course_chapters', [CourseChapterController::class, 'update'])->middleware('permission:course.update');
 
                 Route::delete('course_chapters', [CourseChapterController::class, 'delete'])->middleware('permission:course.delete');
+            
+                // 获取课程留言
+                Route::get('courses/messages', [CourseController::class, 'getMessages'])->middleware('permission:course.detail');
+                
+                // 删除课程留言
+                Route::delete('courses/messages', [CourseController::class, 'deleteMessages'])->middleware('permission:course.detail');
             });
 
             // 导师管理
