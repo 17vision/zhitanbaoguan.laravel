@@ -12,7 +12,7 @@ return new class extends Migration
         Schema::create('themes', function (Blueprint $table) {
             $table->id();
             $table->string('name')->comment('名称');
-            $table->string('introduction')->comment('名称');
+            $table->string('introduction')->comment('介绍');
             $table->string('head')->comment('头像');
             $table->string('path')->comment('主题地址');
             $table->unsignedInteger('like_nums')->default(0)->comment('喜欢数目');

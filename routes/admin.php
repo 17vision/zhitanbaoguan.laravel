@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\UserHomeworkController;
 use App\Http\Controllers\Admin\TutorController;
 use App\Http\Controllers\Admin\ResourceController;
 use App\Http\Controllers\Admin\ResourceGroupController;
+use App\Http\Controllers\Admin\RingtoneController;
 use App\Http\Controllers\Admin\ThemeController;
 
 Route::get('reset', function (Request $request) {
@@ -150,10 +151,10 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::put('course_chapters', [CourseChapterController::class, 'update'])->middleware('permission:course.update');
 
                 Route::delete('course_chapters', [CourseChapterController::class, 'delete'])->middleware('permission:course.delete');
-            
+
                 // 获取课程留言
                 Route::get('courses/messages', [CourseController::class, 'getMessages'])->middleware('permission:course.detail');
-                
+
                 // 删除课程留言
                 Route::delete('courses/messages', [CourseController::class, 'deleteMessages'])->middleware('permission:course.detail');
             });
@@ -259,6 +260,18 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::put('themes', [ThemeController::class, 'update'])->middleware('permission:theme.create');
 
                 Route::delete('themes', [ThemeController::class, 'delete'])->middleware('permission:theme.delete');
+            });
+
+            // 铃声
+            Route::group(['middleware' => 'permission:ringtone'], function () {
+
+                Route::get('ringtones', [RingtoneController::class, 'index'])->middleware('permission:ringtone.index');
+
+                Route::post('ringtones', [RingtoneController::class, 'store'])->middleware('permission:ringtone.create');
+
+                Route::put('ringtones', [RingtoneController::class, 'update'])->middleware('permission:ringtone.create');
+
+                Route::delete('ringtones', [RingtoneController::class, 'delete'])->middleware('permission:ringtone.delete');
             });
         });
     });
