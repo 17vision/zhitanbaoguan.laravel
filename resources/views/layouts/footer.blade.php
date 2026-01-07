@@ -4,9 +4,7 @@
             <div class="col-md-4 d-none d-md-flex justify-content-center">
                 <ul>
                     <li>友情链接</li>
-                    <li><a target="_blank" href="https://www.xiangrong.pro">上海想容</a></li>
-                    <li><a target="_blank" href="https://www.zeipan.com">贼盘网</a></li>
-                    <li><a target="_blank" href="https://www.mlxiu.com">美丽秀</a></li>
+                    <li><a target="_blank" href="https://www.17vision.com/">一尺视界</a></li>
                 </ul>
             </div>
 
@@ -24,7 +22,7 @@
                         <div class="d-flex">
                         <div class="qrcode">
                             <div class="qrcode ms-3">
-                                <img class="wechat" src="{{ url('static/image/web/miniapp.jpg') }}" />
+                                <img class="一尺视界" src="{{ url('static/image/web/web.png') }}" />
                             </div>
                         </div>
                     </li>
@@ -34,6 +32,6 @@
     </div>
 
     <div class="container d-flex justify-content-center">
-        <a target="_blank" href="https://beian.miit.gov.cn/">沪ICP备19010902号-5</a>
+        <a target="_blank" href="https://beian.miit.gov.cn/">沪ICP备17025573号-1</a>
     </div>
 </footer>
