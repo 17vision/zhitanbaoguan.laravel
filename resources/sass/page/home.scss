@@ -2,8 +2,21 @@
     margin-top: 30px;
     margin-bottom: 40px;
 
+    .down-wrap {
+        a {
+            display: flex;
+            padding: 10px 38px;
+            background-color: #ffd500;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 350;
+            border-radius: 120px;
+            margin-top: 20px;
+        }
+    }
+
     .content {
-        animation: contentIn 1s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
+        animation: contentIn 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
 
         .title {
             font-size: 24px;
@@ -37,7 +50,7 @@
                 img {
                     width: 85%;
                     border-radius: 6px;
-                    box-shadow: 0 .0125rem .25rem #00000020 !important;
+                    box-shadow: 0 0.0125rem 0.25rem #00000020 !important;
                 }
 
                 span {
@@ -55,7 +68,7 @@
 
         img {
             width: 94%;
-            animation: imgIn 1.2s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
+            animation: imgIn 1.2s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
         }
     }
 
@@ -66,31 +79,31 @@
 
 @keyframes contentIn {
     0% {
-      filter: blur(12px);
-      transform: translateY(-100px);
-      opacity: 0;
+        filter: blur(12px);
+        transform: translateY(-100px);
+        opacity: 0;
     }
     100% {
-      filter: blur(0px);
-      transform: translateY(0);
-      opacity: 1;
+        filter: blur(0px);
+        transform: translateY(0);
+        opacity: 1;
     }
 }
 
 @keyframes imgIn {
     0% {
-      transform: translateY(-100%) rotateX(-180deg);
-      transform-origin: 50% 100%;
-      scale: 0.2;
-      opacity: 0;
+        transform: translateY(-100%) rotateX(-180deg);
+        transform-origin: 50% 100%;
+        scale: 0.2;
+        opacity: 0;
     }
     100% {
-      transform: translateY(0) rotateX(0);
-      transform-origin: 50% 0%;
-      scale: 1;
-      opacity: 1;
+        transform: translateY(0) rotateX(0);
+        transform-origin: 50% 0%;
+        scale: 1;
+        opacity: 1;
     }
-  }
+}
 
 @media (max-width: 991.98px) {
     .container-app {

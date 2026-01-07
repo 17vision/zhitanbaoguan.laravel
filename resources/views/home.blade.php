@@ -4,6 +4,10 @@
 
 @section('content')
 <div class="container container-app">
+    <div class="row no-gutters down-wrapper">
+        <a id="android">Android 下载</a>
+    </div>
+
     <div class="row no-gutters">
         <div class="col-lg-4 col-md-12 content">
             <div class="text-dark title">观息空间</div>
