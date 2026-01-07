@@ -50,15 +50,21 @@
 
         // 下载
         .down-wrap {
+            display: flex;
+            margin-top: 30px;
+
             a {
                 display: flex;
                 padding: 10px 38px;
                 background-color: #0d1025;
-                color: #fff;
-                font-size: 18px;
+                color: #FFFFFF;
+                font-size: 17px;
                 font-weight: 350;
                 border-radius: 120px;
-                margin-top: 20px;
+
+                &:hover {
+                    color: #AAFFFFFF;
+                }
             }
         }
     }
