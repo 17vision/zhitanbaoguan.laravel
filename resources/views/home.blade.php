@@ -4,10 +4,6 @@
 
 @section('content')
 <div class="container container-app">
-    <div class="row no-gutters down-wrapper">
-        <a id="android">Android 下载</a>
-    </div>
-
     <div class="row no-gutters">
         <div class="col-lg-4 col-md-12 content">
             <div class="text-dark title">观息空间</div>
@@ -22,10 +18,14 @@
                     <span>微信小程序</span>
                 </div>
             </div>
+
+            <div class="down-wrapper">
+                <a id="android">Android 下载</a>
+            </div>
         </div>
 
         <div class="col-lg-8 col-md-12 app-img">
-            <img src="{{ asset('static/image/home/ypb.jpg?t=3') }}" alt="观息空间">
+            <img src="{{ asset('static/image/home/gxkj.jpg?t=3') }}" alt="观息空间">
         </div>
     </div>
 </div>

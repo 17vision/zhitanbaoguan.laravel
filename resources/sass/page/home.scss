@@ -1,19 +1,6 @@
 .container-app {
-    margin-top: 30px;
-    margin-bottom: 40px;
-
-    .down-wrap {
-        a {
-            display: flex;
-            padding: 10px 38px;
-            background-color: #ffd500;
-            color: #fff;
-            font-size: 20px;
-            font-weight: 350;
-            border-radius: 120px;
-            margin-top: 20px;
-        }
-    }
+    margin-top: 40px;
+    margin-bottom: 50px;
 
     .content {
         animation: contentIn 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
@@ -58,6 +45,20 @@
                     margin-top: 16px;
                     color: #636972;
                 }
+            }
+        }
+
+        // 下载
+        .down-wrap {
+            a {
+                display: flex;
+                padding: 10px 38px;
+                background-color: #0d1025;
+                color: #fff;
+                font-size: 18px;
+                font-weight: 350;
+                border-radius: 120px;
+                margin-top: 20px;
             }
         }
     }
