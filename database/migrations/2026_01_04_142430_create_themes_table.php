@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('introduction')->comment('介绍');
             $table->string('head')->comment('头像');
             $table->string('path')->comment('主题地址');
+            $table->string('color')->nullable()->comment('色值');
             $table->unsignedInteger('like_nums')->default(0)->comment('喜欢数目');
             $table->unsignedInteger('unlike_nums')->default(0)->comment('不喜欢数目');
             $table->unsignedTinyInteger('status')->default(1)->comment('状态 1 上线 2 下线');

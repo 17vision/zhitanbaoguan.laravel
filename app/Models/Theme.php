@@ -8,7 +8,7 @@ class Theme extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'introduction', 'head', 'path', 'like_nums', 'unlike_nums', 'status'];
+    protected $fillable = ['name', 'introduction', 'head', 'path', 'color', 'like_nums', 'unlike_nums', 'status'];
 
     public function getHeadAttribute()
     {

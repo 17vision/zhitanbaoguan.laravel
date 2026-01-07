@@ -46,16 +46,18 @@ class ThemeController extends Controller
             'introduction' => 'required|string',
             'head' => 'required|string',
             'path' => 'required|string',
+            'color' => 'filled|string',
             'status' => 'filled|in:1,2',
         ], [], [
             'name' => '名称',
             'introduction' => '介绍',
             'head' => '头像',
             'path' => '地址',
+            'color' => '色值',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['name', 'introduction', 'head', 'path', 'status']);
+        $data = $request->only(['name', 'introduction', 'head', 'path', 'color', 'status']);
 
         $data['head'] = reverseStorageUrl($data['head']);
 
@@ -74,6 +76,7 @@ class ThemeController extends Controller
             'introduction' => 'filled|string',
             'head' => 'filled|string',
             'path' => 'filled|string',
+            'color' => 'filled|string',
             'status' => 'filled|in:1,2',
         ], [], [
             'id' => 'id',
@@ -81,10 +84,11 @@ class ThemeController extends Controller
             'introduction' => '介绍',
             'head' => '头像',
             'path' => '地址',
+            'color' => '色值',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['name', 'introduction', 'head', 'path', 'status']);
+        $data = $request->only(['name', 'introduction', 'head', 'path', 'color', 'status']);
 
         $id = $request->input('id');
 
