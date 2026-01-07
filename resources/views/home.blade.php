@@ -19,7 +19,7 @@
                 </div>
             </div>
 
-            <div class="down-wrapper">
+            <div class="down-wrap">
                 <a id="android">Android 下载</a>
             </div>
         </div>
