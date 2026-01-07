@@ -49,7 +49,7 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
 // 非登录注册相关
 // 'request', 去掉验证
 // 'user.login' 这个也不要
-Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get'])->group(function () {
+Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', 'user.login'])->group(function () {
 
     // 获取课程列表
     Route::get('courses', [CourseController::class, 'index']);

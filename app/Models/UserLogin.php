@@ -8,5 +8,5 @@ class UserLogin extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'ip', 'latitude', 'longitude', 'city', 'citycode', 'system', 'device_model', 'device_type', 'os_name', 'login_at'];
+    protected $fillable = ['user_id', 'database/migrations', 'ip', 'latitude', 'longitude', 'city', 'citycode', 'login_at'];
 }
