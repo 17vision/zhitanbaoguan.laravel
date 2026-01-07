@@ -20,20 +20,15 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->unsignedInteger('citycode')->nullable();
             $table->dateTime('login_at');
+            $table->date('login_date')
+              ->virtualAs('DATE(login_at)');
+            $table->unique(['user_id', 'login_date'], 'uniq_user_day');
             $table->timestamps();
         });
-
-        DB::statement(
-            'ALTER TABLE user_logins ' .
-                'ADD UNIQUE uniq_user_day (user_id, DATE(login_at))'
-        );
     }
 
     public function down(): void
     {
-        DB::statement(
-            'ALTER TABLE user_logins DROP INDEX uniq_user_day'
-        );
         Schema::dropIfExists('user_logins');
     }
 };
