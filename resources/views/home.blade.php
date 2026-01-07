@@ -33,7 +33,7 @@
 
 @section('script')
     <script>
-        function(value) {
+        function showAlert(value) {
             alert(value)
         }
     </script>
