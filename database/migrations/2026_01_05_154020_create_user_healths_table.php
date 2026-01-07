@@ -11,7 +11,7 @@ return new class extends Migration
     {
         Schema::create('user_healths', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->unique();
+            $table->unsignedBigInteger('user_id')->index();
             $table->unsignedTinyInteger('heart_rate')->nullable()->comment('心率 30-250 次/分');
             $table->decimal('blood_oxygen', 5, 2)->nullable()->comment('血氧 0.00-100.00 %，保留两位小数');
             $table->decimal('systolic', 5, 1)->nullable()->comment('收缩压（高压） 50-300 mmHg');

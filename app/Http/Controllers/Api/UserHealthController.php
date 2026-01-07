@@ -32,13 +32,8 @@ class UserHealthController extends Controller
 
         $userHealth = UserHealth::query()->where('user_id', $user->id)->first();
 
-        if ($userHealth) {
-            $userHealth->update($data);
-        } else {
-            $data['user_id'] = $user->id;
-            $userHealth = UserHealth::create($data);
-        }
-
+        $userHealth = UserHealth::create($data);
+        
         return response()->json($userHealth);
     }
 }
