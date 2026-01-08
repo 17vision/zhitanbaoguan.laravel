@@ -19,15 +19,16 @@ class AuthorizationController extends Controller
     public function passwordLogin(Request $request)
     {
         $this->validate($request, [
-            'phone' => ['required',new Phone()],
+            // 'phone' => ['required',new Phone()],
+            'account' => 'required|string',
             'password' => 'required|string|max:16|min:6',
         ], [], [
-            'phone' => '手机',
+            'phone' => '账号',
             'password' => '密码',
         ]);
 
         $data = [
-            'account' => $request->phone,
+            'account' => $request->account,
             'password' => $request->password
         ];
 
