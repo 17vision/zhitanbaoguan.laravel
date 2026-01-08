@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class SceneCategory extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['name', 'introduction', 'scene_nums'];
 }

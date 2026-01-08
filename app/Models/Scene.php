@@ -14,4 +14,22 @@ class Scene extends Model
     {
         return $this->belongsTo(SceneCategory::class);
     }
+
+    public function getImageAttribute()
+    {
+        if (isset($this->attributes['image'])) {
+            $image = $this->attributes['image'];
+            return storageUrl($image);
+        }
+        return '';
+    }
+
+    public function getVideoAttribute()
+    {
+        if (isset($this->attributes['video'])) {
+            $video = $this->attributes['video'];
+            return storageUrl($video);
+        }
+        return '';
+    }
 }
