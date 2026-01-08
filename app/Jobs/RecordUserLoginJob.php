@@ -33,7 +33,7 @@ class RecordUserLoginJob implements ShouldQueue
 
     public function handle(): void
     {
-        $today = $this->login_at->startOfDay();
+        $today = $this->login_at->copy()->startOfDay();
 
         $userLogin = UserLogin::firstOrCreate(
             [
