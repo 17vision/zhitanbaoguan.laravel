@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('tag')->nullable()->comment('标签');
             $table->unsignedInteger('like_nums')->default(0)->comment('喜欢数目');
             $table->unsignedInteger('collect_nums')->default(0)->comment('收藏数目');
+            $table->unsignedTinyInteger('status')->default(1)->comment('状态 1 未发布 2 已发布');
             $table->timestamps();
         });
     }

@@ -104,9 +104,9 @@ class User extends Authenticatable
         static::build_viewid();
     }
 
-    public function userHealth()
+    public function userHealths()
     {
-        return $this->hasOne(UserHealth::class);
+        return $this->hasMany(UserHealth::class);
     }
 
     protected static function randomSignature()
