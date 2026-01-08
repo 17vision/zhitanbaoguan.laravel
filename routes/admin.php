@@ -23,6 +23,8 @@ use App\Http\Controllers\Admin\ResourceController;
 use App\Http\Controllers\Admin\ResourceGroupController;
 use App\Http\Controllers\Admin\RingtoneController;
 use App\Http\Controllers\Admin\ThemeController;
+use App\Http\Controllers\Admin\SceneController;
+use App\Http\Controllers\Admin\SceneCategoryController;
 
 Route::get('reset', function (Request $request) {
     defined('STDIN') or define('STDIN', fopen('php://stdin', 'r'));
@@ -272,6 +274,29 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::put('ringtones', [RingtoneController::class, 'update'])->middleware('permission:ringtone.create');
 
                 Route::delete('ringtones', [RingtoneController::class, 'delete'])->middleware('permission:ringtone.delete');
+            });
+
+            // 主题
+            Route::group(['middleware' => 'permission:scene'], function () {
+
+                Route::get('scenes', [SceneController::class, 'index'])->middleware('permission:scene.index');
+
+                Route::get('scenes/{id}', [SceneController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:scene.index');
+
+                Route::post('scenes', [SceneController::class, 'store'])->middleware('permission:scene.create');
+
+                Route::put('scenes', [SceneController::class, 'update'])->middleware('permission:scene.create');
+
+                Route::delete('scenes', [SceneController::class, 'delete'])->middleware('permission:scene.delete');
+
+                // 主题分组
+                Route::get('scene_categories', [SceneCategoryController::class, 'index'])->middleware('permission:scene.index');
+
+                Route::post('scene_categories', [SceneCategoryController::class, 'store'])->middleware('permission:scene.create');
+
+                Route::put('scene_categories', [SceneCategoryController::class, 'update'])->middleware('permission:scene.create');
+
+                Route::delete('scene_categories', [SceneCategoryController::class, 'delete'])->middleware('permission:scene.delete');
             });
         });
     });
