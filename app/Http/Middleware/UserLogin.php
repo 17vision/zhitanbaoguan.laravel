@@ -17,7 +17,7 @@ class UserLogin
         if (isset($user) && $user) {
             $client_type = $request->input('client_type', null);
 
-            RecordUserLoginJob::dispatch($user['id'], $client_type, $request->ip(), Carbon::now())->onQueue('login');
+            RecordUserLoginJob::dispatch($user['id'], $client_type, $request->ip(), Carbon::now())->onQueue('zhengnian');
         }
         return $next($request);
     }
