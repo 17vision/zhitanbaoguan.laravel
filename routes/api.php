@@ -80,6 +80,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
         // 更新用户信息
         Route::put('userinfos', [UserController::class, 'update']);
 
+        // 获取用户每个月的登录信息
+        Route::put('user/logins', [UserController::class, 'logins']);
+
         // 提交用户的健康情况
         Route::post('user_healths', [UserHealthController::class, 'store']);
 

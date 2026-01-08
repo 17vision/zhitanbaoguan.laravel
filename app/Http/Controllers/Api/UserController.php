@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
 use App\Models\User;
+use App\Models\UserLogin;
 use Illuminate\Http\Request;
 use App\Traits\Authorization;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -17,7 +19,7 @@ class UserController extends Controller
     public function getUserInfo(Request $request)
     {
         $user = $request->user();
-        
+
         return response()->json($this->auth($user['id'], false));
     }
 
@@ -122,5 +124,39 @@ class UserController extends Controller
         $user->update($data);
 
         return response()->json($user);
+    }
+
+    public function logins(Request $request)
+    {
+        $request->validate([
+            'year' => 'filled|integer|min:2024|max:2030',
+            'month' => 'required_with:year|integer|min:1|max:12'
+        ], [], [
+            'year' => '年',
+            'month' => '月'
+        ]);
+
+        $user = $request->user();
+
+        $date = $request->filled('year') ? Carbon::create($request->input('year'), $request->input('month'), 1) : Carbon::now();
+
+        $start = $date->copy()->startOfMonth()->startOfDay();
+        $end   = $date->copy()->endOfMonth()->endOfDay();
+
+        $loginDates = UserLogin::query()->where('user_id', $user->id)->whereBetween('login_date', [$start, $end])->orderBy('login_date', 'asc')->pluck('login_date')->toArray();
+
+        $days = [];
+        $today = Carbon::now()->startOfDay();
+
+        for ($d = $start->copy(); $d <= $end; $d->addDay()) {
+            $dayStr = $d->toDateString();
+            $days[] = [
+                'date'  => $dayStr,
+                'has_data' => \in_array($dayStr, $loginDates),
+                'is_future'  => $d->gt($today),
+            ];
+        }
+
+        return response()->json($days);
     }
 }
