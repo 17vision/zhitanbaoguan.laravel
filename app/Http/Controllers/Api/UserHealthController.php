@@ -30,7 +30,7 @@ class UserHealthController extends Controller
             return response()->json(['message' => '请传入健康数据'], 403);
         }
 
-        $userHealth = UserHealth::query()->where('user_id', $user->id)->first();
+        $data['user_id'] = $user->id;
 
         $userHealth = UserHealth::create($data);
         
