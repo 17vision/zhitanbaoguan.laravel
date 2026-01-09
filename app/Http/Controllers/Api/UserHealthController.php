@@ -33,7 +33,7 @@ class UserHealthController extends Controller
         $data['user_id'] = $user->id;
 
         $userHealth = UserHealth::create($data);
-        
+
         return response()->json($userHealth);
     }
 }

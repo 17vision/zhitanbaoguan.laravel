@@ -12,9 +12,8 @@ return new class extends Migration
         Schema::create('themes', function (Blueprint $table) {
             $table->id();
             $table->string('name')->comment('名称');
-            $table->string('introduction')->comment('介绍');
-            $table->string('head')->comment('头像');
             $table->string('path')->comment('主题地址');
+            $table->string('introduction')->nullable()->comment('介绍');
             $table->string('color')->nullable()->comment('色值');
             $table->unsignedInteger('like_nums')->default(0)->comment('喜欢数目');
             $table->unsignedInteger('unlike_nums')->default(0)->comment('不喜欢数目');

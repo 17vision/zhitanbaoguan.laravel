@@ -42,24 +42,20 @@ class ThemeController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string',
-            'introduction' => 'required|string',
-            'head' => 'required|string',
+            'name' => 'required|string|max:64',
             'path' => 'required|string',
+            'introduction' => 'filled|string|max:255',
             'color' => 'filled|string',
             'status' => 'filled|in:1,2',
         ], [], [
             'name' => '名称',
-            'introduction' => '介绍',
-            'head' => '头像',
             'path' => '地址',
+            'introduction' => '介绍',
             'color' => '色值',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['name', 'introduction', 'head', 'path', 'color', 'status']);
-
-        $data['head'] = reverseStorageUrl($data['head']);
+        $data = $request->only(['name', 'introduction', 'path', 'color', 'status']);
 
         $data['path'] = reverseStorageUrl($data['path']);
 
@@ -74,7 +70,6 @@ class ThemeController extends Controller
             'id' => 'required|integer',
             'name' => 'filled|string',
             'introduction' => 'filled|string',
-            'head' => 'filled|string',
             'path' => 'filled|string',
             'color' => 'filled|string',
             'status' => 'filled|in:1,2',
@@ -82,13 +77,12 @@ class ThemeController extends Controller
             'id' => 'id',
             'name' => '名称',
             'introduction' => '介绍',
-            'head' => '头像',
             'path' => '地址',
             'color' => '色值',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['name', 'introduction', 'head', 'path', 'color', 'status']);
+        $data = $request->only(['name', 'introduction','path', 'color', 'status']);
 
         $id = $request->input('id');
 
@@ -104,11 +98,6 @@ class ThemeController extends Controller
         if (isset($data['path']) && $data['path']) {
             // Storage::disk('file')->delete(reverseStorageUrl($theme['path']));
             $data['path'] = reverseStorageUrl($data['path']);
-        }
-
-        if (isset($data['head']) && $data['head']) {
-            // Storage::disk('file')->delete(reverseStorageUrl($theme['head']));
-            $data['head'] = reverseStorageUrl($data['head']);
         }
 
         $media = $theme->update($data);
@@ -135,10 +124,6 @@ class ThemeController extends Controller
                 continue;
             }
             
-            if ($theme['head']) {
-                Storage::disk('file')->delete(reverseStorageUrl($theme['head']));
-            }
-
             if ($theme['path']) {
                 Storage::disk('file')->delete(reverseStorageUrl($theme['path']));
             }
