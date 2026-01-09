@@ -14,6 +14,8 @@ use App\Http\Controllers\Api\UserHomeworkController;
 use App\Http\Controllers\Api\ConfigController;
 use App\Http\Controllers\Api\CourseMessageController;
 use App\Http\Controllers\Api\GradeUserController;
+use App\Http\Controllers\Api\UserBodyMetricController;
+use App\Http\Controllers\Api\UserDailyStepController;
 use App\Http\Controllers\Api\UserHealthController;
 
 /*
@@ -85,6 +87,12 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
         // 提交用户的健康情况
         Route::post('user_healths', [UserHealthController::class, 'store']);
+        
+        // 提交用户身体指标表
+        Route::post('user_body_metrics', [UserBodyMetricController::class, 'store']);
+        
+        // 提交用户每日运动数据
+        Route::post('user_daily_steps', [UserDailyStepController::class, 'store']);
 
         // 喜欢课程
         Route::post('courses/like', [CourseLikeController::class, 'store']);
