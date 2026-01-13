@@ -299,5 +299,12 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::delete('scene_categories', [SceneCategoryController::class, 'delete'])->middleware('permission:scene.delete');
             });
         });
+
+        // todo 课程分析，应该放在对应的权限里
+        
+        // 课程分析
+        Route::get('datastatistics/courseanalysis/basic', [DashboardController::class, 'basicInfo']);
+
+        Route::get('datastatistics/courseanalysis/view', [DashboardController::class, 'viewData']);
     });
 });
