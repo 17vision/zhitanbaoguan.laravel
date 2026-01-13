@@ -74,7 +74,7 @@ class CourseanalysisController extends Controller
         return response()->json($data);
     }
 
-    public function viewData(Request $request)
+    public function view(Request $request)
     {
         $request->validate([
             'title' => 'filled|string',

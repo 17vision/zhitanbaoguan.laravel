@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Admin\AuthorizationController;
 use App\Http\Controllers\Admin\CaptchaController;
+use App\Http\Controllers\Admin\CourseanalysisController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\UserController;
@@ -303,8 +304,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
         // todo 课程分析，应该放在对应的权限里
         
         // 课程分析
-        Route::get('datastatistics/courseanalysis/basic', [DashboardController::class, 'basicInfo']);
+        Route::get('datastatistics/courseanalysis/basic', [CourseanalysisController::class, 'basic']);
 
-        Route::get('datastatistics/courseanalysis/view', [DashboardController::class, 'viewData']);
+        Route::get('datastatistics/courseanalysis/view', [CourseanalysisController::class, 'view']);
     });
 });
