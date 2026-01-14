@@ -34,6 +34,8 @@ class UserBodyMetricController extends Controller
 
         $userBodyMetric = UserBodyMetric::create($data);
 
+        $user->update($data);
+
         return response()->json($userBodyMetric);
     }
 }

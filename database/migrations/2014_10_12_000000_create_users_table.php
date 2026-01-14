@@ -28,6 +28,13 @@ return new class extends Migration
             $table->string('qq', 16)->nullable()->comment('qq');
             $table->string('wechat', 32)->nullable()->comment('微信');
             $table->date('birthday')->nullable()->comment('生日');
+
+            // 新增加
+            $table->decimal('height', 4, 1)->nullable()->comment('身高(cm)');
+            $table->decimal('weight', 4, 1)->nullable()->comment('体重(kg)');
+            $table->unsignedTinyInteger('age')->nullable()->comment('年龄(岁)');
+            $table->decimal('body_fat_pct', 3, 1)->nullable()->comment('体质率 22.5%, 填 22.5 就可以');
+
             $table->unsignedMediumInteger('province')->nullable();
             $table->unsignedMediumInteger('city')->nullable();
             $table->unsignedMediumInteger('town')->nullable();
