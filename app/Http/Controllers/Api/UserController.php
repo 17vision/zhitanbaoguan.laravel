@@ -197,7 +197,7 @@ class UserController extends Controller
         $user = $request->user();
 
         if ($date || $type == 'day') {
-            $date = $date || Carbon::now()->toDateString();
+            $date = $date ?? Carbon::now()->toDateString();
             $userDailySteps = UserDailyStep::query()->where('user_id', $user->id)->where('date', $date)->get()->toArray();
 
             $userDailySteps = Arr::keyBy($userDailySteps, 'hour');
