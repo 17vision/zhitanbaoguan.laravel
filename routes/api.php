@@ -144,6 +144,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
         Route::post('brain_machine_data', [BrainMachineDataController::class, 'store']);
 
         // 获取自己的身高体重等数据
-        Route::get('user_body_metrics', [UserController::class, 'getUserBodyMetrics']);
+        Route::get('user_body_metrics', action: [UserController::class, 'getUserBodyMetrics']);
+
+        // 获取自己的运动数据
+        Route::get('user_daily_steps',[UserController::class, 'getUserDailySteps']);
     });
 });

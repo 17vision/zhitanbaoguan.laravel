@@ -14,14 +14,22 @@ class UserDailyStepController extends Controller
         $request->validate([
             'steps' => 'filled|integer|min:0',
             'calories' => 'filled|integer|min:0',
-            'distance' => 'filled|numeric|min:0|max:100'
+            'distance' => 'filled|numeric|min:0|max:100',
+            'date' => 'filled|date',
+            'hour' => 'required_with:date|integer|min:0|max:23'
         ], [], [
             'steps' => '步数',
             'calories' => '卡路里',
             'distance' => '距离',
+            'date' => '天',
+            'hour' => '小时'
         ]);
 
         $data = $request->only(['steps', 'calories', 'distance']);
+
+        $date = $request->input('date', Carbon::now()->toDateString());
+
+        $hour = $request->input('hour', Carbon::now()->hour);
 
         $user = $request->user();
 
@@ -30,9 +38,14 @@ class UserDailyStepController extends Controller
         }
 
         $data['user_id'] = $user->id;
-        $data['date'] = Carbon::now()->toDateString();
+        $data['date'] = $date;
+        $data['hour'] = $hour;
 
-        $userDailyStep = UserDailyStep::query()->where('user_id', $data['user_id'])->where('date', $data['date'])->first();
+        $userDailyStep = UserDailyStep::query()
+                ->where('user_id', $data['user_id'])
+                ->where('date', $data['date'])
+                ->where('hour', $data['hour'])
+                ->first();
 
         if ($userDailyStep) {
             $userDailyStep->update($data);

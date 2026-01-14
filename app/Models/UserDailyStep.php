@@ -8,7 +8,7 @@ class UserDailyStep extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'date', 'steps', 'calories', 'distance'];
+    protected $fillable = ['user_id', 'date', 'hour', 'steps', 'calories', 'distance'];
 
     public function user()
     {
