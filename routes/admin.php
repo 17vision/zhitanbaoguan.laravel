@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\GradeController;
 use App\Http\Controllers\Admin\GradeUserController;
+use App\Http\Controllers\Admin\HomeworkanalysisController;
 use App\Http\Controllers\Admin\HomeworkController;
 use App\Http\Controllers\Admin\HomeworkGroupController;
 use App\Http\Controllers\Admin\UserHomeworkController;
@@ -307,5 +308,11 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
         Route::get('datastatistics/courseanalysis/basic', [CourseanalysisController::class, 'basic']);
 
         Route::get('datastatistics/courseanalysis/view', [CourseanalysisController::class, 'view']);
+
+        
+        // 作业分析
+        Route::get('datastatistics/homeworkanalysis/basic', [HomeworkanalysisController::class, 'basic']);
+
+        Route::get('datastatistics/homeworkanalysis/view', [HomeworkanalysisController::class, 'view']);
     });
 });
