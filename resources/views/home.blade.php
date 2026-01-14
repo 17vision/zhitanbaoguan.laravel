@@ -5,6 +5,12 @@
 @section('content')
     <div class="container-1">
         <div class="container container-app">
+            <div class="d-flex align-items-center header">
+                <a class="logo" href="https://zhengnian.17vision.com">
+                    <img class="观息空间" src="{{ url('static/image/web/logo.png') }}" />
+                </a>
+                <span>观息空间</span>
+            </div>
             <div class="row no-gutters">
                 <div class="col-lg-8 col-md-12 content">
                     <div class="text-dark title">与山川相拥，舒缓心绪</div>
@@ -12,6 +18,9 @@
                     <div class="text">
                         睡眠 · 专注 · 冥想 · 呼吸
                     </div>
+
+                    <div class="span">告别喧嚣与浮躁，就从打开观息空间开始</div>
+                    <div class="span">这款专注睡眠、冥想与身心放松的应用，将旅行途中的清风、山林间的鸟鸣、海岸边的潮声，与科学的冥想练习融为一体。当你被生活的快节奏裹挟时，不妨在这里暂歇片刻：让自然之声抚平焦虑，用冥想练习沉淀思绪，在专注与平静中，邂逅一夜安稳好眠。</div>
 
                     <div class="d-flex qr-code">
                         <div class="d-flex flex-column align-items-center qr-code-item">
@@ -44,15 +53,15 @@
             </div>
             <div class="col-6 col-md-3 d-flex flex-column justify-content-center align-items-center">
                 <img src="{{ asset('static/image/home/zhuanzhu.png') }}" alt="专注">
-                <span>睡眠</span>
+                <span>专注</span>
             </div>
             <div class="col-6 col-md-3 d-flex flex-column justify-content-center align-items-center">
                 <img src="{{ asset('static/image/home/mingxiang.png') }}" alt="冥想">
-                <span>睡眠</span>
+                <span>冥想</span>
             </div>
             <div class="col-6 col-md-3 d-flex flex-column justify-content-center align-items-center">
                 <img src="{{ asset('static/image/home/huxi.png') }}" alt="呼吸">
-                <span>睡眠</span>
+                <span>呼吸</span>
             </div>
         </div>
     </div>

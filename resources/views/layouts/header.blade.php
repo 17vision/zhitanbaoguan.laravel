@@ -1,4 +1,4 @@
-<header class="navbar navbar-expand-md navbar-light">
+<header class="navbar navbar-expand-md navbar-light d-none">
     <div class="container-fluid px-5">
       <div class="navbar-translate">
         <a class="logo" href="https://zhengnian.17vision.com">

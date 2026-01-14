@@ -11,12 +11,31 @@
     margin-top: 20px;
     margin-bottom: 20px;
 
+    .header {
+        margin-top: 50px;
+    
+        .logo {
+            width: 88px;
+            height: 88px;
+            img {
+                width: 88px;
+                height: 88px;
+            }
+        }
+
+        span {
+            font-size: 27px;
+            margin-left: 14px;
+            color: #322067;
+        }
+    }
+
     .content {
         animation: contentIn 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
         padding: 0 30px;
 
         .title {
-            font-size: 60px;
+            font-size: 50px;
             margin-top: 60px;
             color: #0a0a0a;
             font-weight: bold;
@@ -24,18 +43,25 @@
 
         .text {
             color: #0a0a0a;
-            font-size: 22px;
+            font-size: 20px;
             margin-top: 12px;
+            margin-bottom: 20px;
+        }
+
+        .span {
+            color: #333333;
+            font-size: 15px;
+            line-height: 24px;
         }
 
         .qr-code {
             margin-top: 50px;
 
             .qr-code-item {
-                width: 200px;
+                width: 180px;
 
                 img {
-                    width: 200px;
+                    width: 180px;
                     border-radius: 6px;
                     box-shadow: 0 0.0125rem 0.25rem #00000020 !important;
                 }
@@ -170,10 +196,16 @@
             .title {
                 margin-top: 0px;
                 margin-bottom: 0px;
+                font-size: 40px;
             }
 
             .text {
-                margin-top: 5px;
+                font-size: 16px;
+            }
+
+            .span {
+                font-size: 12px;
+                line-height: 20px;
             }
         }
 
@@ -306,17 +338,22 @@
             }
 
             .text {
-                font-size: 18px;
+                font-size: 15px;
+            }
+
+            .span {
+                font-size: 14px;
+                line-height: 22px;
             }
 
             .qr-code {
                 margin-top: 20px;
 
                 .qr-code-item {
-                    width: 180px;
+                    width: 160px;
 
                     img {
-                        width: 180px;
+                        width: 160px;
                     }
                 }
 
