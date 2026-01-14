@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\GradeUserController;
 use App\Http\Controllers\Api\UserBodyMetricController;
 use App\Http\Controllers\Api\UserDailyStepController;
 use App\Http\Controllers\Api\UserHealthController;
+use App\Http\Controllers\Api\BrainMachineDataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -138,5 +139,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
         //  删除留言
         Route::delete('course_messages', [CourseMessageController::class, 'delete']);
+
+        // 脑机数据
+        Route::post('brain_machine_data', [BrainMachineDataController::class, 'store']);
     });
 });

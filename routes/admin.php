@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\GradeController;
 use App\Http\Controllers\Admin\GradeUserController;
 use App\Http\Controllers\Admin\HomeworkanalysisController;
+use App\Http\Controllers\Admin\BrainMachineDataController;
 use App\Http\Controllers\Admin\HomeworkController;
 use App\Http\Controllers\Admin\HomeworkGroupController;
 use App\Http\Controllers\Admin\UserHomeworkController;
@@ -314,5 +315,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
         Route::get('datastatistics/homeworkanalysis/basic', [HomeworkanalysisController::class, 'basic']);
 
         Route::get('datastatistics/homeworkanalysis/view', [HomeworkanalysisController::class, 'view']);
+
+        // 获取脑机接口数据
+        Route::get('brain_machine_data', [BrainMachineDataController::class, 'index']);
     });
 });
