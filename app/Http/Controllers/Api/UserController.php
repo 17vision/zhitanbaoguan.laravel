@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
 use App\Models\User;
+use App\Models\UserBodyMetric;
 use App\Models\UserLogin;
 use Illuminate\Http\Request;
 use App\Traits\Authorization;
@@ -158,5 +159,24 @@ class UserController extends Controller
         }
 
         return response()->json($days);
+    }
+
+    public function getUserBodyMetrics(Request $request)
+    {
+        $request->validate([
+            'page' => 'required|integer|min:1',
+            'limit' => 'filled|integer|min:1',
+        ], [], [
+            'page' => '当前页',
+            'limit' => '单页显示多少',
+        ]);
+
+        $limit = $request->input('limit', 20);
+
+        $user = $request->user();
+
+        $user_body_metrics = UserBodyMetric::query()->where('user_id', $user->id)->orderByDesc('id')->simplePaginate($limit);
+
+        return response()->json($user_body_metrics);
     }
 }
