@@ -36,9 +36,9 @@ class CourseStatisticsController extends Controller
 
         $courseStatistics = CourseStatistics::query()
                 ->where('user_id', $data['user_id'])
-                ->where('date', $data['date'])
-                ->where('course_chapter_id', $data['course_chapter_id'])
                 ->where('course_id', $data['course_id'])
+                ->where('course_chapter_id', $data['course_chapter_id'])
+                ->where('date', $data['date'])
                 ->first();
 
         if ($courseStatistics) {

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->date('date')->comment('观看课程日期');
             $table->unsignedBigInteger('course_id')->comment('课程id');
             $table->unsignedBigInteger('course_chapter_id')->comment('章节id');
-            $table->index(['user_id', 'date', 'course_chapter_id', 'course_id']);
-            $table->unique(['user_id', 'date', 'course_chapter_id', 'course_id']);
+            $table->index(['user_id', 'course_id', 'course_chapter_id', 'date']);
+            $table->unique(['user_id', 'course_id', 'course_chapter_id', 'date']);
             $table->unsignedInteger('duration')->comment('观看总时长，单位秒');
             $table->unsignedInteger('position')->nullable()->comment('观看位置，单位秒');
             $table->timestamps();
