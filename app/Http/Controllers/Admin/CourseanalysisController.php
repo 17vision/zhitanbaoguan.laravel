@@ -105,14 +105,9 @@ class CourseanalysisController extends Controller
         if ($type == 1) {
             $endDate = Carbon::now();
             $startDay = $endDate->clone()->addDays(-20);
-            $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay()]);
-            if ($title) {
-                $query->selectRaw('course_id, DATE(created_at) as date, COUNT(*) as count');
-                $query->groupBy(['course_id', 'date'])->orderByDesc('date');
-            } else {
-                $query->selectRaw('DATE(created_at) as date, COUNT(*) as count');
-                $query->groupBy('date')->orderByDesc('date');
-            }
+            $query->whereBetween('date', [$startDay->startOfDay()->toDateString(), $endDate->endOfDay()->toDateString()]);
+            $query->selectRaw('date, COUNT(*) as count');
+            $query->groupBy('date')->orderByDesc('date');
             $courseStatistics = $query->get();
         } elseif ($type == 2) {
             $endDate = Carbon::now();
