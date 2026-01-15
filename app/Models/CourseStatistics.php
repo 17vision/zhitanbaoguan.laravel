@@ -8,7 +8,7 @@ class CourseStatistics extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['course_id', 'course_chapter_id', 'user_id', 'duration', 'position'];
+    protected $fillable = ['course_id', 'date', 'course_chapter_id', 'user_id', 'duration', 'position'];
 
     public function course()
     {

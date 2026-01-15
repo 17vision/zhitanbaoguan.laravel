@@ -11,11 +11,14 @@ return new class extends Migration
     {
         Schema::create('course_statistics', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('course_id')->index()->comment('课程id');
-            $table->unsignedBigInteger('course_chapter_id')->index()->comment('章节id');
-            $table->unsignedBigInteger('user_id')->index()->comment('用户 id');
-            $table->unsignedInteger('duration')->comment('观看总时长，单位秒'); 
-            $table->unsignedInteger('position')->nullable()->comment('观看位置，单位秒'); 
+            $table->unsignedBigInteger('user_id')->comment('用户 id');
+            $table->date('date')->comment('观看课程日期');
+            $table->unsignedBigInteger('course_id')->comment('课程id');
+            $table->unsignedBigInteger('course_chapter_id')->comment('章节id');
+            $table->index(['user_id', 'date', 'course_chapter_id', 'course_id']);
+            $table->unique(['user_id', 'date', 'course_chapter_id', 'course_id']);
+            $table->unsignedInteger('duration')->comment('观看总时长，单位秒');
+            $table->unsignedInteger('position')->nullable()->comment('观看位置，单位秒');
             $table->timestamps();
         });
     }

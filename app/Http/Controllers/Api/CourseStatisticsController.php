@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CourseChapter;
 use Illuminate\Http\Request;
 use App\Models\CourseStatistics;
+use Carbon\Carbon;
 
 class CourseStatisticsController extends Controller
 {
@@ -24,15 +25,22 @@ class CourseStatisticsController extends Controller
         $user = $request->user();
 
         $data = $request->only(['course_chapter_id', 'duration', 'position']);
-
-        $data['user_id'] = $user->id;
-
         $courseChapter = CourseChapter::query()->where('id', $data['course_chapter_id'])->first();
         if (!$courseChapter) {
             return response()->json(['message' => '章节不存在'], 403);
         }
 
-        $courseStatistics = CourseStatistics::query()->where('course_chapter_id', $data['course_chapter_id'])->where('user_id', $data['user_id'])->first();
+        $data['user_id'] = $user->id;
+        $data['date'] = Carbon::now()->toDateString();
+        $data['course_id'] = $courseChapter['course_id'];
+
+        $courseStatistics = CourseStatistics::query()
+                ->where('user_id', $data['user_id'])
+                ->where('date', $data['date'])
+                ->where('course_chapter_id', $data['course_chapter_id'])
+                ->where('course_id', $data['course_id'])
+                ->first();
+
         if ($courseStatistics) {
             $data['duration'] = $courseStatistics['duration'] + $data['duration'];
             $courseStatistics->update($data);
