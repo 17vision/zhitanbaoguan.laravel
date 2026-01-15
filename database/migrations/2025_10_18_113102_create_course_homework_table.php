@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    // 课程作业
+    // 课程作业 (这个确认是否还需要)
     public function up(): void
     {
         Schema::create('course_homework', function (Blueprint $table) {
