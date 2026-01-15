@@ -129,6 +129,8 @@ class CourseanalysisController extends Controller
             
             $courseStatistics = $query->get();
         }
+
+        $courseStatistics = array_reverse($courseStatistics);
         return response()->json($courseStatistics);
     }
 }
