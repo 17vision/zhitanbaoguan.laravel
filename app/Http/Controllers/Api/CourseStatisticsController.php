@@ -101,7 +101,7 @@ class CourseStatisticsController extends Controller
 
         $user = $request->user();
 
-        $courseStatistics = $query->where('user_id', $user->id)->orderByDesc('updated_at')->simplePaginate($limit);
+        $courseStatistics = $query->where('user_id', $user->id)->orderByDesc('date')->simplePaginate($limit);
 
         return response()->json($courseStatistics);
     }
@@ -126,7 +126,30 @@ class CourseStatisticsController extends Controller
 
         $user = $request->user();
 
-        $courseStatistics = $query->where('user_id', $user->id)->orderByDesc('updated_at')->simplePaginate($limit);
+        $courseStatistics = $query->where('user_id', $user->id)->orderByDesc('date')->simplePaginate($limit);
+
+        return response()->json($courseStatistics);
+    }
+
+    public function getDayCourseStatistics(Request $request)
+    {
+        $request->validate([
+            'date' => 'filled|date',
+        ], [], [
+            'date' => '日期',
+        ]);
+
+        $user = $request->user();
+
+        $date = $request->input('date');
+        if (!$date) {
+            $date = Carbon::now()->toDateString();
+        }
+
+        $courseStatistics = CourseStatistics::query()->with(['course', 'course_chapter'])
+            ->where('user_id', $user->id)
+            ->where('date', $date)
+            ->get();
 
         return response()->json($courseStatistics);
     }

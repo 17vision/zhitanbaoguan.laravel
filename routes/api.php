@@ -120,6 +120,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
         Route::get('course_statistics/practise_history', [CourseStatisticsController::class, 'practiseHistory']);
 
+        // 统计某一天的观看数据
+        Route::get('user/day/course_statistics', [CourseStatisticsController::class, 'getDayCourseStatistics']);
+
         // 获取自己的班级
         Route::get('grade_users', [GradeUserController::class, 'index']);
 
