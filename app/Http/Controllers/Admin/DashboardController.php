@@ -139,44 +139,74 @@ class DashboardController extends Controller
         // 1 日的话取 20 天内的
         // 2 周的话取 2 个月内的
         // 3 月的话取 6 个月内的
-
         if ($type == 1) {
             $endDate = Carbon::now();
             $startDay = $endDate->clone()->addDays(-20);
-            $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay()]);
-            if ($title) {
-                $query->selectRaw('course_id, DATE(created_at) as date, COUNT(*) as count');
-                $query->groupBy(['course_id', 'date'])->orderByDesc('date');
-            } else {
-                $query->selectRaw('DATE(created_at) as date, COUNT(*) as count');
-                $query->groupBy('date')->orderByDesc('date');
-            }
+            $query->whereBetween('date', [$startDay->startOfDay()->toDateString(), $endDate->endOfDay()->toDateString()]);
+            $query->selectRaw('date, COUNT(*) as count');
+            $query->groupBy('date')->orderByDesc('date');
             $courseStatistics = $query->get();
         } elseif ($type == 2) {
             $endDate = Carbon::now();
             $startDay = $endDate->clone()->addMonths(-2);
-            $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay()]);
-            if ($title) {
-                $query->selectRaw('course_id, YEARWEEK(created_at, 1) as week, COUNT(*) as count');
-                $query->groupBy(['course_id', 'week'])->orderByDesc('week');
-            } else {
-                $query->selectRaw('YEARWEEK(created_at, 1) as week, COUNT(*) as count');
-                $query->groupBy('week')->orderByDesc('week');
-            }
+            $query->whereBetween('date', [$startDay->startOfDay()->toDateString(), $endDate->endOfDay()->toDateString()]);
+            $query->selectRaw('YEARWEEK(date, 1) as week, COUNT(*) as count');
+            $query->groupBy('week')->orderByDesc('week');
             $courseStatistics = $query->get();
         } elseif ($type == 3) {
             $endDate = Carbon::now();
             $startDay = $endDate->clone()->addMonths(-6);
-            $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay()]);
-            if ($title) {
-                $query->selectRaw('course_id, CONCAT(YEAR(created_at), LPAD(MONTH(created_at), 2, "0")) as month, COUNT(*) as count');
-                $query->groupBy(['course_id', 'month'])->orderByDesc('month');
-            } else {
-                $query->selectRaw('CONCAT(YEAR(created_at), LPAD(MONTH(created_at), 2, "0")) as month, COUNT(*) as count');
-                $query->groupBy('month')->orderByDesc('month');
-            }
+            $query->whereBetween('date', [$startDay->startOfDay()->toDateString(), $endDate->endOfDay()->toDateString()]);
+
+            // $query->selectRaw('course_id, CONCAT(YEAR(created_at), LPAD(MONTH(created_at), 2, "0")) as month, COUNT(*) as count');
+            // $query->groupBy(['course_id', 'month'])->orderByDesc('month');
+    
+            $query->selectRaw('CONCAT(YEAR(date), LPAD(MONTH(date), 2, "0")) as month, COUNT(*) as count');
+            $query->groupBy('month')->orderByDesc('month');
+            
             $courseStatistics = $query->get();
         }
+
+        $courseStatistics = array_reverse($courseStatistics->toArray());
         return response()->json($courseStatistics);
+
+        // if ($type == 1) {
+        //     $endDate = Carbon::now();
+        //     $startDay = $endDate->clone()->addDays(-20);
+        //     $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay()]);
+        //     if ($title) {
+        //         $query->selectRaw('course_id, DATE(created_at) as date, COUNT(*) as count');
+        //         $query->groupBy(['course_id', 'date'])->orderByDesc('date');
+        //     } else {
+        //         $query->selectRaw('DATE(created_at) as date, COUNT(*) as count');
+        //         $query->groupBy('date')->orderByDesc('date');
+        //     }
+        //     $courseStatistics = $query->get();
+        // } elseif ($type == 2) {
+        //     $endDate = Carbon::now();
+        //     $startDay = $endDate->clone()->addMonths(-2);
+        //     $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay()]);
+        //     if ($title) {
+        //         $query->selectRaw('course_id, YEARWEEK(created_at, 1) as week, COUNT(*) as count');
+        //         $query->groupBy(['course_id', 'week'])->orderByDesc('week');
+        //     } else {
+        //         $query->selectRaw('YEARWEEK(created_at, 1) as week, COUNT(*) as count');
+        //         $query->groupBy('week')->orderByDesc('week');
+        //     }
+        //     $courseStatistics = $query->get();
+        // } elseif ($type == 3) {
+        //     $endDate = Carbon::now();
+        //     $startDay = $endDate->clone()->addMonths(-6);
+        //     $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay()]);
+        //     if ($title) {
+        //         $query->selectRaw('course_id, CONCAT(YEAR(created_at), LPAD(MONTH(created_at), 2, "0")) as month, COUNT(*) as count');
+        //         $query->groupBy(['course_id', 'month'])->orderByDesc('month');
+        //     } else {
+        //         $query->selectRaw('CONCAT(YEAR(created_at), LPAD(MONTH(created_at), 2, "0")) as month, COUNT(*) as count');
+        //         $query->groupBy('month')->orderByDesc('month');
+        //     }
+        //     $courseStatistics = $query->get();
+        // }
+        // return response()->json($courseStatistics);
     }
 }
