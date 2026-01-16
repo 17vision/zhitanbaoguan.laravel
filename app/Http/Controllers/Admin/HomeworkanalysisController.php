@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\UserExtend;
 use App\Models\UserHomework;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class HomeworkanalysisController extends Controller
 {
@@ -66,10 +67,14 @@ class HomeworkanalysisController extends Controller
             'timeout_finished' => $timeout,
             'pending' => $pending,
             'unfinished' => $unfinished,
-            'total_str' => '总',
-            'finished_str' => '已完成',
+            'ontime_finished_rate' => round(1000 * $ontime / $finished) / 10 . '%',
+            'finished_rate' => round(1000 * $finished / $total) / 10 . '%',
+            'total_str' => '总数',
+            'finished_str' => '已完成数',
             'ontime_finished_str' => '按时完成',
             'timeout_finished_str' => '超时完成',
+            'ontime_finished_rate_str' => '按时完成率',
+            'finished_rate_str' => '完成率',
             'pending_str' => '待完成',
             'unfinished_str' => '未完成',
         ];
@@ -79,6 +84,47 @@ class HomeworkanalysisController extends Controller
 
     public function view(Request $request)
     {
-        return response()->json($request->all());
+        // 完成作业排行
+        $completed = UserHomework::query()->whereNotNull('completed_at')->selectRaw('homework_id,COUNT(*) as count')->groupBy('homework_id')->orderByDesc('count')->get()->toArray();
+
+        $maps = Arr::pluck($completed, 'count', 'homework_id');
+
+        $total = UserHomework::query()->whereNotNull('completed_at')->with(['homework'])->selectRaw('homework_id,COUNT(*) as count')->groupBy('homework_id')->orderByDesc('count')->get()->toArray();
+
+        $homework_rates = [];
+        foreach($total as $item) {
+            if (isset($maps[$item['homework_id']])) {
+                $item['finished'] = $maps[$item['homework_id']];
+                $item['total'] = $item['count'];
+
+                $homework_rates[] = [
+                    'finished' => $maps[$item['homework_id']],
+                    'total' => $item['count'],
+                    'rate' =>  round(1000 * $maps[$item['homework_id']]/ $item['count'])/10 . '%',
+                    'homework_name' => $item['homework']['title'] ?? '',
+                ];
+            } else {
+                $homework_rates[] = [
+                    'finished' => 0,
+                    'total' => $item['count'],
+                    'rate' => '0%',
+                    'homework_name' => $item['homework']['title'] ?? '',
+                ];
+            }
+        }
+
+        $rankings = UserHomework::query()->whereNotNull('completed_at')->with(['user'])->selectRaw('user_id,COUNT(*) as count')->groupBy('user_id')->orderByDesc('count')->get()->toArray();
+
+        foreach($rankings as &$ranking) {
+            $ranking['nickname'] = $ranking['user']['nickname'] ?? '';
+            unset($ranking['user']);
+        }
+
+        $data = [
+            'homework_rates' => $homework_rates,
+            'user_rankings' => $rankings
+        ];
+
+        return response()->json($data);
     }
 }
