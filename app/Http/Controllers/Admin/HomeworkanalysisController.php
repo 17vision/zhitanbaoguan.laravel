@@ -89,7 +89,7 @@ class HomeworkanalysisController extends Controller
 
         $maps = Arr::pluck($completed, 'count', 'homework_id');
 
-        $total = UserHomework::query()->whereNotNull('completed_at')->with(['homework'])->selectRaw('homework_id,COUNT(*) as count')->groupBy('homework_id')->orderByDesc('count')->get()->toArray();
+        $total = UserHomework::query()->with(['homework'])->selectRaw('homework_id,COUNT(*) as count')->groupBy('homework_id')->orderByDesc('count')->get()->toArray();
 
         $homework_rates = [];
         foreach($total as $item) {
