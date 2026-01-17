@@ -16,10 +16,7 @@
 
 <body>
     <div class="d-flex flex-column align-items-center content">
-        <div class="title-1-div">
-            <img src="{{ asset('static/image/activity/title-1.png') }}" class="title-1" />
-        </div>
-        <img src="{{ asset('static/image/activity/title-2.png') }}" class="title-2" />
+        <img src="{{ asset('static/image/activity/title.png') }}" class="top-title" />
 
         <form action="{{ route('store.activity.user') }}" method="POST">
             <div class="form-box">
@@ -70,17 +67,17 @@
         </form>
     </div>
 
-    @if (session('success'))
+    {{-- @if (session('success')) --}}
     <div class="message-box">
         <div class="success-box">
             <img src="{{ asset('static/image/activity/success-1.png') }}" class="success-icon" />
 
             <span class="success-txt">提交成功啦</span>
 
-            <a href="{{ url('/') }}" class="success-btn">返回首页</a>
+            {{-- <a href="{{ url('/') }}" class="success-btn">返回首页</a> --}}
         </div>
     </div>
-    @endif
+    {{-- @endif --}}
 
     <script>
         (function() {
@@ -126,23 +123,10 @@
         /* aspect-ratio: 749 / 1333 width: 100%; */
         min-height: 100vh;
 
-        .title-1-div {
-            display: flex;
-            align-items: center;
-            width: 7.5rem;
-            overflow: hidden;
-        }
-
-        .title-1 {
-            width: 7.97rem;
-            height: 2.44rem;
+        .top-title {
+            width: 7.49rem;
+            height: 3.03rem;
             margin-top: 0.76rem;
-        }
-
-        .title-2 {
-            width: 2.83rem;
-            height: 0.69rem;
-            margin-top: 0.1rem;
             margin-bottom: 0.61rem;
         }
 
@@ -250,7 +234,7 @@
             align-items: center;
             background: linear-gradient(to bottom, #CBEFE7FF, #F8FFFBFF);
             width: 5.75rem;
-            height: 5.98rem;
+            height: 4.75rem;
             border-radius: 0.2rem;
 
             .success-icon {
