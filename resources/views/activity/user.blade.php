@@ -222,8 +222,8 @@
                                     width: 0.12rem;
                                     height: 0.12rem;
                                     border-radius: 50%;
-                                    left: 0.04rem;
-                                    top: 0.04rem;
+                                    left: 0.05rem;
+                                    top: 0.05rem;
                                 }
                             }
                         }
