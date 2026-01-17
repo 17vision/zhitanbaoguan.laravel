@@ -67,7 +67,7 @@
         </form>
     </div>
 
-    {{-- @if (session('success')) --}}
+    @if (session('success'))
     <div class="message-box">
         <div class="success-box">
             <img src="{{ asset('static/image/activity/success-1.png') }}" class="success-icon" />
@@ -77,7 +77,7 @@
             {{-- <a href="{{ url('/') }}" class="success-btn">返回首页</a> --}}
         </div>
     </div>
-    {{-- @endif --}}
+    @endif
 
     <script>
         (function() {
@@ -186,13 +186,18 @@
                     }
 
                     .form-check-radio {
-                        display: inline-block;
+                        display: flex;
+                        align-items: center;
                         margin-right: 0.47rem;
-
+        
                         .form-check-input {
                             -webkit-appearance: none;
                             -moz-appearance: none;
                             appearance: none;
+                            margin-top: 0;
+                            margin-right: 0.1rem;
+                            background-size: initial;
+
 
                             &:checked {
                                 background-color: #3E997B;
