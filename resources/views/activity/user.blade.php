@@ -34,7 +34,7 @@
                 <div class="form-item">
                     <label for="username" class="form-label">性别:</label>
 
-                    <div class="form-input">
+                    <div class="form-input nobg">
                         <div class="form-check-radio">
                             <input class="form-check-input" type="radio" name="gender" id="male" value="1"
                                 @checked(old('gender') == '1') required>
@@ -177,6 +177,11 @@
                     appearance: none;
                     color: #ffffff;
 
+                    &.nobg {
+                        background-color: transparent;
+                        color: #4f4f4f;
+                    }
+
                     &::placeholder {
                         color: #ffffffaa;
                     }
@@ -197,11 +202,29 @@
                             margin-top: 0;
                             margin-right: 0.1rem;
                             background-size: initial;
+                            border-color: #979797;
 
+                            &:focus,
+                            &:focus-visible {
+                                box-shadow: none !important;
+                                outline: 0 !important;
+                            }
 
                             &:checked {
-                                background-color: #3E997B;
+                                background-color: #ffffff;
                                 border-color: #3E997B;
+                                position: relative;
+
+                                &::before {
+                                    position: absolute;
+                                    content: '';
+                                    background-color: #3E997B;
+                                    width: 0.12rem;
+                                    height: 0.12rem;
+                                    border-radius: 50%;
+                                    left: 0.04rem;
+                                    top: 0.04rem;
+                                }
                             }
                         }
                     }
