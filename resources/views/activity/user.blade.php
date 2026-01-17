@@ -123,8 +123,8 @@
         background-position: center center;
         background-repeat: no-repeat;
         background-size: cover;
-        aspect-ratio: 749 / 1333 width: 100%;
-        height: calc(1333/ 749 * 100vh);
+        /* aspect-ratio: 749 / 1333 width: 100%; */
+        /* height: calc(1333/ 749 * 100vh); */
 
         .title-1-div {
             display: flex;
@@ -150,15 +150,16 @@
             background: url('/static/image/activity/form-bg.png');
             width: 6.5rem;
             height: 8.28rem;
+            margin-bottom: 0.5rem;
 
             .title {
                 display: inline-block;
-                height: 1.2rem;
-                line-height: 1.2rem;
+                height: 1.1rem;
+                line-height: 1.1rem;
                 font-size: 0.36rem;
                 color: #005030;
                 margin-left: 0.4rem;
-                margin-bottom: 0.2rem;
+                margin-bottom: 0.15rem;
             }
 
             .form-item {
