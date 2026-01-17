@@ -124,7 +124,7 @@
         background-repeat: no-repeat;
         background-size: cover;
         /* aspect-ratio: 749 / 1333 width: 100%; */
-        /* height: calc(1333/ 749 * 100vh); */
+        min-height: 100vh;
 
         .title-1-div {
             display: flex;
@@ -203,6 +203,17 @@
                     .form-check-radio {
                         display: inline-block;
                         margin-right: 0.47rem;
+
+                        .form-check-input {
+                            -webkit-appearance: none;
+                            -moz-appearance: none;
+                            appearance: none;
+
+                            &:checked {
+                                background-color: #3E997B;
+                                border-color: #3E997B;
+                            }
+                        }
                     }
                 }
             }
