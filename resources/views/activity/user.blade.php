@@ -150,6 +150,7 @@
             background: url('/static/image/activity/form-bg.png');
             width: 6.5rem;
             height: 8.28rem;
+            background-size: 6.5rem 8.28rem;
             margin-bottom: 0.5rem;
 
             .title {
@@ -159,7 +160,7 @@
                 font-size: 0.36rem;
                 color: #005030;
                 margin-left: 0.4rem;
-                margin-bottom: 0.15rem;
+                margin-bottom: 0.12rem;
             }
 
             .form-item {
