@@ -209,8 +209,8 @@
                             background-size: initial;
                             border-color: #979797;
                             /* 下边是特意加的 */
-                            width: 1.2rem;
-                            height: 1.2rem;
+                            width: 0.14rem;
+                            height: 0.14rem;
 
                             &:focus,
                             &:focus-visible {
@@ -227,11 +227,11 @@
                                     position: absolute;
                                     content: '';
                                     background-color: #3E997B;
-                                    width: 0.4rem;
-                                    height: 0.4rem;
+                                    width: 0.08rem;
+                                    height: 0.08rem;
                                     border-radius: 50%;
-                                    left: 0.1rem;
-                                    top: 0.1rem;
+                                    left: 0.02rem;
+                                    top: 0.02rem;
                                 }
                             }
                         }
