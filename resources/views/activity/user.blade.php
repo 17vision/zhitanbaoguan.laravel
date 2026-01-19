@@ -209,8 +209,9 @@
                             background-size: initial;
                             border-color: #979797;
                             /* 下边是特意加的 */
-                            width: 0.14rem;
-                            height: 0.14rem;
+                            width: 0.48rem;
+                            height: 0.48rem;
+                            border-width: 0.04rem;
 
                             &:focus,
                             &:focus-visible {
@@ -221,17 +222,18 @@
                             &:checked {
                                 background-color: #ffffff;
                                 border-color: #3E997B;
+                                border-width: 0.04rem;
                                 position: relative;
 
                                 &::before {
                                     position: absolute;
                                     content: '';
                                     background-color: #3E997B;
-                                    width: 0.08rem;
-                                    height: 0.08rem;
+                                    width: 0.29rem;
+                                    height: 0.29rem;
                                     border-radius: 50%;
-                                    left: 0.02rem;
-                                    top: 0.02rem;
+                                    left: 0.04rem;
+                                    top: 0.04rem;
                                 }
                             }
                         }
