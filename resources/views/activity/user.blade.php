@@ -208,6 +208,9 @@
                             margin-right: 0.1rem;
                             background-size: initial;
                             border-color: #979797;
+                            /* 下边是特意加的 */
+                            width: 1.2rem;
+                            height: 1.2rem;
 
                             &:focus,
                             &:focus-visible {
@@ -224,13 +227,18 @@
                                     position: absolute;
                                     content: '';
                                     background-color: #3E997B;
-                                    width: 0.12rem;
-                                    height: 0.12rem;
+                                    width: 0.4rem;
+                                    height: 0.4rem;
                                     border-radius: 50%;
-                                    left: 0.05rem;
-                                    top: 0.05rem;
+                                    left: 0.1rem;
+                                    top: 0.1rem;
                                 }
                             }
+                        }
+
+                        /* 男，女标签 */
+                        .form-check-label {
+                            font-size: 0.38rem;
                         }
                     }
                 }
