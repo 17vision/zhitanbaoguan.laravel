@@ -229,11 +229,11 @@
                                     position: absolute;
                                     content: '';
                                     background-color: #3E997B;
-                                    width: 0.29rem;
-                                    height: 0.29rem;
+                                    width: 0.31rem;
+                                    height: 0.31rem;
                                     border-radius: 50%;
-                                    left: 0.04rem;
-                                    top: 0.04rem;
+                                    left: 0.05rem;
+                                    top: 0.05rem;
                                 }
                             }
                         }
