@@ -120,7 +120,6 @@
         background-position: center center;
         background-repeat: no-repeat;
         background-size: cover;
-        /* aspect-ratio: 749 / 1333 width: 100%; */
         min-height: 100vh;
 
         .top-title {
@@ -133,8 +132,9 @@
         .form-box {
             background: url('/static/image/activity/form-bg.png');
             width: 6.5rem;
-            height: 8.28rem;
-            background-size: 6.5rem 8.28rem;
+            /* height: 8.28rem; 0119 */
+            height: 8.78rem;
+            background-size: 6.5rem 8.78rem;
             margin-bottom: 0.5rem;
 
             .title {
@@ -155,7 +155,8 @@
 
                 .form-label {
                     color: #4F4F4F;
-                    font-size: 0.28rem;
+                    /* font-size: 0.28rem; 0119 */
+                    font-size: 0.38rem;
                     margin-bottom: 0.1rem;
                 }
 
@@ -164,10 +165,12 @@
                     align-items: center;
                     background-color: #80929A95;
                     width: 5.7rem;
-                    height: 0.68rem;
+                    /* height: 0.68rem; 0119 */ 
+                    height: 0.78rem;
                     padding: 0 0.22rem;
                     border-radius: 0.1rem;
-                    font-size: 0.24rem;
+                    /* font-size: 0.24rem; 0119 */
+                    font-size: 0.34rem;
                     border: none;
                     outline: none;
                     -webkit-appearance: none;
@@ -233,7 +236,8 @@
 
             .submit-btn {
                 width: 5.71rem;
-                height: 0.68rem;
+                /* height: 0.68rem; 0119 */
+                height: 0.78rem;
                 border-radius: 0.48rem;
                 background: #3E997B;
                 border: none;
