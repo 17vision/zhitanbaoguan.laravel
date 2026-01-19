@@ -133,8 +133,8 @@
             background: url('/static/image/activity/form-bg.png');
             width: 6.5rem;
             /* height: 8.28rem; 0119 */
-            height: 9.58rem;
-            background-size: 6.5rem 9.58rem;
+            height: 10.58rem;
+            background-size: 6.5rem 10.58rem;
             margin-bottom: 0.5rem;
 
             .title {
@@ -142,7 +142,7 @@
                 height: 1.1rem;
                 line-height: 1.1rem;
                 /* font-size: 0.36rem; 0119*/
-                font-size: 0.46rem;
+                font-size: 0.36rem;
                 color: #005030;
                 /* margin-left: 0.4rem; 0119 */
                 margin-left: 0.24rem; 
