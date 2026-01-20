@@ -8,6 +8,25 @@ use Illuminate\Http\Request;
 
 class UserHealthController extends Controller
 {
+    public function index(Request $request)
+    {
+        $request->validate([
+            'page' => 'required|integer|min:1',
+            'limit' => 'filled|integer',
+        ], [], [
+            'limit' => '单页显示条数',
+            'page' => '当前页',
+        ]);
+
+        $limit = $request->input('limit', 20);
+
+        $user = $request->user();
+
+        $userHealths = UserHealth::query()->where('user_id', $user->id)->simplePaginate($limit);
+
+        return response()->json($userHealths);
+    }
+
     public function store(Request $request)
     {
         $request->validate([

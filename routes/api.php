@@ -88,6 +88,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
         // 提交用户的健康情况
         Route::post('user_healths', [UserHealthController::class, 'store']);
+
+        // 获取用户健康数据
+        Route::get('user_healths', [UserHealthController::class, 'index']);
         
         // 提交用户身体指标表
         Route::post('user_body_metrics', [UserBodyMetricController::class, 'store']);
