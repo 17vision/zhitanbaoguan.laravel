@@ -158,5 +158,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
         // 提交睡眠数据
         Route::post('sleep_data', [SleepDataController::class, 'store']);
+
+        // 获取睡眠数据
+        Route::get('sleep_data', [SleepDataController::class, 'index']);
     });
 });

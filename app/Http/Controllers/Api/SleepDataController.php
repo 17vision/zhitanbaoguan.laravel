@@ -10,6 +10,34 @@ use App\Models\SleepDataBean;
 
 class SleepDataController extends Controller
 {
+    public function index(Request $request)
+    {
+        $request->validate([
+            'page' => 'required|integer|min:1',
+            'limit' => 'filled|integer',
+            'date' => 'filled|string'
+        ], [], [
+            'page' => '当前页',
+            'limit' => '单页显示条数',
+            'date' => '日期'
+        ]);
+
+        $limit = $request->input('limit', 30);
+
+        $date = $request->input('date');
+
+        $user = $request->user();
+
+        $query = SleepDataBean::query()->where('user_id', $user->id);
+        if ($date) {
+            $query->where('date', $date);
+        }
+
+        $sleepDataBeans = $query->orderByDesc('id')->simplePaginate($limit);
+
+        return response()->json($sleepDataBeans);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
