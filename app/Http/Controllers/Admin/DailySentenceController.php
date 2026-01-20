@@ -46,24 +46,28 @@ class DailySentenceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'date' => 'filled|date',
             'title' => 'required|string|min:1|max:64',
             'text' => 'required|string|max:255',
             'author' => 'filled|string|max:64',
             'image' => 'filled|string|max:255',
         ], [], [
+            'date' => '日期',
             'title' => '标题',
             'text' => '文案',
             'author' => '作者',
             'image' => '图片',
         ]);
 
-        $data = $request->only(['title', 'text', 'author', 'image']);
+        $data = $request->only(['date', 'title', 'text', 'author', 'image']);
 
         $user = $request->user();
 
         $data['user_id'] = $user->id;
 
-        $data['date'] = Carbon::now()->toDateString();
+        if (!isset($data['date'])) {
+            $data['date'] = Carbon::now()->toDateString();
+        }
 
         if (isset($data['image']) && $data['image']) {
             $data['image'] = reverseStorageUrl($data['image']);
@@ -82,12 +86,14 @@ class DailySentenceController extends Controller
     {
         $request->validate([
             'id' => 'required|integer',
+            'date' => 'filled|date',
             'title' => 'filled|string|min:1|max:64',
             'text' => 'filled|string|max:255',
             'author' => 'filled|string|max:64',
             'image' => 'filled|string|max:255',
         ], [], [
             'id' => '每日一句 id',
+            'date' => '日期',
             'title' => '标题',
             'text' => '文案',
             'author' => '作者',
@@ -98,7 +104,7 @@ class DailySentenceController extends Controller
 
         $user = $request->user();
 
-        $data = $request->only(['title', 'text', 'author', 'image']);
+        $data = $request->only(['date', 'title', 'text', 'author', 'image']);
 
         if (empty($data)) {
             return response()->json(['message' => '请提交数据'], 403);
@@ -113,6 +119,12 @@ class DailySentenceController extends Controller
         $dailySentence = DailySentence::query()->where('id', $id)->first();
         if (!$dailySentence) {
             return response()->json(['message' => '每日一句不存在'], 403);
+        }
+
+        if (isset($data['date']) && $data['date'] != $dailySentence['date']) {
+            if (DailySentence::query()->where('date', $data['date'])->exists()) {
+                return response()->json(['message' => '该日期的每日一句已存在'], 403);
+            }
         }
 
         $dailySentence->update($data);
