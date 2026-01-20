@@ -15,7 +15,7 @@ class SleepDataController extends Controller
         $request->validate([
             'page' => 'required|integer|min:1',
             'limit' => 'filled|integer',
-            'date' => 'filled|string'
+            'date' => 'filled|date'
         ], [], [
             'page' => '当前页',
             'limit' => '单页显示条数',
@@ -28,7 +28,7 @@ class SleepDataController extends Controller
 
         $user = $request->user();
 
-        $query = SleepDataBean::query()->where('user_id', $user->id);
+        $query = SleepDataBean::query()->where('user_id', $user->id)->with(['sleepData']);
         if ($date) {
             $query->where('date', $date);
         }
