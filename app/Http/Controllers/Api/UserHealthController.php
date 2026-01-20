@@ -22,7 +22,7 @@ class UserHealthController extends Controller
 
         $user = $request->user();
 
-        $userHealths = UserHealth::query()->where('user_id', $user->id)->simplePaginate($limit);
+        $userHealths = UserHealth::query()->where('user_id', $user->id)->orderByDesc('id')->simplePaginate($limit);
 
         return response()->json($userHealths);
     }
