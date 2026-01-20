@@ -8,7 +8,7 @@ class Ringtone extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'introduction', 'thumbnail', 'path'];
+    protected $fillable = ['name', 'introduction', 'thumbnail', 'path', 'status'];
 
     public function getThumbnailAttribute()
     {
