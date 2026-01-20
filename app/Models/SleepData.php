@@ -10,6 +10,8 @@ class SleepData extends Model
 
     protected $fillable = ['user_id', 'sleep_data_bean_id', 'type', 'start_at', 'end_at'];
 
+    protected $appends = ['type_str'];
+
     public function getTypeStrAttribute()
     {
         $type = $this->getAttribute('type');
