@@ -11,6 +11,7 @@ return new class extends Migration
     {
         Schema::create('scenes', function (Blueprint $table) {
             $table->id();
+            $table->unsignedTinyInteger('type')->comment('类型 1 专注 2 睡眠 3 小憩 4 呼吸');
             $table->unsignedBigInteger('scene_category_id')->index()->comment('分组 id');
             $table->string('name')->comment('名称');
             $table->string('introduction')->comment('介绍');

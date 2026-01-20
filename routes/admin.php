@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\GradeController;
 use App\Http\Controllers\Admin\GradeUserController;
 use App\Http\Controllers\Admin\HomeworkanalysisController;
 use App\Http\Controllers\Admin\BrainMachineDataController;
+use App\Http\Controllers\Admin\DailySentenceController;
 use App\Http\Controllers\Admin\HomeworkController;
 use App\Http\Controllers\Admin\HomeworkGroupController;
 use App\Http\Controllers\Admin\UserHomeworkController;
@@ -318,5 +319,16 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
 
         // 获取脑机接口数据
         Route::get('brain_machine_data', [BrainMachineDataController::class, 'index']);
+
+        // 每日一句
+        Route::get('daily_sentences', [DailySentenceController::class, 'index']);
+
+        Route::get('daily_sentences/{id}', [DailySentenceController::class, 'detail'])->where('id', '^[1-9]\d*$');
+
+        Route::post('daily_sentences', [DailySentenceController::class, 'store']);
+
+        Route::put('daily_sentences', [DailySentenceController::class, 'update']);
+
+        Route::delete('daily_sentences', [DailySentenceController::class, 'delete']);
     });
 });

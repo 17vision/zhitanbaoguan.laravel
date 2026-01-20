@@ -50,6 +50,7 @@ class SceneController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'type' => 'required|in:1,2,3,4',
             'scene_category_id' => 'required|integer|min:1',
             'name' => 'required|string|max:255',
             'introduction' => 'required|string|max:255',
@@ -57,6 +58,7 @@ class SceneController extends Controller
             'video' => 'filled|string|max:255',
             'tag' => 'filled|string|max:64'
         ], [], [
+            'type' => '类型',
             'scene_category_id' => '组别 id',
             'name' => '名称',
             'introduction' => '介绍',
@@ -66,7 +68,7 @@ class SceneController extends Controller
         ]);
 
 
-        $data = $request->only(['scene_category_id', 'name', 'introduction', 'image', 'video', 'tag']);
+        $data = $request->only(['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'tag']);
 
         if (isset($data['image']) && $data['image']) {
             $data['image'] = reverseStorageUrl($data['image']);
@@ -92,6 +94,7 @@ class SceneController extends Controller
     {
         $request->validate([
             'id' => 'required|integer',
+            'type' => 'filled|in:1,2,3,4',
             'scene_category_id' => 'filled|integer|min:1',
             'name' => 'filled|string|max:255',
             'introduction' => 'filled|string|max:255',
@@ -100,6 +103,7 @@ class SceneController extends Controller
             'tag' => 'filled|string|max:64'
         ], [], [
             'id' => 'id',
+            'type' => '类型',
             'scene_category_id' => '组别 id',
             'name' => '名称',
             'introduction' => '介绍',
@@ -110,7 +114,7 @@ class SceneController extends Controller
 
         $id = $request->input('id');
 
-        $data = $request->only(['scene_category_id', 'name', 'introduction', 'image', 'video', 'tag']);
+        $data = $request->only(['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'tag']);
 
         if (empty($data)) {
             return response()->json(['message' => '请提交数据'], 403);
