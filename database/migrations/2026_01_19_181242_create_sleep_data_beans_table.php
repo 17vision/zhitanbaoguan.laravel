@@ -20,9 +20,10 @@ return new class extends Migration
             $table->unsignedTinyInteger('rapid_eye_movement_count')->nullable()->comment('快速眼动次数');
             $table->dateTime('start_at')->comment('开始睡眠时间');
             $table->dateTime('end_at')->nullable()->comment('结束睡眠时间');
+            $table->unsignedInteger('total')->nullable()->comment('睡眠总时间');
             $table->unsignedInteger('deep_sleep_total')->nullable()->comment('深睡总时间');
             $table->unsignedInteger('light_sleep_total')->nullable()->comment('浅睡总时间');
-            $table->unsignedInteger('rapid_eye_movement_total')->nullable()->comment('快速眼动时间');
+            $table->unsignedInteger('rapid_eye_movement_total')->nullable()->comment('快速眼动总时间');
             $table->unsignedTinyInteger('wake_count')->nullable()->comment('清醒次数');
             $table->unsignedTinyInteger('wake_duration')->nullable()->comment('清醒时长，单位秒');
             $table->timestamps();

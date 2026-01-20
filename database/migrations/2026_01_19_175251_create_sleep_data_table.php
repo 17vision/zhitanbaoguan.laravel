@@ -14,7 +14,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('sleep_data_bean_id')->comment('睡眠数据 id');
             $table->index(['user_id', 'sleep_data_bean_id']);
-            $table->unsignedTinyInteger('type')->comment('睡眠类型 0 未知, 1 深睡, 2 浅睡, 3 快速眼动, 4 清醒');
+            $table->unsignedTinyInteger('type')->comment('睡眠类型 1 深睡, 2 浅睡, 3 快速眼动, 4 清醒 5 未知');
             $table->dateTime('start_at')->comment('睡眠开始时间');
             $table->dateTime('end_at')->comment('睡眠结束时间');
             $table->timestamps();

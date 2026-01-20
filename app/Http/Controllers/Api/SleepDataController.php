@@ -13,7 +13,7 @@ class SleepDataController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'type' => 'required|integer|exists:users,id',
+            'type' => 'required|in:1,2,3,4,5',
             'start_at' => 'required|date_format:Y-m-d H:i:s',
             'end_at' => 'required|date_format:Y-m-d H:i:s|after:start_at'
         ], [], [
@@ -50,6 +50,7 @@ class SleepDataController extends Controller
 
         $start_at = '';
         $end_at = '';
+        $total = 0;
         $deep_sleep_count = 0;
         $light_sleep_count = 0;
         $rapid_eye_movement_count = 0;
@@ -92,12 +93,15 @@ class SleepDataController extends Controller
             }
         }
 
+        $total = $deep_sleep_total + $light_sleep_total + $rapid_eye_movement_total;
+
         $sleepDataBean->update([
             'deep_sleep_count' => $deep_sleep_count,
             'light_sleep_count' => $light_sleep_count,
             'rapid_eye_movement_count' => $rapid_eye_movement_count,
             'start_at' => $start_at,
             'end_at' => $end_at,
+            'total' => $total,
             'deep_sleep_total' => $deep_sleep_total,
             'light_sleep_total' => $light_sleep_total,
             'rapid_eye_movement_total' => $rapid_eye_movement_total,
