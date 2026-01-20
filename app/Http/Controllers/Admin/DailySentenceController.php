@@ -135,6 +135,8 @@ class DailySentenceController extends Controller
             return response()->json(['message' => '每日一句不存在'], 403);
         }
 
-        return response()->json($dailySentence);
+        $dailySentence->delete();
+
+        return response()->json(['message' => '已删除', 'dailySentence' => $dailySentence]);
     }
 }
