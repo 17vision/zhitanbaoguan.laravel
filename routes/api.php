@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\UserHealthController;
 use App\Http\Controllers\Api\BrainMachineDataController;
 use App\Http\Controllers\Api\SleepDataController;
 use App\Http\Controllers\Api\DailySentenceController;
+use App\Http\Controllers\Api\ThemeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -165,5 +166,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
         // 获取每日一句
         Route::get('daily_sentence', [DailySentenceController::class, 'detail']);
+
+        // 获取主题列表
+        Route::get('themes', [ThemeController::class, 'index']);
     });
 });
