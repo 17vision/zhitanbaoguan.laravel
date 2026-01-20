@@ -21,9 +21,22 @@ class Scene extends Model
     {
         $type = $this->getAttribute('type');
 
-        $arr = ['', '专注', '睡眠', '小憩', '呼吸'];
+        if ($type) {
+            $arr = ['', '专注', '睡眠', '小憩', '呼吸'];
+            $result = '';
+            $types = explode(',',  $type);
+            foreach($types as $index) {
+                $item = $arr[$index] ?? '';
+                if ($item) {
+                    $result .= ",$item";
+                }
+            }
 
-        return $arr[$type] ?? '';
+            if ($result) {
+                return substr($result, 1);
+            }
+        }
+        return '';
     }
 
     public function getImageAttribute()

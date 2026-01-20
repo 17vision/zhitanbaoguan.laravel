@@ -50,7 +50,7 @@ class SceneController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'type' => 'required|in:1,2,3,4',
+            'type' => 'required|string',
             'scene_category_id' => 'required|integer|min:1',
             'name' => 'required|string|max:255',
             'introduction' => 'required|string|max:255',
@@ -71,6 +71,13 @@ class SceneController extends Controller
 
 
         $data = $request->only(['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'tag', 'status']);
+
+        $typeArr = explode(',', $data['type']);
+        foreach ($typeArr as $type) {
+            if (!\in_array($type, [1, 2, 3, 4])) {
+                return response()->json(['message' => '类型错误']);
+            }
+        }
 
         if (isset($data['image']) && $data['image']) {
             $data['image'] = reverseStorageUrl($data['image']);
@@ -96,7 +103,7 @@ class SceneController extends Controller
     {
         $request->validate([
             'id' => 'required|integer',
-            'type' => 'filled|in:1,2,3,4',
+            'type' => 'filled|string',
             'scene_category_id' => 'filled|integer|min:1',
             'name' => 'filled|string|max:255',
             'introduction' => 'filled|string|max:255',
@@ -119,6 +126,15 @@ class SceneController extends Controller
         $id = $request->input('id');
 
         $data = $request->only(['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'tag', 'status']);
+
+        if (isset($data['type'])) {
+            $typeArr = explode(',', $data['type']);
+            foreach ($typeArr as $type) {
+                if (!\in_array($type, [1, 2, 3, 4])) {
+                    return response()->json(['message' => '类型错误']);
+                }
+            }
+        }
 
         if (empty($data)) {
             return response()->json(['message' => '请提交数据'], 403);

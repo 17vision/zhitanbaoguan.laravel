@@ -10,7 +10,8 @@ return new class extends Migration
     {
         Schema::table('scenes', function (Blueprint $table) {
             if (!Schema::hasColumn('scenes', 'type')) {
-                $table->unsignedTinyInteger('type')->comment('类型 1 专注 2 睡眠 3 小憩 4 呼吸')->after('id');
+                // $table->unsignedTinyInteger('type')->comment('类型 1 专注 2 睡眠 3 小憩 4 呼吸')->after('id');
+                $table->string('type')->comment('类型 1 专注 2 睡眠 3 小憩 4 呼吸, 多个类型用,分割')->after('id');
             }
 
             if (!Schema::hasColumn('scenes', 'status')) {
