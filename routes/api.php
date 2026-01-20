@@ -20,6 +20,8 @@ use App\Http\Controllers\Api\UserHealthController;
 use App\Http\Controllers\Api\BrainMachineDataController;
 use App\Http\Controllers\Api\SleepDataController;
 use App\Http\Controllers\Api\DailySentenceController;
+use App\Http\Controllers\Api\RingtoneController;
+use App\Http\Controllers\Api\SceneController;
 use App\Http\Controllers\Api\ThemeController;
 
 /*
@@ -169,5 +171,11 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
         // 获取主题列表
         Route::get('themes', [ThemeController::class, 'index']);
+
+        // 获取场景列表
+        Route::get('scenes', [SceneController::class, 'index']);
+
+        // 铃声
+        Route::get('ringtones', [RingtoneController::class, 'index']);
     });
 });

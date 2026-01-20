@@ -10,6 +10,8 @@ class Ringtone extends Model
 
     protected $fillable = ['name', 'introduction', 'thumbnail', 'path', 'status'];
 
+    protected $appends = ['status_str'];
+    
     public function getThumbnailAttribute()
     {
         $value = $this->attributes['thumbnail'] ?? '';
@@ -26,5 +28,14 @@ class Ringtone extends Model
             return storageUrl(value: $value);
         }
         return '';
+    }
+
+    public function getStatusStrAttribute()
+    {
+        $value = $this->attributes['status'] ?? 100;
+
+        $array = ['', '可用', '不可用'];
+
+        return $array[$value] ?? '';
     }
 }

@@ -9,6 +9,7 @@ class Theme extends Model
     use HasFactory;
 
     protected $fillable = ['name', 'introduction', 'path', 'color', 'like_nums', 'unlike_nums', 'status'];
+    protected $appends = ['status_str'];
 
     public function getPathAttribute()
     {
@@ -17,5 +18,14 @@ class Theme extends Model
             return storageUrl($path);
         }
         return '';
+    }
+
+    public function getStatusStrAttribute()
+    {
+        $value = $this->attributes['status'] ?? 100;
+
+        $array = ['', '可用', '不可用'];
+
+        return $array[$value] ?? '';
     }
 }

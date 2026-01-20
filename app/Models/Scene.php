@@ -10,7 +10,7 @@ class Scene extends Model
 
     protected $fillable = ['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'tag', 'like_nums', 'collect_nums', 'status'];
 
-    protected $appends = ['type_str'];
+    protected $appends = ['type_str', 'status_str'];
 
     public function sceneCategory()
     {
@@ -42,5 +42,14 @@ class Scene extends Model
             return storageUrl($video);
         }
         return '';
+    }
+
+    public function getStatusStrAttribute()
+    {
+        $value = $this->attributes['status'] ?? 100;
+
+        $array = ['', '可用', '不可用'];
+
+        return $array[$value] ?? '';
     }
 }

@@ -280,7 +280,7 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::delete('ringtones', [RingtoneController::class, 'delete'])->middleware('permission:ringtone.delete');
             });
 
-            // 主题
+            // 场景
             Route::group(['middleware' => 'permission:scene'], function () {
 
                 Route::get('scenes', [SceneController::class, 'index'])->middleware('permission:scene.index');

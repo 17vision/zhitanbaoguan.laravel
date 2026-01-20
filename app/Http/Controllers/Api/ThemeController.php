@@ -24,7 +24,7 @@ class ThemeController extends Controller
 
         $name = $request->input('name');
 
-        $query = Theme::query()->where('status', 2);
+        $query = Theme::query()->where('status', 1);
 
         if ($name) {
             $name = trim($name);
@@ -32,7 +32,7 @@ class ThemeController extends Controller
             $query->where('name', 'like', $name);
         }
 
-        $themes = $query->orderByDesc('id')->paginate($limit);
+        $themes = $query->orderByDesc('id')->simplePaginate($limit);
 
         return response()->json($themes);
     }
