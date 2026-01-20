@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unique(['user_id', 'date']);
             $table->unsignedTinyInteger('deep_sleep_count')->nullable()->comment('深睡次数');
             $table->unsignedTinyInteger('light_sleep_count')->nullable()->comment('浅睡次数');
+            $table->unsignedTinyInteger('rapid_eye_movement_count')->nullable()->comment('快速眼动次数');
             $table->dateTime('start_at')->comment('开始睡眠时间');
             $table->dateTime('end_at')->nullable()->comment('结束睡眠时间');
             $table->unsignedInteger('deep_sleep_total')->nullable()->comment('深睡总时间');

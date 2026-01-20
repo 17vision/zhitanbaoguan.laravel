@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\UserBodyMetricController;
 use App\Http\Controllers\Api\UserDailyStepController;
 use App\Http\Controllers\Api\UserHealthController;
 use App\Http\Controllers\Api\BrainMachineDataController;
+use App\Http\Controllers\Api\SleepDataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -154,5 +155,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
         // 获取自己的运动数据
         Route::get('user_daily_steps',[UserController::class, 'getUserDailySteps']);
+
+        // 提交睡眠数据
+        Route::post('sleep_data', [SleepDataController::class, 'store']);
     });
 });
