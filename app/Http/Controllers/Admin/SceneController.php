@@ -56,7 +56,8 @@ class SceneController extends Controller
             'introduction' => 'required|string|max:255',
             'image' => 'filled|string|max:255',
             'video' => 'filled|string|max:255',
-            'tag' => 'filled|string|max:64'
+            'tag' => 'filled|string|max:64',
+            'status' => 'filled|in:1,2'
         ], [], [
             'type' => '类型',
             'scene_category_id' => '组别 id',
@@ -65,10 +66,11 @@ class SceneController extends Controller
             'image' => '图片地址',
             'video' => '视频地址',
             'tag' => '标签',
+            'status' => '状态',
         ]);
 
 
-        $data = $request->only(['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'tag']);
+        $data = $request->only(['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'tag', 'status']);
 
         if (isset($data['image']) && $data['image']) {
             $data['image'] = reverseStorageUrl($data['image']);
@@ -100,7 +102,8 @@ class SceneController extends Controller
             'introduction' => 'filled|string|max:255',
             'image' => 'filled|string|max:255',
             'video' => 'filled|string|max:255',
-            'tag' => 'filled|string|max:64'
+            'tag' => 'filled|string|max:64',
+            'status' => 'filled|in:1,2'
         ], [], [
             'id' => 'id',
             'type' => '类型',
@@ -110,11 +113,12 @@ class SceneController extends Controller
             'image' => '图片地址',
             'video' => '视频地址',
             'tag' => '标签',
+            'status' => '状态',
         ]);
 
         $id = $request->input('id');
 
-        $data = $request->only(['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'tag']);
+        $data = $request->only(['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'tag', 'status']);
 
         if (empty($data)) {
             return response()->json(['message' => '请提交数据'], 403);

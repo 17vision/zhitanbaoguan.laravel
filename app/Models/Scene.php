@@ -8,7 +8,7 @@ class Scene extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'tag', 'like_nums', 'collect_nums'];
+    protected $fillable = ['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'tag', 'like_nums', 'collect_nums', 'status'];
 
     public function sceneCategory()
     {
