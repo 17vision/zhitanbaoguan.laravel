@@ -71,6 +71,18 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
     // 获取留言列表
     Route::get('course_messages', [CourseMessageController::class, 'index']);
 
+    // 获取每日一句
+    Route::get('daily_sentence', [DailySentenceController::class, 'detail']);
+
+    // 获取主题列表
+    Route::get('themes', [ThemeController::class, 'index']);
+
+    // 获取场景列表
+    Route::get('scenes', [SceneController::class, 'index']);
+
+    // 铃声
+    Route::get('ringtones', [RingtoneController::class, 'index']);
+
     // 下边需要授权才可以
     Route::middleware(['auth:api'])->group(function () {
         // 小程序授权管理后台登录
@@ -165,17 +177,5 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
         // 获取睡眠数据
         Route::get('sleep_data', [SleepDataController::class, 'index']);
-
-        // 获取每日一句
-        Route::get('daily_sentence', [DailySentenceController::class, 'detail']);
-
-        // 获取主题列表
-        Route::get('themes', [ThemeController::class, 'index']);
-
-        // 获取场景列表
-        Route::get('scenes', [SceneController::class, 'index']);
-
-        // 铃声
-        Route::get('ringtones', [RingtoneController::class, 'index']);
     });
 });
