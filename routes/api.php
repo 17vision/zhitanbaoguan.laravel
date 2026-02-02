@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\SleepDataController;
 use App\Http\Controllers\Api\DailySentenceController;
 use App\Http\Controllers\Api\RingtoneController;
 use App\Http\Controllers\Api\SceneController;
+use App\Http\Controllers\Api\SceneStatisticController;
 use App\Http\Controllers\Api\ThemeController;
 
 /*
@@ -177,5 +178,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
         // 获取睡眠数据
         Route::get('sleep_data', [SleepDataController::class, 'index']);
+
+        // 场景数据统计
+        Route::post('scene_statistics', [SceneStatisticController::class, 'store']);
     });
 });
