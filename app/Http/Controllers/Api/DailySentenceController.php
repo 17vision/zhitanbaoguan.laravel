@@ -12,19 +12,25 @@ class DailySentenceController extends Controller
     public function detail(Request $request)
     {
         $request->validate([
-            'date' => 'filled|date'
-        ],[],[
-            'date' => '日期'
+            'date' => 'required_without:begin_date|date',
+            'begin_date' => 'required_without:date|date',
+            'end_date' => 'required_without:date|date',
+        ], [], [
+            'date' => '日期',
+            'begin_date' => '开始日期',
+            'end_date' => '结束日期',
         ]);
 
         $date = $request->input('date');
+        $begin_date = $request->input('begin_date');
+        $end_date = $request->input('end_date');
 
-        if (!$date) {
-            $date = Carbon::now()->toDateString();
+        $query = DailySentence::query();
+        if ($date) {
+            $dailySentences = $query->where('date', $date)->get();
+        } else {
+            $dailySentences = $query->whereBetween('date', [$begin_date, $end_date])->get();
         }
-
-        $dailySentence = DailySentence::query()->where('date', $date)->first();
-
-        return response()->json($dailySentence);
+        return response()->json($dailySentences);
     }
 }
