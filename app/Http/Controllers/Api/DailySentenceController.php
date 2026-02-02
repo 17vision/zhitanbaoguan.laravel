@@ -14,7 +14,7 @@ class DailySentenceController extends Controller
         $request->validate([
             'date' => 'required_without:begin_date|date',
             'begin_date' => 'required_without:date|date',
-            'end_date' => 'required_without:date|date',
+            'end_date' => 'required_without:date|date|after:begin_date',
         ], [], [
             'date' => '日期',
             'begin_date' => '开始日期',
