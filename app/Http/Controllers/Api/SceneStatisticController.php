@@ -29,7 +29,7 @@ class SceneStatisticController extends Controller
 
         $sceneStatistic = SceneStatistic::create($data);
 
-        $dailySentences = DailySentence::query()->limit(10)->select(['id', 'date', 'text', 'auth'])->get()->toArray();
+        $dailySentences = DailySentence::query()->limit(10)->select(['id', 'date', 'text', 'author'])->get()->toArray();
 
         if (!empty($dailySentences)) {
             $dailySentence = fake()->randomElement($dailySentences);
