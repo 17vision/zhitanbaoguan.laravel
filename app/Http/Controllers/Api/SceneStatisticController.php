@@ -35,7 +35,9 @@ class SceneStatisticController extends Controller
             $dailySentence = fake()->randomElement($dailySentences);
         }
 
-        $day_count = SceneStatistic::query()->where('user_id', $user->id)->where('type', $data['type'])->selectRaw("Date(created_at) as date")->groupBy('date')->count();
+        $dates = SceneStatistic::query()->where('user_id', $user->id)->where('type', $data['type'])->selectRaw("Date(created_at) as date")->groupBy('date')->pluck('date');
+
+        $day_count = $dates->count();
 
         return response()->json(['dailySentence' => $dailySentence ?? null, 'day_count' => $day_count, 'type' => $sceneStatistic['type'], 'duration' => $sceneStatistic['duration']]);
     }
