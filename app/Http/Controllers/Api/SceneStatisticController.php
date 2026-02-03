@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use App\Models\DailySentence;
 use App\Models\SceneStatistic;
 use Illuminate\Http\Request;
@@ -35,9 +36,7 @@ class SceneStatisticController extends Controller
             $dailySentence = fake()->randomElement($dailySentences);
         }
 
-        $dates = SceneStatistic::query()->where('user_id', $user->id)->where('type', $data['type'])->selectRaw("Date(created_at) as date")->groupBy('date')->pluck('date');
-
-        $day_count = $dates->count();
+        $day_count = SceneStatistic::query()->where('user_id', $user->id)->where('type', $data['type'])->distinct()->count(DB::raw('DATE(created_at)'));
 
         return response()->json(['dailySentence' => $dailySentence ?? null, 'day_count' => $day_count, 'type' => $sceneStatistic['type'], 'duration' => $sceneStatistic['duration']]);
     }
