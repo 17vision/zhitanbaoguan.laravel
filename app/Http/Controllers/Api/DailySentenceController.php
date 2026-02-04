@@ -27,7 +27,19 @@ class DailySentenceController extends Controller
 
         $query = DailySentence::query();
         if ($date) {
-            $dailySentences = $query->where('date', $date)->get();
+            $dailySentence = $query->where('date', $date)->first();
+            if (!$dailySentence) {
+                $dailySentence = $query->whereNull('date')->first();
+                if ($dailySentence) {
+                    $dailySentence->update(['date' => $date]);
+                }
+            }
+
+            if ($dailySentence) {
+                $dailySentences = [$dailySentence];
+            } else {
+                $dailySentences = [];
+            }
         } else {
             $dailySentences = $query->whereBetween('date', [$begin_date, $end_date])->get();
         }
