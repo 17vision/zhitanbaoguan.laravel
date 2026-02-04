@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('introduction')->comment('介绍');
             $table->string('image')->nullable()->comment('图片地址');
             $table->string('video')->nullable()->comment('视频地址');
+            $table->string('audio')->nullable()->comment('音频地址');
             $table->string('tag')->nullable()->comment('标签');
             $table->unsignedInteger('like_nums')->default(0)->comment('喜欢数目');
             $table->unsignedInteger('collect_nums')->default(0)->comment('收藏数目');

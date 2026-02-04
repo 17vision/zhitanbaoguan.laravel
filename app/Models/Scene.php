@@ -8,7 +8,7 @@ class Scene extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'tag', 'like_nums', 'collect_nums', 'status'];
+    protected $fillable = ['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'audio', 'tag', 'like_nums', 'collect_nums', 'status'];
 
     protected $appends = ['type_str', 'status_str'];
 
@@ -53,6 +53,15 @@ class Scene extends Model
         if (isset($this->attributes['video'])) {
             $video = $this->attributes['video'];
             return storageUrl($video);
+        }
+        return '';
+    }
+
+    public function getAudioAttribute()
+    {
+        if (isset($this->attributes['audio'])) {
+            $audio = $this->attributes['audio'];
+            return storageUrl($audio);
         }
         return '';
     }

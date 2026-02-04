@@ -56,6 +56,7 @@ class SceneController extends Controller
             'introduction' => 'required|string|max:255',
             'image' => 'filled|string|max:255',
             'video' => 'filled|string|max:255',
+            'audio' => 'filled|string|max:255',
             'tag' => 'filled|string|max:64',
             'status' => 'filled|in:1,2'
         ], [], [
@@ -65,12 +66,13 @@ class SceneController extends Controller
             'introduction' => '介绍',
             'image' => '图片地址',
             'video' => '视频地址',
+            'audio' => '音频地址',
             'tag' => '标签',
             'status' => '状态',
         ]);
 
 
-        $data = $request->only(['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'tag', 'status']);
+        $data = $request->only(['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'audio', 'tag', 'status']);
 
         $typeArr = explode(',', $data['type']);
         foreach ($typeArr as $type) {
@@ -109,6 +111,7 @@ class SceneController extends Controller
             'introduction' => 'filled|string|max:255',
             'image' => 'filled|string|max:255',
             'video' => 'filled|string|max:255',
+            'audio' => 'filled|string|max:255',
             'tag' => 'filled|string|max:64',
             'status' => 'filled|in:1,2'
         ], [], [
@@ -119,13 +122,14 @@ class SceneController extends Controller
             'introduction' => '介绍',
             'image' => '图片地址',
             'video' => '视频地址',
+            'audio' => '音频地址',
             'tag' => '标签',
             'status' => '状态',
         ]);
 
         $id = $request->input('id');
 
-        $data = $request->only(['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'tag', 'status']);
+        $data = $request->only(['type', 'scene_category_id', 'name', 'introduction', 'image', 'video', 'audio', 'tag', 'status']);
 
         if (isset($data['type'])) {
             $typeArr = explode(',', $data['type']);
