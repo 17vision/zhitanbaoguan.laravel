@@ -61,6 +61,10 @@ class ThemeController extends Controller
 
         $data['path'] = reverseStorageUrl($data['path']);
 
+        if(isset($data['audio'])) {
+            $data['audio'] = reverseStorageUrl($data['audio']);;
+        }
+
         $theme = Theme::create($data);
 
         return response()->json($theme);
@@ -102,6 +106,10 @@ class ThemeController extends Controller
         if (isset($data['path']) && $data['path']) {
             // Storage::disk('file')->delete(reverseStorageUrl($theme['path']));
             $data['path'] = reverseStorageUrl($data['path']);
+        }
+
+        if(isset($data['audio'])) {
+            $data['audio'] = reverseStorageUrl($data['audio']);;
         }
 
         $media = $theme->update($data);
