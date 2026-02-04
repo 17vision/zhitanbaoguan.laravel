@@ -45,17 +45,19 @@ class ThemeController extends Controller
             'name' => 'required|string|max:64',
             'path' => 'required|string',
             'introduction' => 'filled|string|max:255',
+            'audio' => 'filled|string|max:255',
             'color' => 'filled|string',
             'status' => 'filled|in:1,2',
         ], [], [
             'name' => '名称',
             'path' => '地址',
             'introduction' => '介绍',
+            'audio' => '音频',
             'color' => '色值',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['name', 'introduction', 'path', 'color', 'status']);
+        $data = $request->only(['name', 'introduction', 'path', 'audio', 'color', 'status']);
 
         $data['path'] = reverseStorageUrl($data['path']);
 
@@ -71,6 +73,7 @@ class ThemeController extends Controller
             'name' => 'filled|string',
             'introduction' => 'filled|string',
             'path' => 'filled|string',
+            'audio' => 'filled|string',
             'color' => 'filled|string',
             'status' => 'filled|in:1,2',
         ], [], [
@@ -78,11 +81,12 @@ class ThemeController extends Controller
             'name' => '名称',
             'introduction' => '介绍',
             'path' => '地址',
+            'audio' => '音频',
             'color' => '色值',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['name', 'introduction','path', 'color', 'status']);
+        $data = $request->only(['name', 'introduction', 'path', 'audio', 'color', 'status']);
 
         $id = $request->input('id');
 
@@ -123,7 +127,7 @@ class ThemeController extends Controller
             if (!$theme) {
                 continue;
             }
-            
+
             if ($theme['path']) {
                 Storage::disk('file')->delete(reverseStorageUrl($theme['path']));
             }

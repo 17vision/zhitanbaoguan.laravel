@@ -8,13 +8,22 @@ class Theme extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'introduction', 'path', 'color', 'like_nums', 'unlike_nums', 'status'];
+    protected $fillable = ['name', 'introduction', 'path', 'color', 'audio', 'like_nums', 'unlike_nums', 'status'];
     protected $appends = ['status_str'];
 
     public function getPathAttribute()
     {
         if (isset($this->attributes['path'])) {
             $path = $this->attributes['path'];
+            return storageUrl($path);
+        }
+        return '';
+    }
+
+    public function getAudioAttribute()
+    {
+        if (isset($this->attributes['audio'])) {
+            $path = $this->attributes['audio'];
             return storageUrl($path);
         }
         return '';
