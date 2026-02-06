@@ -46,7 +46,7 @@ class UserController extends Controller
 
             $url = "https://api.weixin.qq.com/sns/jscode2session?appid={$appid}&secret={$secret}&js_code={$code}&grant_type=authorization_code";
 
-            $result = curl($url, true, '');
+            $result = curl($url, true, false, true);
 
             $result = json_decode($result, true);
 
@@ -108,6 +108,70 @@ class UserController extends Controller
 
             $user = User::create($data);
         }
+        return response()->json($this->auth($user['id']));
+    }
+
+    // 微信 app 登录
+    public function wxappLogin(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string'
+        ], [], [
+            'code' => 'code'
+        ]);
+
+        $code = $request->input('code');
+
+        $appid = config('auth.wxopen.client_id');
+
+        $secert = config('auth.wxopen.client_secret');
+
+        if (!$appid || !$secert) {
+            return response()->json(['message' => '缺少配置，请联系管理员'], 403);
+        }
+
+        $url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=$appid&secret=$secert&code=$code&grant_type=authorization_code";
+
+        $result = curl($url, false, false, true);
+
+        $result = json_decode($result, true);
+
+        if (isset($result['errcode']) && $result['errcode']) {
+            return response()->json(['message' => $result['errcode']])->setStatusCode(403);
+        }
+
+        $openid = $result['openid'];
+
+        $unionid = $result['unionid'];
+
+        $access_token = $result['access_token'];
+
+        $user = User::query()->where('wx_unionid', $unionid)->first();
+
+        if ($user) {
+            return response()->json($this->auth($user['id']));
+        }
+
+        $url = "https://api.weixin.qq.com/sns/userinfo?access_token=$access_token&openid=$openid";
+
+        $result = curl($url, false, false, true);
+
+        $result = json_decode($result, true);
+
+        if (isset($result['errcode']) && $result['errcode']) {
+            return response()->json(['message' => $result['errcode']])->setStatusCode(403);
+        }
+
+        $data = [
+            'wxapp_openid' => $openid,
+            'wx_unionid' => $unionid,
+            'gender' => $result['sex'],
+            'nickname' => $result['nickname'],
+            'avatar' => $result['headimgurl']
+        ];
+
+        $user = User::create($data);
+
         return response()->json($this->auth($user['id']));
     }
 
@@ -236,11 +300,11 @@ class UserController extends Controller
         $start = $type == 'week' ? $end->copy()->addDays(-6) : $end->copy()->addDays(-29);
 
         $userDailySteps = UserDailyStep::query()->where('user_id', $user->id)
-                                ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
-                                ->groupBy(['user_id', 'date'])
-                                ->selectRaw('user_id,date,SUM(steps) AS steps,SUM(calories) AS calories,SUM(distance) AS distance')
-                                ->get()
-                                ->toArray();
+            ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
+            ->groupBy(['user_id', 'date'])
+            ->selectRaw('user_id,date,SUM(steps) AS steps,SUM(calories) AS calories,SUM(distance) AS distance')
+            ->get()
+            ->toArray();
 
         $userDailySteps = Arr::keyBy($userDailySteps, 'date');
 

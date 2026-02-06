@@ -51,6 +51,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
     // 小程序登录
     Route::post('wxmini-login', [UserController::class, 'wxminiLogin']);
 
+    // app 微信授权登录
+    Route::post('wxapp-login', [UserController::class, 'wxappLogin']);
+
     // 配置
     Route::get('config', [ConfigController::class, 'show']);
 });
