@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\UserBodyMetric;
 use App\Models\UserDailyStep;
@@ -136,6 +137,8 @@ class UserController extends Controller
 
         $result = json_decode($result, true);
 
+        Log::info('wxapp-login-1', $result);
+
         if (isset($result['errcode']) && $result['errcode']) {
             return response()->json(['message' => $result['errcode']])->setStatusCode(403);
         }
@@ -157,6 +160,8 @@ class UserController extends Controller
         $result = curl($url, false, false, true);
 
         $result = json_decode($result, true);
+
+        Log::info('wxapp-login-2', $result);
 
         if (isset($result['errcode']) && $result['errcode']) {
             return response()->json(['message' => $result['errcode']])->setStatusCode(403);
