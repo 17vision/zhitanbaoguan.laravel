@@ -54,34 +54,46 @@ class UserController extends Controller
                 return response()->json(['errors' => ['message' => $result['errcode']]])->setStatusCode(403);
             }
 
-            if (!isset($result['openid'])) {
-                return response()->json(['errors' => ['message' => '缺少 openid']])->setStatusCode(403);
+            if (!isset($result['unionid'])) {
+                return response()->json(['errors' => ['message' => '缺少 unionid']])->setStatusCode(403);
             }
 
             $session_key = $result['session_key'];
 
-            $user = User::where('wxmini_openid', $result['openid'])->first();
+            $user = User::where('wx_unionid', $result['unionid'])->orWhere('wxmini_openid', $result['openid'])->first();
 
             if (!$user) {
                 $key = self::WXMINI_SESSION_KEY . '_' . $result['openid'];
 
+                $cacheData = [
+                    'session_key' => $session_key,
+                    'openid' => $result['openid'],
+                    'unionid' => $result['unionid'] ?? ''
+                ];
+
                 $expiredAt = now()->addMinutes(5);
 
-                Cache::put($key, $session_key, $expiredAt);
+                Cache::put($key, $cacheData, $expiredAt);
 
                 unset($result['session_key']);
 
                 return response()->json($result);
             }
 
-            $user->update(['wxmini_session_key' => $session_key]);
+            $data = ['wxmini_session_key' => $session_key];
+
+            if (!$user['wx_unionid'] && isset($result['unionid']) && $result['unionid']) {
+                $data['wx_unionid'] = $result['unionid'];
+            }
+
+            $user->update($data);
         } else {
             $openid = $request->openid;
             $nickname = $request->nickname;
 
             $key = self::WXMINI_SESSION_KEY . '_' . $openid;
-            $session_key = Cache::get($key);
-            if (!$session_key) {
+            $cacheData = Cache::get($key);
+            if (!$cacheData || !$cacheData['session_key'] || !$cacheData['openid'] || !$cacheData['unionid']) {
                 return response()->json(['message' => '请重新操作'], 403);
             }
             Cache::forget($key);
@@ -89,7 +101,8 @@ class UserController extends Controller
             $data = [
                 'wxmini_openid' => $openid,
                 'nickname' => $nickname,
-                'wxmini_session_key' => $session_key,
+                'wxmini_session_key' => $cacheData['session_key'],
+                'wx_unionid' => $cacheData['unionid'],
                 'register_ip' => $request->getClientIp()
             ];
 
