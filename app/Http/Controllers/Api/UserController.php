@@ -131,6 +131,8 @@ class UserController extends Controller
             return response()->json(['message' => '缺少配置，请联系管理员'], 403);
         }
 
+        Log::info('wxapp-login-0', ['appid' => $appid, 'secert' => $secert, 'code' => $code]);
+
         $url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=$appid&secret=$secert&code=$code&grant_type=authorization_code";
 
         $result = curl($url, false, false, true);
@@ -152,6 +154,9 @@ class UserController extends Controller
         $user = User::query()->where('wx_unionid', $unionid)->first();
 
         if ($user) {
+            if (!$user['wxapp_openid']) {
+                $user->update(['wxapp_openid' => $openid]);
+            }
             return response()->json($this->auth($user['id']));
         }
 
@@ -170,10 +175,13 @@ class UserController extends Controller
         $data = [
             'wxapp_openid' => $openid,
             'wx_unionid' => $unionid,
-            'gender' => $result['sex'],
             'nickname' => $result['nickname'],
             'avatar' => $result['headimgurl']
         ];
+
+        if ($result['sex']) {
+            $data['gender'] = $result['sex'];
+        }
 
         $user = User::create($data);
 
