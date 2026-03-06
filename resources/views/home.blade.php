@@ -33,6 +33,10 @@
                             <a id="android" target="_blank"  href="{{ asset('static/apk/android-app.apk?t=1') }}">
                                 <img src="{{ asset('static/image/home/android-btn.png') }}" alt="观息空间小程序">
                             </a>
+
+                            <a id="ios" target="_blank"  href="{{ asset('https://apps.apple.com/us/app/%E8%A7%82%E6%81%AF%E7%A9%BA%E9%97%B4/id6758660377') }}">
+                                <img src="{{ asset('static/image/home/ios-btn.png') }}" alt="观息空间小程序">
+                            </a>
                         </div>
                     </div>
                 </div>
