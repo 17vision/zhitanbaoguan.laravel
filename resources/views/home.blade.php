@@ -30,7 +30,7 @@
 
 
                         <div class="down-wrap">
-                            <a id="android" onclick="showAlert('开发中，请稍后')">
+                            <a id="android" target="_blank"  href="{{ asset('static/apk/android-app.apk?t=1') }}">
                                 <img src="{{ asset('static/image/home/android-btn.png') }}" alt="观息空间小程序">
                             </a>
                         </div>

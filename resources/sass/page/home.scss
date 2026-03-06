@@ -13,7 +13,7 @@
 
     .header {
         margin-top: 50px;
-    
+
         .logo {
             width: 88px;
             height: 88px;
@@ -188,6 +188,72 @@
     }
 }
 
+
+@media (max-width: 1399.98px) {
+    .phone-img {
+        display: flex;
+        width: 400px !important;
+    }
+}
+
+@media (max-width: 1199.98px) {
+    .container-app {
+        .content {
+            .title {
+                font-size: 30px;
+            }
+
+            .text {
+                font-size: 15px;
+            }
+
+            .span {
+                font-size: 14px;
+                line-height: 22px;
+            }
+
+            .qr-code {
+                margin-top: 20px;
+
+                .qr-code-item {
+                    width: 160px;
+
+                    img {
+                        width: 160px;
+                    }
+                }
+
+                .down-wrap {
+                    a {
+                        img {
+                            width: 90px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .phone-img {
+        display: flex;
+        width: 350px !important;
+    }
+
+    .title-1 {
+        font-size: 24px !important;
+
+        &:first-child {
+            margin-top: 30px !important;
+        }
+    }
+
+    .title-2 {
+        font-size: 14px !important;
+        margin-top: 20px !important;
+    }
+}
+
+
 @media (max-width: 991.98px) {
     .container-app {
         margin-top: 12px;
@@ -253,7 +319,7 @@
 
     .phone-img {
         display: flex;
-        width: 440px !important;
+        width: 400px !important;
         margin-left: auto;
         margin-right: auto;
     }
@@ -328,64 +394,4 @@
         font-size: 12px !important;
         margin-top: 20px !important;
     }
-}
-
-@media (max-width: 1199.98px) {
-      .container-app {
-        .content {
-            .title {
-                font-size: 30px;
-            }
-
-            .text {
-                font-size: 15px;
-            }
-
-            .span {
-                font-size: 14px;
-                line-height: 22px;
-            }
-
-            .qr-code {
-                margin-top: 20px;
-
-                .qr-code-item {
-                    width: 160px;
-
-                    img {
-                        width: 160px;
-                    }
-                }
-
-                .down-wrap {
-                    a {
-                        img {
-                            width: 90px;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    .phone-img {
-        display: flex;
-        width: 400px !important;
-    }
-
-    .title-1 {
-        font-size: 24px !important;
-
-        &:first-child {
-            margin-top: 30px !important;
-        }
-    }
-
-    .title-2 {
-        font-size: 14px !important;
-        margin-top: 20px !important;
-    }
-}
-
-@media (max-width: 1399.98px) {
 }
