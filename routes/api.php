@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\UserHealthController;
 use App\Http\Controllers\Api\BrainMachineDataController;
 use App\Http\Controllers\Api\SleepDataController;
 use App\Http\Controllers\Api\DailySentenceController;
+use App\Http\Controllers\Api\PayController;
 use App\Http\Controllers\Api\RingtoneController;
 use App\Http\Controllers\Api\SceneController;
 use App\Http\Controllers\Api\SceneStatisticController;
@@ -184,5 +185,14 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
         // 场景数据统计
         Route::post('scene_statistics', [SceneStatisticController::class, 'store']);
+
+        // 微信支付
+        Route::post('pay/payment', [PayController::class, 'payment']);
+
+        Route::post('pay/payment/status', [PayController::class, 'paymentStatus']);
     });
 });
+
+
+// 微信支付通知
+Route::post('pay/wechat-notify', [PayController::class, 'wechatNotify']);

@@ -86,6 +86,20 @@ return [
             'days' => 300,
         ],
 
+        'pay' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/pay/laravel.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 300,
+        ],
+
+        'pay-notify' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/pay-notify/laravel.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 300,
+        ],
+
         // 短信
         'easysms' => [
             'driver' => 'daily',
@@ -117,7 +131,7 @@ return [
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
                 'port' => env('PAPERTRAIL_PORT'),
-                'connectionString' => 'tls://'.env('PAPERTRAIL_URL').':'.env('PAPERTRAIL_PORT'),
+                'connectionString' => 'tls://' . env('PAPERTRAIL_URL') . ':' . env('PAPERTRAIL_PORT'),
             ],
         ],
 
