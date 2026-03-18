@@ -37,7 +37,7 @@ class WorkflowController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'id' => 'required|integer|min:1|exists:workflows,id',,
+            'id' => 'required|integer|min:1|exists:workflows,id',
             'price' => 'nullable|numeric|min:0.01|max:999999.99',
         ], [], [
             'id' => '课程 id',
