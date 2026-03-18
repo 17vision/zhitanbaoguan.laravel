@@ -911,6 +911,157 @@ class PermissionSeeder extends Seeder
                         ]
                     ]
                 ]
+            ],
+            [
+                'name'       => 'goods',
+                'path'       => '/goods',
+                'icon'       => 'goods',
+                'title'      => '商品管理',
+                'breadcrumb' => 1,
+                'hidden'     => 0,
+                'keep_alive'    => 0,
+                'redirect'   => '',
+                'active_path' => '',
+                'child' => [
+                    [
+                        'name'       => 'workflows',
+                        'path'       => 'workflows',
+                        'icon'       => '',
+                        'title'      => '课程管理',
+                        'breadcrumb' => 1,
+                        'hidden'     => 0,
+                        'keep_alive'    => 0,
+                        'redirect'   => '',
+                        'active_path' => '',
+                        'child' => [
+                            [
+                                'name'       => 'workflows.index',
+                                'path'       => 'index',
+                                'icon'       => '',
+                                'title'      => '列表',
+                                'breadcrumb' => 1,
+                                'hidden'     => 1,
+                                'keep_alive'    => 0,
+                                'redirect'   => '',
+                                'active_path' => '/goods/workflows',
+                            ],
+                            [
+                                'name'       => 'workflows.detail',
+                                'path'       => 'detail',
+                                'icon'       => '',
+                                'title'      => '详情',
+                                'breadcrumb' => 1,
+                                'hidden'     => 1,
+                                'keep_alive'    => 0,
+                                'redirect'   => '',
+                                'active_path' => '/goods/workflows',
+                            ],
+                            [
+                                'name'       => 'workflows.update',
+                                'path'       => 'update',
+                                'icon'       => '',
+                                'title'      => '编辑',
+                                'breadcrumb' => 1,
+                                'hidden'     => 1,
+                                'keep_alive'    => 0,
+                                'redirect'   => '',
+                                'active_path' => '/goods/workflows',
+                            ]
+                        ]
+                    ],
+                    [
+                        'name'       => 'orders',
+                        'path'       => 'orders',
+                        'icon'       => '',
+                        'title'      => '订单管理',
+                        'breadcrumb' => 1,
+                        'hidden'     => 0,
+                        'keep_alive'    => 0,
+                        'redirect'   => '',
+                        'active_path' => '',
+                        'child' => [
+                            [
+                                'name'       => 'orders.index',
+                                'path'       => 'index',
+                                'icon'       => '',
+                                'title'      => '列表',
+                                'breadcrumb' => 1,
+                                'hidden'     => 1,
+                                'keep_alive'    => 0,
+                                'redirect'   => '',
+                                'active_path' => '/goods/orders',
+                            ],
+                            [
+                                'name'       => 'orders.detail',
+                                'path'       => 'detail',
+                                'icon'       => '',
+                                'title'      => '详情',
+                                'breadcrumb' => 1,
+                                'hidden'     => 1,
+                                'keep_alive'    => 0,
+                                'redirect'   => '',
+                                'active_path' => '/goods/orders',
+                            ],
+                            [
+                                'name'       => 'orders.update',
+                                'path'       => 'update',
+                                'icon'       => '',
+                                'title'      => '编辑',
+                                'breadcrumb' => 1,
+                                'hidden'     => 1,
+                                'keep_alive'    => 0,
+                                'redirect'   => '',
+                                'active_path' => '/goods/orders',
+                            ]
+                        ]
+                    ],
+                    [
+                        'name'       => 'refunds',
+                        'path'       => 'refunds',
+                        'icon'       => '',
+                        'title'      => '退款管理',
+                        'breadcrumb' => 1,
+                        'hidden'     => 0,
+                        'keep_alive'    => 0,
+                        'redirect'   => '',
+                        'active_path' => '',
+                        'child' => [
+                            [
+                                'name'       => 'refunds.index',
+                                'path'       => 'index',
+                                'icon'       => '',
+                                'title'      => '列表',
+                                'breadcrumb' => 1,
+                                'hidden'     => 1,
+                                'keep_alive'    => 0,
+                                'redirect'   => '',
+                                'active_path' => '/goods/refunds',
+                            ],
+                            [
+                                'name'       => 'refunds.detail',
+                                'path'       => 'detail',
+                                'icon'       => '',
+                                'title'      => '详情',
+                                'breadcrumb' => 1,
+                                'hidden'     => 1,
+                                'keep_alive'    => 0,
+                                'redirect'   => '',
+                                'active_path' => '/goods/refunds',
+                            ],
+                            [
+                                'name'       => 'refunds.update',
+                                'path'       => 'update',
+                                'icon'       => '',
+                                'title'      => '编辑',
+                                'breadcrumb' => 1,
+                                'hidden'     => 1,
+                                'keep_alive'    => 0,
+                                'redirect'   => '',
+                                'active_path' => '/goods/refunds',
+                            ]
+                        ]
+                    ],
+                ]
             ]
         ];
 
