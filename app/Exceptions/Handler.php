@@ -44,5 +44,25 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
+        // 添加这个：强制在 CLI 输出详细错误
+        $this->renderable(function (Throwable $e, $request) {
+            if (app()->runningInConsole()) {
+                throw $e; // 重新抛出，让 PHP 打印完整堆栈
+            }
+        });
+    }
+
+    // 关键：覆盖 renderForConsole 方法
+    public function renderForConsole($output, Throwable $e): void
+    {
+        // 打印完整堆栈跟踪
+        $output->writeln('<error>' . get_class($e) . ': ' . $e->getMessage() . '</error>');
+        $output->writeln('');
+        $output->writeln('<comment>Stack trace:</comment>');
+        $output->writeln($e->getTraceAsString());
+
+        // 或者直接用 PHP 默认的异常处理
+        throw $e;
     }
 }

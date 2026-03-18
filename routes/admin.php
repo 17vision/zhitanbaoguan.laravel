@@ -29,6 +29,7 @@ use App\Http\Controllers\Admin\RingtoneController;
 use App\Http\Controllers\Admin\ThemeController;
 use App\Http\Controllers\Admin\SceneController;
 use App\Http\Controllers\Admin\SceneCategoryController;
+use App\Http\Controllers\Admin\WorkflowController;
 
 Route::get('reset', function (Request $request) {
     defined('STDIN') or define('STDIN', fopen('php://stdin', 'r'));
@@ -304,14 +305,28 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
             });
         });
 
+        // 商品管理
+        Route::group(['middleware' => 'permission:goods'], function () {
+
+            // 课程管理(工作流)
+            Route::group(['middleware' => 'permission:workflows'], function () {
+                
+                Route::get('workflows', [WorkflowController::class, 'index'])->middleware('permission:workflows.index');
+
+                Route::get('workflows/{id}', [WorkflowController::class, 'show'])->where('id', '^[1-9]\d*$')->middleware('permission:workflows.detail');
+
+                Route::put('workflows', [WorkflowController::class, 'update'])->middleware('permission:workflows.update');
+            });
+        });
+
         // todo 课程分析，应该放在对应的权限里
-        
+
         // 课程分析
         Route::get('datastatistics/courseanalysis/basic', [CourseanalysisController::class, 'basic']);
 
         Route::get('datastatistics/courseanalysis/view', [CourseanalysisController::class, 'view']);
 
-        
+
         // 作业分析
         Route::get('datastatistics/homeworkanalysis/basic', [HomeworkanalysisController::class, 'basic']);
 
