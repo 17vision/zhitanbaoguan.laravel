@@ -37,7 +37,7 @@ class WorkflowController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'id' => 'required|integer|min:1|exists:workflows,id',
+            'id' => 'required|integer|min:1',
             'price' => 'nullable|numeric|min:0.01|max:999999.99',
         ], [], [
             'id' => '课程 id',
@@ -54,7 +54,14 @@ class WorkflowController extends Controller
             ], 403);
         }
 
-        Workflow::query()->where('id', $id)->update($data);
+        $workflow = Workflow::query()->where('id', $id)->first();
+        if (!$workflow) {
+            return response()->json([
+                'message' => '工作流不存在'
+            ], 403);
+        }
+        
+        $workflow->update($data);
 
         return response()->json([
             'message' => '更新成功'
