@@ -62,6 +62,10 @@ class RefundController extends Controller
         $reason = $request->reason;
 
         $order = Order::query()->where('id', $order_id)->first();
+        if (!$order) {
+            return response()->json(['message' => '订单不存在'], 403);
+        }
+
 
         if ($order->user_refund_status != 1) {
             return response()->json(['message' => '该订单未申请退款'], 403);

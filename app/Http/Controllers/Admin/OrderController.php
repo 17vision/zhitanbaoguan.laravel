@@ -15,7 +15,7 @@ class OrderController extends Controller
     {
         $request->validate([
             'status' => 'filled|in:1,2,3',
-            'order_status' => 'filled|in:1,2,3',
+            'order_status' => 'filled|in:1,2,3,4',
             'limit' => 'filled|integer'
         ], [], [
             'status' => '订单状态',
@@ -69,6 +69,9 @@ class OrderController extends Controller
         $order_id = $request->order_id;
 
         $order = Order::query()->where('id', $order_id)->first();
+        if (!$order) {
+            return response()->json(['message' => '订单不存在'], 403);
+        }
 
         if ($order->refund_status == 1) {
             return response()->json(['message' => '退款中，请稍后'], 403);
