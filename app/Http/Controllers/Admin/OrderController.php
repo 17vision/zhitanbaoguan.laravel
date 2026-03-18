@@ -37,7 +37,7 @@ class OrderController extends Controller
         if ($order_status) {
             $query->where('order_status', $order_status);
         }
-        
+
         $orders = $query->orderByDesc('id')->paginate($limit);
 
         // 对数据进行过滤处理
@@ -117,13 +117,16 @@ class OrderController extends Controller
         $order_id = $request->order_id;
 
         $order = Order::query()->where('id', $order_id)->first();
+        if (!$order) {
+            return response()->json(['message' => '订单不存在'], 403);
+        }
 
         if ($order->status != 2) {
-            return response()->json(['仅支持关闭已支付的订单'], 403);
+            return response()->json(['message' => '仅支持关闭已支付的订单'], 403);
         }
 
         if ($order->order_status != 3) {
-            return response()->json(['仅支持关闭体验中的订单'], 403);
+            return response()->json(['message' => '仅支持关闭体验中的订单'], 403);
         }
 
         $result = $order->update([
