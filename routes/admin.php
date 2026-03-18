@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\BrainMachineDataController;
 use App\Http\Controllers\Admin\DailySentenceController;
 use App\Http\Controllers\Admin\HomeworkController;
 use App\Http\Controllers\Admin\HomeworkGroupController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\UserHomeworkController;
 use App\Http\Controllers\Admin\TutorController;
 use App\Http\Controllers\Admin\ResourceController;
@@ -310,12 +311,30 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
 
             // 课程管理(工作流)
             Route::group(['middleware' => 'permission:workflows'], function () {
-                
+
                 Route::get('workflows', [WorkflowController::class, 'index'])->middleware('permission:workflows.index');
 
                 Route::get('workflows/{id}', [WorkflowController::class, 'show'])->where('id', '^[1-9]\d*$')->middleware('permission:workflows.detail');
 
                 Route::put('workflows', [WorkflowController::class, 'update'])->middleware('permission:workflows.update');
+            });
+
+            // 获取订单
+            Route::group(['middleware' => 'permission:orders'], function () {
+                Route::get('orders', [OrderController::class, 'index'])->middleware('permission:orders.index');
+
+                // 退款
+                Route::post('orders/refund', [OrderController::class, 'refund'])->middleware('permission:orders.update');
+
+                // 关闭订单
+                Route::post('orders/close', [OrderController::class, 'close'])->middleware('permission:orders.update');
+            });
+
+            // 获取退款申请的订单
+            Route::group(['middleware' => 'permission:refunds'], function () {
+                // Route::get('refunds', [RefundController::class, 'index'])->middleware('permission:refunds.index');
+
+                // Route::post('refunds/reject', [RefundController::class, 'reject'])->middleware('permission:refunds.action');
             });
         });
 

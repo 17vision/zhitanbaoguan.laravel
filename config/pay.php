@@ -49,7 +49,7 @@ $config = [
             'mch_public_cert_path' => storage_path('app/cert/wechat_pay/apiclient_cert.pem'),
             // 「必填」微信回调url
             // 不能有参数，如?号，空格等，否则会无法正确回调
-            'notify_url' =>  asset(env("PAY_WECHAT_NOTIFY_URL", '')),
+            'notify_url' => env("PAY_WECHAT_NOTIFY_URL", ''),
             // 「选填」公众号 的 app_id
             // 可在 mp.weixin.qq.com 设置与开发->基本配置->开发者ID(AppID) 查看
             'mp_app_id' => env("PAY_WECHAT_MP_APP_ID", ''),
