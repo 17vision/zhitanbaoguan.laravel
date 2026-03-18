@@ -12,15 +12,21 @@ class WorkflowController extends Controller
     {
         $request->validate([
             'page' => 'required|integer|min:1',
-            'limit' => 'filled|integer|min:1|max:200'
+            'limit' => 'filled|integer|min:1|max:200',
+            'list_status' => 'filled|in:1,2'
         ], [], [
             'page' => '页码',
-            'limit' => '每页条数'
+            'limit' => '每页条数',
+            'list_status' => '上架状态'
         ]);
 
         $limit = $request->input('limit', 20);
 
         $query = Workflow::query()->where('organization_id', 1)->where('status', 2);
+
+        if ($request->has('list_status')) {
+            $query->where('list_status', $request->input('list_status'));
+        }
 
         $workflows = $query->paginate($limit);
 
@@ -39,14 +45,16 @@ class WorkflowController extends Controller
         $request->validate([
             'id' => 'required|integer|min:1',
             'price' => 'nullable|numeric|min:0.01|max:999999.99',
+            'list_status' => 'filled|in:1,2'
         ], [], [
             'id' => '课程 id',
             'price' => '价格',
+            'list_status' => '上架状态'
         ]);
 
         $id = $request->input('id');
 
-        $data = $request->only(['price']);
+        $data = $request->only(['price', 'list_status']);
 
         if (empty($data)) {
             return response()->json([
