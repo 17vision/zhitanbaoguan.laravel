@@ -335,7 +335,7 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
             Route::group(['middleware' => 'permission:refunds'], function () {
                 Route::get('refunds', [RefundController::class, 'index'])->middleware('permission:refunds.index');
 
-                Route::post('refunds/reject', [RefundController::class, 'reject'])->middleware('permission:refunds.action');
+                Route::post('refunds/reject', [RefundController::class, 'reject'])->middleware('permission:refunds.update');
             });
         });
 
