@@ -192,7 +192,11 @@ class WorkflowController extends Controller
         $user = $request->user();
 
         $order = Order::query()->where('id', $request->id)->where('user_id', $user->id)->first();
-        
+
+        if (!$order) {
+            return response()->json(['message' => '订单不存在'], 403);
+        }
+
         if ($order->status != 1) {
             return response()->json(['message' => '订单状态不允许取消'], 403);
         }
