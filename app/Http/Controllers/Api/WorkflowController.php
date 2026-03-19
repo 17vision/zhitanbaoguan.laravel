@@ -172,7 +172,7 @@ class WorkflowController extends Controller
             $query->where('status', $request['status']);
         }
 
-        $orders = $query->with(['workflow:id,name,price,cover'])
+        $orders = $query->with(['items.workflow:id,name,price,cover'])
             ->select(['id', 'user_id', 'number', 'workflow_id', 'name', 'total_amount', 'pay_amount', 'payment_type', 'paid_at', 'status', 'order_status', 'user_refund_status', 'user_refund_reason', 'refund_reject_reason'])
             ->orderBy('id', 'desc')
             ->simplePaginate($limit);

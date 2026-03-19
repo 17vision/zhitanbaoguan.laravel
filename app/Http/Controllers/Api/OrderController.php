@@ -23,7 +23,7 @@ class OrderController extends Controller
         $device_id = $request->input('device_id');
 
         $order = Order::query()->where('device_id', $device_id)->where('status', 2)->where('order_status', 2)
-                    ->whereNull('refund_status')->with(['workflow:id,name,price,cover', 'user:id,nickname'])->orderBy('id', 'asc')->first();
+                    ->whereNull('refund_status')->with(['items.workflow:id,name,price,cover', 'user:id,nickname'])->orderBy('id', 'asc')->first();
 
         if ($order) {
             $data = [
@@ -38,10 +38,6 @@ class OrderController extends Controller
                 'refund_reject_reason' => $order->refund_reject_reason,
                 'user_id' => $order->user_id,
                 'user_nickname' => $order->user['nickname'],
-                'workflow_id' => $order->workflow_id,
-                'workflow_name' => $order->workflow['name'],
-                'workflow_price' => $order->workflow['price'],
-                'workflow_cover' => $order->workflow['cover'],
             ];
         } else {
             $data = null;
