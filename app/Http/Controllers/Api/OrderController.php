@@ -38,6 +38,7 @@ class OrderController extends Controller
                 'refund_reject_reason' => $order->refund_reject_reason,
                 'user_id' => $order->user_id,
                 'user_nickname' => $order->user['nickname'],
+                'items' => $order['items']
             ];
         } else {
             $data = null;
