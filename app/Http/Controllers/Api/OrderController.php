@@ -70,6 +70,8 @@ class OrderController extends Controller
         Log::channel('unity')->info('updateOrders', ['order_id' => $order_id, 'user_id' => $user_id, 'item_id' => $item_id, 'is_end' => $is_end]);
 
         $order = Order::query()->where('id', $order_id)->first();
+
+        $game_over = false;
         if (!$order) {
             return response()->json(['message' => '订单不存在'], 403);
         }
@@ -105,12 +107,14 @@ class OrderController extends Controller
 
             if ($is_end || OrderItem::query()->where('order_id', $order_id)->whereNull('play_end_at')->count() == 0) {
                 $result = $order->update(['order_status' => 4, 'play_end_at' => $now]);
+
+                $game_over = true;
             }
         } else {
             return response()->json(['message' => '状态错误'], 403);
         }
 
-        Log::channel('unity')->info('updateOrders', ['order_id' => $order_id, 'user_id' => $user_id, 'result' => $result]);
+        Log::channel('unity')->info('updateOrders', ['order_id' => $order_id, 'user_id' => $user_id, 'result' => $result, 'game_over' => $game_over]);
 
         return response()->json(['result' => $result]);
     }
