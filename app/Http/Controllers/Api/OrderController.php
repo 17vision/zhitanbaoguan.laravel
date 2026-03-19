@@ -53,16 +53,19 @@ class OrderController extends Controller
         $request->validate([
             'order_id' => 'required|integer',
             'user_id' => 'required|integer',
-            'item_id' => 'required|integer'
+            'item_id' => 'required|integer',
+            'is_end' => 'filled|boolean'
         ], [], [
             'order_id' => '订单 id',
             'user_id' => '用户 id',
-            'item_id' => '子订单 id'
+            'item_id' => '子订单 id',
+            'is_end' => '是否结束'
         ]);
 
         $order_id = $request->order_id;
         $user_id = $request->user_id;
         $item_id = $request->item_id;
+        $is_end = $request->is_end;
 
         Log::channel('unity')->info('updateOrders', ['order_id' => $order_id, 'user_id' => $user_id, 'sign' => 1]);
 
@@ -100,7 +103,7 @@ class OrderController extends Controller
                 $result = $orderItem->update(['play_end_at' => $now]);
             }
 
-            if (OrderItem::query()->where('order_id', $order_id)->whereNull('play_end_at')->count() == 0) {
+            if ($is_end || OrderItem::query()->where('order_id', $order_id)->whereNull('play_end_at')->count() == 0) {
                 $result = $order->update(['order_status' => 4, 'play_end_at' => $now]);
             }
         } else {
