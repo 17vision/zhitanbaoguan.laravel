@@ -67,7 +67,7 @@ class OrderController extends Controller
         $item_id = $request->item_id;
         $is_end = $request->is_end;
 
-        Log::channel('unity')->info('updateOrders', ['order_id' => $order_id, 'user_id' => $user_id, 'sign' => 1]);
+        Log::channel('unity')->info('updateOrders', ['order_id' => $order_id, 'user_id' => $user_id, 'item_id' => $item_id, 'is_end' => $is_end]);
 
         $order = Order::query()->where('id', $order_id)->first();
         if (!$order) {
