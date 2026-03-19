@@ -12,6 +12,14 @@ use App\Models\Order;
 
 class PayController extends Controller
 {
+    private function getOrderNumber(string $value)
+    {
+        $array = explode('-', $value);
+        if (!empty($array)) {
+            return $array[0];
+        }
+        return 0;
+    }
     public function wechatNotify(Request $request)
     {
         Pay::config(config('pay'));
