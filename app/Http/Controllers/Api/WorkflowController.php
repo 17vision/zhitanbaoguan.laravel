@@ -126,7 +126,7 @@ class WorkflowController extends Controller
         return response()->json(['isPaid' => $isPaid, 'status' => $order->status, 'status_str' => $order->status_str]);
     }
 
-    public function goodsOrders(Request $request)
+    public function orders(Request $request)
     {
         $request->validate([
             'limit' => 'required|integer',
