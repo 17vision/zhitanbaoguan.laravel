@@ -74,6 +74,29 @@ class PayController extends Controller
                 }
             } elseif (isset($res['refund_id'])) {
                 // 退款
+                 // 退款通知 退款通知
+                if ($res['refund_status'] == 'SUCCESS') {
+                    $order = Order::query()->where('payment_number', $res['transaction_id'])->first();
+                    if ($order->refund_status == 2) {
+                        return response()->json(['code' => 'SUCCESS', 'message' => '成功']);
+                    }
+
+                    $data = [
+                        'status' => 3,
+                        'refund_status' => 2,
+                        'refund_at' => $res['success_time'] ?? Carbon::now()->toDateTimeString()
+                    ];
+
+                    if ($order->user_refund_status == 2) {
+                        $data['user_refund_status'] = 3;
+                    }
+
+                    $order->update($data);
+
+                    Log::channel('pay-notify')->info('refundNotify', ['resource' => $res, 'order' => $order]);
+
+                    return response()->json(['code' => 'SUCCESS', 'message' => '成功']);
+                }
             } else {
                 return throw new Exception('行为异常');
             }
