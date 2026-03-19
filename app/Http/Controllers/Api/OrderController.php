@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use App\Models\Workflow;
 use App\Models\Order;
+use App\Models\OrderItem;
 
 class OrderController extends Controller
 {
@@ -75,19 +76,38 @@ class OrderController extends Controller
         }
 
         if ($order->user_id != $user_id) {
-            return response()->json(['message' => '订单错误'], 403);
+            return response()->json(['message' => '订单错误 1'], 403);
         }
 
+        $orderItem = OrderItem::query()->where('id', $item_id)->first();
+        if (!$orderItem) {
+            return response()->json(['message' => '子订单不存在'], 403);
+        }
+
+        if ($orderItem['order_id'] != $order_id) {
+            return response()->json(['message' => '订单错误 2'], 403);
+        }
+
+        $now = now();
         // 从待体验到体验中
         if ($order->order_status == 2) {
             $result = $order->update(['order_status' => 3, 'play_begin_at' => now()]);
+            $orderItem->update(['play_begin_at' => $now]);
         } else if ($order->order_status == 3) {
-            $result = $order->update(['order_status' => 4, 'play_end_at' => now()]);
+            if (!$orderItem['play_begin_at']) {
+                $result = $orderItem->update(['play_begin_at' => $now]);
+            } elseif (!$orderItem['play_end_at']) {
+                $result = $orderItem->update(['play_end_at' => $now]);
+            }
+
+            if (OrderItem::query()->where('order_id', $order_id)->whereNull('play_end_at')->count() == 0) {
+                $result = $order->update(['order_status' => 4, 'play_end_at' => $now]);
+            }
         } else {
             return response()->json(['message' => '状态错误'], 403);
         }
 
-        Log::channel('unity')->info('updateOrders', ['order_id' => $order_id, 'user_id' => $user_id, 'sign' => 2, 'result' => $result]);
+        Log::channel('unity')->info('updateOrders', ['order_id' => $order_id, 'user_id' => $user_id, 'result' => $result]);
 
         return response()->json(['result' => $result]);
     }

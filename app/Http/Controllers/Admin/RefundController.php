@@ -22,7 +22,7 @@ class RefundController extends Controller
 
         $limit = $request->input('limit', 30);
 
-        $query = Order::query()->with(['workflow:id,name,price,cover', 'user:id,nickname,avatar,gender']);
+        $query = Order::query()->with(['items.workflow:id,name,price,cover', 'user:id,nickname,avatar,gender']);
         if ($status) {
             $query->where('user_refund_status', $status);
         }
@@ -31,14 +31,6 @@ class RefundController extends Controller
 
         // 对数据进行过滤处理
         foreach ($orders as &$order) {
-            if ($order['workflow']) {
-                $order['workflow_name'] = $order['workflow']['name'];
-                $order['workflow_price'] = $order['workflow']['price'];
-                $order['workflow_cover'] = $order['workflow']['cover'];
-
-                unset($order['workflow']);
-            }
-
             if ($order['user']) {
                 $order['user_nickname'] = $order['user']['nickname'];
                 $order['user_avatar'] = $order['user']['avatar'];
