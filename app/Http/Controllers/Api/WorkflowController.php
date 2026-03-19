@@ -179,4 +179,25 @@ class WorkflowController extends Controller
 
         return response()->json($orders);
     }
+
+    // 取消订单
+    public function cancel(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|integer'
+        ], [], [
+            'id' => '订单 id'
+        ]);
+
+        $user = $request->user();
+
+        $order = Order::query()->where('id', $request->id)->where('user_id', $user->id)->first();
+        
+        if ($order->status != 1) {
+            return response()->json(['message' => '订单状态不允许取消'], 403);
+        }
+        $order->update(['status' => 0]);
+
+        return response()->json($order);
+    }
 }

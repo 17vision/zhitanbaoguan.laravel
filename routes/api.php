@@ -202,6 +202,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
         // 获取课程订单
         Route::get('workflows/orders', [WorkflowController::class, 'orders']);
+
+        // 取消订单
+        Route::post('workflows/orders/cancel', [WorkflowController::class, 'cancel']);
     });
 
     // 获取课程列表
