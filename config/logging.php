@@ -107,6 +107,13 @@ return [
             'days' => 300,
         ],
 
+        'unity' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/unity/laravel.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 300,
+        ],
+
         // 短信
         'easysms' => [
             'driver' => 'daily',

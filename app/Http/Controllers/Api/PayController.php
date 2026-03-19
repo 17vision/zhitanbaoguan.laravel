@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Exception;
 use Yansongda\Pay\Pay;
+use App\Models\Order;
 
 class PayController extends Controller
 {
@@ -29,7 +30,40 @@ class PayController extends Controller
 
             if (isset($res['attach'])) {
                 // 支付
+                if ($res['attach'] == 'workflows') {
+                    $order_number = $this->getOrderNumber($res['out_trade_no']);
+                    $amount = $res['amount']['payer_total'] / 100;
+                    $payment_number = $res['transaction_id'];
 
+                    if ($res['trade_state'] != 'SUCCESS') {
+                        return throw new Exception('支付失败');
+                    }
+
+                    $order = Order::query()->where('number', $order_number)->first();
+                    if (!$order) {
+                        return throw new Exception('无法获取订单');
+                    }
+
+                    if ($amount != $order->pay_amount) {
+                        return throw new Exception('付款价格和订单价格不一样');
+                    }
+
+                    if ($order->status >= 2) {
+                        return response()->json(['code' => 'SUCCESS', 'message' => '成功']);
+                    }
+
+                    $order->update([
+                        'status' => 2,
+                        'order_status' => 2,
+                        'payment_number' => $payment_number,
+                        'paid_at' => Carbon::now()->toDateTimeString()
+                    ]);
+
+                    Log::channel('pay-notify')->info('payNotify', ['resource' => $res, 'order' => $order]);
+
+                    // return Pay::wechat()->success();
+                    return response()->json(['code' => 'SUCCESS', 'message' => '成功']);
+                }
             } elseif (isset($res['refund_id'])) {
                 // 退款
             } else {

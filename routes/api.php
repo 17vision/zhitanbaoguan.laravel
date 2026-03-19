@@ -25,6 +25,8 @@ use App\Http\Controllers\Api\RingtoneController;
 use App\Http\Controllers\Api\SceneController;
 use App\Http\Controllers\Api\SceneStatisticController;
 use App\Http\Controllers\Api\ThemeController;
+use App\Http\Controllers\Api\WorkflowController;
+use App\Http\Controllers\Api\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -186,13 +188,35 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
         // 场景数据统计
         Route::post('scene_statistics', [SceneStatisticController::class, 'store']);
 
-        // 微信支付
+        // 微信支付(测试)
         Route::post('pay/payment', [PayController::class, 'payment']);
 
         Route::post('pay/payment/status', [PayController::class, 'paymentStatus']);
+
+        // 微信支付(正式)
+        // 获取课程列表
+        Route::get('workflows', [WorkflowController::class, 'index']);
+
+        // 支付
+        Route::post('workflows/payments', [WorkflowController::class, 'payment']);
+
+        // 查看订单状态
+        Route::post('workflows/payments/status', [WorkflowController::class, 'paymentStatus']);
+
+        // 获取课程订单
+        Route::get('workflows/orders', [WorkflowController::class, 'orders']);
     });
 });
 
 
 // 微信支付通知
 Route::post('pay/wechat-notify', [PayController::class, 'wechatNotify']);
+
+// unity 获取已支付的订单
+Route::get('workflows/paid_orders', [OrderController::class, 'paidOrders']);
+
+// 更改状态
+Route::put('workflows/paid_orders', [OrderController::class, 'updateOrders']);
+
+// 发起退款
+Route::post('workflows/paid_orders/refund', [OrderController::class, 'refundOrders']);
