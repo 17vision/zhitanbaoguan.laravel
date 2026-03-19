@@ -51,14 +51,17 @@ class OrderController extends Controller
     {
         $request->validate([
             'order_id' => 'required|integer',
-            'user_id' => 'required|integer'
+            'user_id' => 'required|integer',
+            'item_id' => 'required|integer'
         ], [], [
             'order_id' => '订单 id',
-            'user_id' => '用户 id'
+            'user_id' => '用户 id',
+            'item_id' => '子订单 id'
         ]);
 
         $order_id = $request->order_id;
         $user_id = $request->user_id;
+        $item_id = $request->item_id;
 
         Log::channel('unity')->info('updateOrders', ['order_id' => $order_id, 'user_id' => $user_id, 'sign' => 1]);
 
