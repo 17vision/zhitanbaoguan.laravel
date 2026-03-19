@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\Workflow;
 use App\Models\Order;
+use App\Models\OrderItem;
+use Exception;
 use Yansongda\Pay\Pay;
 
 class WorkflowController extends Controller
@@ -32,40 +36,49 @@ class WorkflowController extends Controller
     public function payment(Request $request)
     {
         $request->validate([
-            'workflow_id' => 'required|integer',
+            'workflow_ids' => 'required|string',
             'device_id' => 'required|string'
         ], [], [
             'id' => '商品 id',
             'device_id' => '设备 id'
         ]);
 
-        $workflow_id = $request->input('workflow_id');
+        $workflow_ids = $request->input('workflow_ids');
 
         $device_id = $request->input('device_id');
 
         $user = $request->user();
 
-        $workflow = Workflow::query()->where('id', $workflow_id)->where('status', 2)->where('list_status', 2)->first();
-        if (!$workflow) {
-            return response()->json(['message' => '课程不存在或已下架'], 403);
-        }
+        $workflow_ids = explode(',', $workflow_ids);
 
-        if (!$workflow['price']) {
-            return response()->json(['message' => '课程未定价,请联系管理员'], 403);
-        }
+        sort($workflow_ids);
 
-        // 先看看是否有用户的订单未使用
+        // 有订单待体验
         if (Order::query()->where('status', 2)->where('order_status', 2)->where('device_id', $device_id)->exists()) {
             return response()->json(['message' => '用户待体验,请等待用户体验完毕再购买', 'type' => 'confirm'], 403);
         }
 
+        // 订单在体验中
         if (Order::query()->where('status', 2)->where('order_status', 3)->where('device_id', $device_id)->exists()) {
             return response()->json(['message' => '用户体验中,请等待用户体验完毕再购买', 'type' => 'confirm'], 403);
         }
 
-        // 先查询是否有待支付的订单
-        $order = Order::query()->where('workflow_id', $workflow_id)->where('device_id', $device_id)->where('status', 1)->first();
+        // 先判断课程 id 是否符合逻辑
+        $workflows = Workflow::query()->whereIn('id', $workflow_ids)->where('status', 2)->where('list_status', 2)->get();
+        if (\count($workflows) != \count($workflow_ids)) {
+            return response()->json(['message' => '课程不存在或已下架'], 403);
+        }
 
+        $total_amount = 0;
+        foreach ($workflows as $workflow) {
+            if (!$workflow['price']) {
+                return response()->json(['message' => '课程未定价,请联系管理员'], 403);
+            }
+            $total_amount += $workflow['price'];
+        }
+
+        // 先查询是否有待支付的订单
+        $order = Order::query()->where('device_id', $device_id)->where('status', 1)->first();
         if ($order && $order->user_id != $user->id) {
             return response()->json(['message' => '前边用户未付款，请稍等', 'type' => 'confirm'], 403);
         }
@@ -73,17 +86,32 @@ class WorkflowController extends Controller
         if ($order) {
             $out_trade_no = $order->number . '-' . rand(1000000, 9999999);
         } else {
-            $order = Order::create([
-                'user_id' => $user->id,
-                'device_id' => $device_id,
-                'workflow_id' => $workflow_id,
-                'name' => $workflow->name,
-                'total_amount' => $workflow->price,
-                'pay_amount' => $workflow->price,
-                'payment_type' => 1,
-                'status' => 1,
-            ]);
-            $out_trade_no = $order->number;
+            DB::beginTransaction();
+            try {
+                $order = Order::create([
+                    'user_id' => $user->id,
+                    'device_id' => $device_id,
+                    'name' => $workflow->name,
+                    'total_amount' => $total_amount,
+                    'pay_amount' => $total_amount,
+                    'payment_type' => 1,
+                    'status' => 1,
+                ]);
+
+                foreach ($workflows as $workflow) {
+                    OrderItem::create([
+                        'order_id' => $order['id'],
+                        'workflow_id' => $workflow['id'],
+                        'pay_amount' => $workflow['price'],
+                    ]);
+                }
+                $out_trade_no = $order->number;
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollBack();
+                Log::channel('error')->error('订单创建失败: ', ['message' => $e->getMessage(), 'line' => $e->getLine(), 'file' => $e->getFile()]);
+                return response()->json(['message' => '创建订单失败'], 403);
+            }
         }
 
         $pay = Pay::wechat(config('pay'))->mini([
@@ -120,8 +148,6 @@ class WorkflowController extends Controller
         if (!$order) {
             return response()->json(['message' => '订单不存在'], 403);
         }
-
-        $isPaid = $order->status == 2 ? true : false;
 
         return response()->json($order);
     }

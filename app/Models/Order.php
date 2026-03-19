@@ -15,7 +15,6 @@ class Order extends Model
         'user_id',
         'device_id',
         'number',
-        'workflow_id',
         'name',
         'total_amount',
         'pay_amount',
@@ -36,20 +35,20 @@ class Order extends Model
 
     protected $appends = ['status_str', 'order_status_str', 'use_status', 'refund_status_str'];
 
-    public function workflow()
-    {
-        return $this->hasOne(Workflow::class, 'id', 'workflow_id');
-    }
-
     public function user()
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class, 'order_id', 'id');
+    }
+
     protected static function boot()
     {
         parent::boot();
-        
+
         // 监听模型创建事件，在写入数据库之前触发
         static::creating(function ($model) {
             if (!$model->number) {
