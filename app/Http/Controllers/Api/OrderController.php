@@ -21,6 +21,8 @@ class OrderController extends Controller
             'device_id' => '设备 id'
         ]);
 
+        Log::info('paidOrders request', ['device_id' => $request->device_id, 'all' => $request->all()]);
+
         $device_id = $request->input('device_id');
 
         $order = Order::query()->where('device_id', $device_id)->where('status', 2)->where('order_status', 2)
