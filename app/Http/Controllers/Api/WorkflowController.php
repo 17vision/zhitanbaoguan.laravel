@@ -123,7 +123,7 @@ class WorkflowController extends Controller
 
         $isPaid = $order->status == 2 ? true : false;
 
-        return response()->json(['isPaid' => $isPaid, 'status' => $order->status, 'status_str' => $order->status_str]);
+        return response()->json($order);
     }
 
     public function orders(Request $request)
