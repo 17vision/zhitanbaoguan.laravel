@@ -33,7 +33,7 @@ class WorkflowController extends Controller
     {
         $request->validate([
             'workflow_id' => 'required|integer',
-            'device_id' => 'required|integer'
+            'device_id' => 'required|string'
         ], [], [
             'id' => '商品 id',
             'device_id' => '设备 id'

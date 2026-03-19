@@ -12,7 +12,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->index()->comment('用户 id');
-            $table->unsignedInteger('device_id')->index()->comment('扫码设备 id');
+            $table->string('device_id')->index()->comment('扫码设备 id');
             $table->string('number', 32)->index()->comment('订单编号');
             $table->unsignedBigInteger('workflow_id')->index()->comment('课程 id');
             $table->string('name')->comment('商品名称');
@@ -23,6 +23,8 @@ return new class extends Migration
             $table->dateTime('paid_at')->nullable()->comment('支付时间');
             $table->dateTime('refund_at')->nullable()->comment('退款时间');
             $table->dateTime('closed_at')->nullable()->comment('关闭时间');
+            $table->dateTime('play_begin_at')->nullable()->comment('关闭时间');
+            $table->dateTime('play_end_at')->nullable()->comment('关闭时间');
             $table->unsignedTinyInteger('status')->default(1)->comment('支付状态 1 待支付 2 已支付 3 已退款 0 已关闭');
             $table->unsignedTinyInteger('order_status')->default(1)->comment('订单状态 1 待付款 2 待体验 3 体验中 4 已体验');
             $table->unsignedTinyInteger('refund_status')->nullable()->comment('退款状态 1 退款中 2 已退款');

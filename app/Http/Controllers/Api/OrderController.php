@@ -15,7 +15,7 @@ class OrderController extends Controller
     public function paidOrders(Request $request)
     {
         $request->validate([
-            'device_id' => 'required|integer'
+            'device_id' => 'required|string'
         ], [], [
             'device_id' => '设备 id'
         ]);
@@ -80,9 +80,9 @@ class OrderController extends Controller
 
         // 从待体验到体验中
         if ($order->order_status == 2) {
-            $result = $order->update(['order_status' => 3]);
+            $result = $order->update(['order_status' => 3, 'play_begin_at' => now()]);
         } else if ($order->order_status == 3) {
-            $result = $order->update(['order_status' => 4]);
+            $result = $order->update(['order_status' => 4, 'play_end_at' => now()]);
         } else {
             return response()->json(['message' => '状态错误'], 403);
         }

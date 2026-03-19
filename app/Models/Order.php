@@ -24,6 +24,8 @@ class Order extends Model
         'paid_at',
         'refund_at',
         'closed_at',
+        'play_begin_at',
+        'play_end_at',
         'status',
         'order_status',
         'refund_status',
