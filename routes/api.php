@@ -194,9 +194,6 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
         Route::post('pay/payment/status', [PayController::class, 'paymentStatus']);
 
         // 微信支付(正式)
-        // 获取课程列表
-        Route::get('workflows', [WorkflowController::class, 'index']);
-
         // 支付
         Route::post('workflows/payments', [WorkflowController::class, 'payment']);
 
@@ -206,6 +203,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
         // 获取课程订单
         Route::get('workflows/orders', [WorkflowController::class, 'orders']);
     });
+
+    // 获取课程列表
+    Route::get('workflows', [WorkflowController::class, 'index']);
 });
 
 
