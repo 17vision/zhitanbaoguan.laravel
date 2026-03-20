@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('system_version')->nullable()->comment('系统版本');
             $table->string('equipment_model')->nullable()->comment('设备型号');
             $table->string('equipment_sn')->comment('设备序列号');
-            $table->unique(['organization_id', 'equipment_sn']);
+            $table->unique(['equipment_sn']);
             $table->string('customer_sn')->nullable()->comment('客户序列号');
             $table->string('internal_storage_space')->nullable()->comment('设备存储');
             $table->string('bluetooth_status')->nullable()->comment('蓝牙状态');
