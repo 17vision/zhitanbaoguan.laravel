@@ -67,7 +67,7 @@ class ImageController extends Controller
             $folder = sprintf('storage/upload/image/tutor/%s/', date('Ym', time()));
             $name = randStr(8);
             $max_width = 240;
-        }else {
+        } else {
             return  response()->json(['message' => '没有对应的 referer'], 403);
         }
 
@@ -94,5 +94,22 @@ class ImageController extends Controller
         $thumbnail = $res['thumbnail'] ? storageUrl($res['thumbnail']) : '';
 
         return response()->json(['url' => $url, 'thumbnail' => $thumbnail]);
+    }
+
+    public function getWxcode($data)
+    {
+        $access_token = getAccessToken(config('auth.wxmini.appid'), config('auth.wxmini.secret'));
+
+        $url = 'https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=' . $access_token;
+
+        $result = curl($url, true, json_encode($data));
+
+        if (!$result) {
+            return false;
+        }
+
+        $image = "data:image/jpeg;base64," . base64_encode($result);
+
+        return $image;
     }
 }

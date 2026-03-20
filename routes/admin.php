@@ -351,6 +351,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
 
                 // 删除眼镜
                 Route::delete('glasses', [GlassesController::class, 'delete'])->middleware('permission:glasses.create');
+
+                // 生成小程序码
+                Route::post('glasses/qrcode', [GlassesController::class, 'buildQrcode'])->middleware('permission:glasses.create');
             });
         });
 

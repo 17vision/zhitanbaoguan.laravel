@@ -326,3 +326,32 @@ function percentageToFloat($percentage)
     }
     return $number / 100;
 }
+
+function getAccessToken($appid, $appsecret)
+{
+    $key = sprintf('accesstoken-%s', $appid);
+
+    if (Illuminate\Support\Facades\Redis::exists($key)) {
+        return Illuminate\Support\Facades\Redis::get($key);
+    }
+
+    $url = sprintf('https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s', $appid, $appsecret);
+
+    $res = file_get_contents($url);
+    if ($res === false) {
+        Illuminate\Support\Facades\Log::error(sprintf('appid:%s, 获取accessToken 失败。', $appid));
+        return false;
+    }
+
+    $res = json_decode($res, true);
+    if (isset($res['access_token'])) {
+        Illuminate\Support\Facades\Redis::setex($key, $res['expires_in'] - 200, $res['access_token']);
+        return $res['access_token'];
+    }
+
+    if (is_array($res)) {
+        Illuminate\Support\Facades\Log::error(sprintf('appid:%s,获取accessToken 失败。 errmsg:%d, errmsg:%s', $appid, $res['errcode'], $res['errmsg']));
+    }
+        
+    return false;
+}

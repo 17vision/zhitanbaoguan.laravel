@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Glasses;
+use App\Utils\ImageUpload;
 use Carbon\Carbon;
+use App\Models\Glasses;
 
 class GlassesController extends Controller
 {
@@ -89,5 +90,51 @@ class GlassesController extends Controller
         $result =  Glasses::query()->where('id', $id)->delete();
 
         return response()->json($result);
+    }
+
+    public function buildQrcode(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|integer',
+            'width' => 'filled|integer|min:240',
+        ], [], [
+            'id' => '眼镜 id',
+            'width' => '小程序码宽度'
+        ]);
+
+        $id = $request->input('id');
+        $width = $request->input('width', 640);
+
+        $glasses =  Glasses::query()->where('id', $id)->first();
+        if (!$glasses) {
+            return response()->json(['message' => '眼镜不存在'], 403);
+        }
+
+        $sn = $glasses->equipment_sn;
+
+        $data = [
+            'scene' => 'device_id=' . $sn,
+            'page' => 'large-space/pages/product-list/product-list',
+            'width' => $width
+        ];
+
+        $base64Image = app(ImageController::class)->getWxcode($data);
+
+        $folder = sprintf('storage/upload/glasses/%s/', Carbon::parse($glasses->created_at)->format('Ym'));
+
+        $name = $sn . '_wxcode.png';
+
+        $result = app(ImageUpload::class)->saveBase64Image($base64Image, $folder, $name);
+        if ($result && isset($result['error']) && $result['error']) {
+            return response()->json(['message' => $result['error']], 403);
+        }
+
+        if ($result['url']) {
+            $glasses->update([
+                'qrcode' => $result['url']
+            ]);
+            return response()->json(storageUrl($result['url']));
+        }
+        return response()->json(['message' => '生成失败'], 403);
     }
 }
