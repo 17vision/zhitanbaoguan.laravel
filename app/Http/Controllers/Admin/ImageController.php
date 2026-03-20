@@ -102,7 +102,7 @@ class ImageController extends Controller
 
         $url = 'https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=' . $access_token;
 
-        $result = curl($url, true, json_encode($data));
+        $result = curl($url, json_encode($data), true, true);
 
         try {
             $res = json_decode($result, true);
