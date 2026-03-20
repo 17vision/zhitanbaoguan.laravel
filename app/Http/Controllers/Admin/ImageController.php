@@ -111,7 +111,7 @@ class ImageController extends Controller
                 return false;
             }
         } catch (\Exception $e) {
-            Log::channel('error')->error('get-wxcode-error-----', ['url' => $url,  'data' => $data, 'result' => $result]);
+            Log::channel('error')->error('get-wxcode-error', ['url' => $url,  'data' => $data, 'result' => $result, 'message' => $e->getMessage()]);
         }
 
         $image = "data:image/jpeg;base64," . base64_encode($result);
