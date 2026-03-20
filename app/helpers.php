@@ -314,3 +314,15 @@ function randStr($len)
     }
     return $string;
 }
+
+// 将百分比转换成小数
+function percentageToFloat($percentage)
+{
+    // 移除百分号并转换为浮点数
+    $number = floatval(str_replace("%", "", $percentage));
+    // 检查是否为有效数字
+    if ($number === 0 && $percentage !== "0%") {
+        throw new InvalidArgumentException("Invalid percentage format");
+    }
+    return $number / 100;
+}

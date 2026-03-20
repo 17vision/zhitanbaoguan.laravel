@@ -1061,6 +1061,61 @@ class PermissionSeeder extends Seeder
                             ]
                         ]
                     ],
+                    [
+                        'name'       => 'glasses',
+                        'path'       => 'glasses',
+                        'icon'       => '',
+                        'title'      => '眼镜管理',
+                        'en_title'   => 'glasses',
+                        'ja_title'   => '眼镜管理',
+                        'breadcrumb' => 1,
+                        'hidden'     => 0,
+                        'keep_alive'    => 0,
+                        'redirect'   => '',
+                        'active_path' => '',
+                        'always_show' => 1,
+                        'child' => [
+                            [
+                                'name'       => 'glasses.index',
+                                'path'       => 'index',
+                                'icon'       => '',
+                                'title'      => '列表',
+                                'en_title'   => 'listing',
+                                'ja_title'   => 'リスト',
+                                'breadcrumb' => 1,
+                                'hidden'     => 1,
+                                'keep_alive'    => 0,
+                                'redirect'   => '',
+                                'active_path' => '/device/glasses',
+                            ],
+                            [
+                                'name'       => 'glasses.create',
+                                'path'       => 'create',
+                                'icon'       => '',
+                                'title'      => '创建',
+                                'en_title'   => 'create',
+                                'ja_title'   => '作成＃サクセイ＃',
+                                'breadcrumb' => 1,
+                                'hidden'     => 1,
+                                'keep_alive'    => 0,
+                                'redirect'   => '',
+                                'active_path' => '/device/glasses',
+                            ],
+                            [
+                                'name'       => 'glasses.delete',
+                                'path'       => 'delete',
+                                'icon'       => '',
+                                'title'      => '删除',
+                                'en_title'   => 'delete',
+                                'ja_title'   => '削除＃サクジョ＃',
+                                'breadcrumb' => 1,
+                                'hidden'     => 1,
+                                'keep_alive'    => 0,
+                                'redirect'   => '',
+                                'active_path' => '/device/glasses',
+                            ],
+                        ]
+                    ]
                 ]
             ]
         ];

@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\GradeUserController;
 use App\Http\Controllers\Admin\HomeworkanalysisController;
 use App\Http\Controllers\Admin\BrainMachineDataController;
 use App\Http\Controllers\Admin\DailySentenceController;
+use App\Http\Controllers\Admin\GlassesController;
 use App\Http\Controllers\Admin\HomeworkController;
 use App\Http\Controllers\Admin\HomeworkGroupController;
 use App\Http\Controllers\Admin\OrderController;
@@ -336,6 +337,20 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::get('refunds', [RefundController::class, 'index'])->middleware('permission:refunds.index');
 
                 Route::post('refunds/reject', [RefundController::class, 'reject'])->middleware('permission:refunds.update');
+            });
+
+            Route::group(['middleware' => 'permission:glasses'], function () {
+                // 眼镜列表
+                Route::get('glasses', [GlassesController::class, 'index'])->middleware('permission:glasses.index');
+
+                // 眼镜信息
+                Route::get('glasses/info', [GlassesController::class, 'info'])->middleware('permission:glasses.index');
+
+                // 修改眼镜信息
+                Route::put('glasses', [GlassesController::class, 'update'])->middleware('permission:glasses.create');
+
+                // 删除眼镜
+                Route::delete('glasses', [GlassesController::class, 'delete'])->middleware('permission:glasses.create');
             });
         });
 
