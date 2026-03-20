@@ -14,8 +14,8 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $request->validate([
-            'status' => 'filled|in:1,2,3',
-            'order_status' => 'filled|in:1,2,3,4',
+            'status' => 'filled|in:0,1,2,3',
+            'order_status' => 'filled|in:0,1,2,3,4',
             'limit' => 'filled|integer'
         ], [], [
             'status' => '订单状态',
