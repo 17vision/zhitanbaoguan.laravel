@@ -27,6 +27,7 @@ use App\Http\Controllers\Api\SceneStatisticController;
 use App\Http\Controllers\Api\ThemeController;
 use App\Http\Controllers\Api\WorkflowController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\GlassesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -223,3 +224,6 @@ Route::put('workflows/paid_orders', [OrderController::class, 'updateOrders']);
 
 // 发起退款
 Route::post('workflows/paid_orders/refund', [OrderController::class, 'refundOrders']);
+
+// 添加或修改眼镜设备
+Route::post('glasses', [GlassesController::class, 'store']);
