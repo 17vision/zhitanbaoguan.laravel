@@ -90,14 +90,14 @@ class Order extends Model
         if (isset($this->attributes['order_status'])) {
             $order_status = $this->attributes['order_status'];
 
-            $status = $this->attributes['status'] ?? null;
-            if ($status && $status == 3) {
-                return '已退款';
-            }
+            // $status = $this->attributes['status'] ?? null;
+            // if ($status && $status == 3) {
+            //     return '已退款';
+            // }
 
-            if ($status === 0) {
-                return '已关闭';
-            }
+            // if ($status === 0) {
+            //     return '已关闭';
+            // }
 
             if ($order_status == 1) {
                 return '待付款';
@@ -107,6 +107,8 @@ class Order extends Model
                 return '体验中';
             } elseif ($order_status == 4) {
                 return '已体验';
+            } elseif ($order_status == 0) {
+                return '已关闭';
             }
         }
         return '';

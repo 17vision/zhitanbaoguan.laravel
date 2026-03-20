@@ -66,6 +66,10 @@ class OrderController extends Controller
             return response()->json(['message' => '订单不存在'], 403);
         }
 
+        if ($order->pay_amount == 0) {
+            return response()->json(['message' => '订单金额为0，无需退款'], 403);
+        }
+
         if ($order->refund_status == 1) {
             return response()->json(['message' => '退款中，请稍后'], 403);
         }

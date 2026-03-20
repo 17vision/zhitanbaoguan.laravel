@@ -25,7 +25,7 @@ return new class extends Migration
             $table->dateTime('play_begin_at')->nullable()->comment('体验开始时间');
             $table->dateTime('play_end_at')->nullable()->comment('体验结束时间');
             $table->unsignedTinyInteger('status')->default(1)->comment('支付状态 1 待支付 2 已支付 3 已退款 0 已关闭');
-            $table->unsignedTinyInteger('order_status')->default(1)->comment('订单状态 1 待付款 2 待体验 3 体验中 4 已体验');
+            $table->unsignedTinyInteger('order_status')->default(1)->comment('订单状态 1 待付款 2 待体验 3 体验中 4 已体验 0 已关闭');
             $table->unsignedTinyInteger('refund_status')->nullable()->comment('退款状态 1 退款中 2 已退款');
             $table->unsignedTinyInteger('user_refund_status')->nullable()->comment('退款状态 1 申请中 2 退款中 3 已退款 4 已驳回');
             $table->string('user_refund_reason')->nullable()->comment('用户退款的理由');
