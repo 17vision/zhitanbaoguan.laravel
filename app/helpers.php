@@ -155,7 +155,7 @@ function cleanWxMiniAccessToken($appid)
 
 // 获取微信短链接
 // https://api.weixin.qq.com/wxa/genwxashortlink?access_token=ACCESS_TOKEN
-function getWxMiniShortLink($url, $title='', $is_permanent = false)
+function getWxMiniShortLink($url, $title = '', $is_permanent = false)
 {
     $access_token = getWxMiniAccessToken(config('auth.wxmini.appid'), config('auth.wxmini.secret'));
     if (!$access_token) {
@@ -212,7 +212,7 @@ function curl($url, $params = false, $post = false, $https = false)
     } else {
         // 临时加的，后边删掉这个玩意
         if (isset($params['sign']) && isset($params['time'])) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, ['sign' . ':' . $params['sign'], 'time' . ':'. $params['time']]);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['sign' . ':' . $params['sign'], 'time' . ':' . $params['time']]);
         }
 
         if ($params === false) {
@@ -260,7 +260,7 @@ function getCityByLL($longitude, $latitude)
         if ($res['result']['address_reference']) {
             if (isset($res['result']['address_reference']['landmark_l2']) && isset($res['result']['address_reference']['landmark_l2']['title'])) {
                 $data['address'] = $res['result']['address_reference']['landmark_l2']['title'];
-            } elseif($res['result']['address']) {
+            } elseif ($res['result']['address']) {
                 $data['address'] = $res['result']['address'];
             }
         }
@@ -282,7 +282,7 @@ function getCityByIp($ip)
         $data['latitude'] =  $res['result']['location']['lat'];
         $data['longitude'] =  $res['result']['location']['lng'];
 
-        if(isset($res['result']['ad_info']) && $res['result']['ad_info']) {
+        if (isset($res['result']['ad_info']) && $res['result']['ad_info']) {
             $data['province'] =  $res['result']['ad_info']['province'] ?? '';
             $data['city'] =  $res['result']['ad_info']['city'] ?? '';
             $data['district'] =  $res['result']['ad_info']['district'] ?? '';
@@ -296,7 +296,7 @@ function getCityByIp($ip)
         if (isset($res['result']['address_reference'])) {
             if (isset($res['result']['address_reference']['landmark_l2']) && isset($res['result']['address_reference']['landmark_l2']['title'])) {
                 $data['address'] = $res['result']['address_reference']['landmark_l2']['title'];
-            } elseif($res['result']['address']) {
+            } elseif ($res['result']['address']) {
                 $data['address'] = $res['result']['address'];
             }
         }
@@ -337,21 +337,26 @@ function getAccessToken($appid, $appsecret)
 
     $url = sprintf('https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s', $appid, $appsecret);
 
-    $res = file_get_contents($url);
-    if ($res === false) {
-        Illuminate\Support\Facades\Log::error(sprintf('appid:%s, 获取accessToken 失败。', $appid));
+    try {
+        $response = Illuminate\Support\Facades\Http::timeout(10)->get($url);
+        if (!$response->successful()) {
+            Illuminate\Support\Facades\Log::error(sprintf('appid:%s, 获取accessToken 接口请求失败，状态码：%d', $appid, $response->status()));
+            return false;
+        }
+        $res = $response->json();
+    } catch (\Exception $e) {
+        Illuminate\Support\Facades\Log::error(sprintf('appid:%s, 获取accessToken 网络请求异常：%s', $appid, $e->getMessage()));
         return false;
     }
 
-    $res = json_decode($res, true);
+    if (!is_array($res)) {
+        Illuminate\Support\Facades\Log::error(sprintf('appid:%s, 获取accessToken 返回非JSON格式：%s', $appid, $response->body()));
+        return false;
+    }
+
     if (isset($res['access_token'])) {
         Illuminate\Support\Facades\Redis::setex($key, $res['expires_in'] - 200, $res['access_token']);
         return $res['access_token'];
     }
-
-    if (is_array($res)) {
-        Illuminate\Support\Facades\Log::error(sprintf('appid:%s,获取accessToken 失败。 errmsg:%d, errmsg:%s', $appid, $res['errcode'], $res['errmsg']));
-    }
-        
     return false;
 }
