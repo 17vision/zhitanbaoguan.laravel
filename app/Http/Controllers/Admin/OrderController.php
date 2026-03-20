@@ -23,19 +23,15 @@ class OrderController extends Controller
             'limit' => '分页'
         ]);
 
-        $status = $request->input('status');
-
-        $order_status = $request->input('order_status');
-
         $limit = $request->input('limit', 30);
 
         $query = Order::query()->with(['items.workflow:id,name,price,cover', 'user:id,nickname,avatar,gender']);
-        if ($status) {
-            $query->where('status', $status);
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
         }
 
-        if ($order_status) {
-            $query->where('order_status', $order_status);
+        if ($request->has('order_status')) {
+            $query->where('order_status', $request->order_status);
         }
 
         $orders = $query->orderByDesc('id')->paginate($limit);
