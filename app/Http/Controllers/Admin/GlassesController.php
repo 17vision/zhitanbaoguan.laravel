@@ -119,6 +119,9 @@ class GlassesController extends Controller
         ];
 
         $base64Image = app(ImageController::class)->getWxcode($data);
+        if (!$base64Image) {
+            return response()->json(['message' => '生成失败[1]'], 403);
+        }
 
         $folder = sprintf('storage/upload/glasses/%s/', Carbon::parse($glasses->created_at)->format('Ym'));
 
@@ -135,6 +138,6 @@ class GlassesController extends Controller
             ]);
             return response()->json(storageUrl($result['url']));
         }
-        return response()->json(['message' => '生成失败'], 403);
+        return response()->json(['message' => '生成失败[2]'], 403);
     }
 }
