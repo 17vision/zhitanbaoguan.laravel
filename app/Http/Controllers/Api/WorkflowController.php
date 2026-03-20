@@ -114,6 +114,11 @@ class WorkflowController extends Controller
             }
         }
 
+        if ($total_amount == 0) {
+            $order->update(['status' => 2, 'order_status' => 2, 'paid_at' => now()]);
+            return response()->json(['message' => '购买成功', 'order_id' => $order->id]);
+        }
+
         $pay = Pay::wechat(config('pay'))->mini([
             'out_trade_no' => $out_trade_no,
             'description' => substr($order['name'], 0, 48),
