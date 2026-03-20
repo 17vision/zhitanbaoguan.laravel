@@ -119,6 +119,7 @@ class GlassesController extends Controller
         ];
 
         $base64Image = app(ImageController::class)->getWxcode($data);
+
         if (!$base64Image) {
             return response()->json(['message' => '生成失败[1]'], 403);
         }
@@ -134,7 +135,7 @@ class GlassesController extends Controller
 
         if ($result['url']) {
             $glasses->update([
-                'qrcode' => $result['url']
+                'qrcode' => $result['url'] . '?t=' . time()
             ]);
             return response()->json(storageUrl($result['url']));
         }

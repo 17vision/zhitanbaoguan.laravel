@@ -104,8 +104,14 @@ class ImageController extends Controller
 
         $result = curl($url, true, json_encode($data));
 
-        if (!$result) {
-            return false;
+        try {
+            $res = json_decode($result, true);
+            if (isset($res['errcode']) && $res['errcode'] != 0) {
+                Log::channel('error')->error('get-wxcode-error', ['url' => $url,  'data' => $data, 'result' => $result]);
+                return false;
+            }
+        } catch (\Exception $e) {
+            Log::channel('error')->error('get-wxcode-error-----', ['url' => $url,  'data' => $data, 'result' => $result]);
         }
 
         $image = "data:image/jpeg;base64," . base64_encode($result);
