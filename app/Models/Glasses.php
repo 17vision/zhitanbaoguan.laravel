@@ -28,4 +28,13 @@ class Glasses extends Model
         }
         return null;
     }
+
+    public function getQrcodeAttribute()
+    {
+        if (isset($this->attributes['qrcode'])) {
+            $path = $this->attributes['qrcode'];
+            return storageUrl($path);
+        }
+        return '';
+    }
 }
