@@ -213,7 +213,7 @@ class ImageUpload
 
     private function reduceSize($file_path, $max_width = null, $new_path = null, $text = '')
     {
-        Log::info('filepath', ['filepath' => $file_path, 'newpath' => $new_path]);
+        Log::info('filepath', ['filepath' => $file_path, 'newpath' => $new_path, 'text' => $text]);
 
         // 先实例化，传参是文件的磁盘物理路径
         $image = Image::make($file_path);
@@ -252,7 +252,8 @@ class ImageUpload
                 // 设置字体文件（必须使用绝对路径）
                 // $font->file($fontPath);
                 // 设置字体大小（单位：像素）
-                $font->size(20);
+                $font->file(storage_path('app/public/fonts/SourceHanSansSC-ExtraLight.ttf'));
+                $font->size(36);
                 $font->color('#333333');
                 $font->align('center');
                 $font->valign('center'); // 垂直居中
