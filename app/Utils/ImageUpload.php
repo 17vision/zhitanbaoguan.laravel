@@ -252,7 +252,8 @@ class ImageUpload
                 // 设置字体文件（必须使用绝对路径）
                 // $font->file($fontPath);
                 // 设置字体大小（单位：像素）
-                $font->file(storage_path('app/public/fonts/SourceHanSansSC-ExtraLight.ttf'));
+                // $font->file(storage_path('app/public/fonts/SourceHanSansSC-ExtraLight.ttf'));
+                $font->file(storage_path('app/public/fonts/SourceHanSansSC-Regular.ttf'));
                 $font->size(36);
                 $font->color('#333333');
                 $font->align('center');
