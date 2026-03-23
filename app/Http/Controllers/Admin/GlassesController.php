@@ -128,7 +128,9 @@ class GlassesController extends Controller
 
         $name = $sn . '_wxcode.png';
 
-        $result = app(ImageUpload::class)->saveBase64Image($base64Image, $folder, $name, $width, null, null, $sn);
+        $text = sprintf("%s：%s",  $glasses->name ?? $glasses->id, $sn);
+
+        $result = app(ImageUpload::class)->saveBase64Image($base64Image, $folder, $name, $width, null, null, $text);
         if ($result && isset($result['error']) && $result['error']) {
             return response()->json(['message' => $result['error']], 403);
         }

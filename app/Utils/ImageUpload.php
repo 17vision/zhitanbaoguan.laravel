@@ -257,6 +257,10 @@ class ImageUpload
                 $font->color('#333333');
                 $font->align('center');
                 $font->valign('center'); // 垂直居中
+
+                if (method_exists($font, 'weight')) {
+                    $font->weight(500);
+                }
             });
 
             if ($new_path) {
