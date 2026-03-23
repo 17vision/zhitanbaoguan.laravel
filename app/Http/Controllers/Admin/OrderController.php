@@ -117,7 +117,7 @@ class OrderController extends Controller
             return response()->json(['message' => '订单不存在'], 403);
         }
 
-        if ($order->status == 0 || $order->order_status == 3) {
+        if ($order->status == 0 || $order->order_status == 0) {
             return response()->json(['message' => '订单已关闭或已退款'], 403);
         }
 
