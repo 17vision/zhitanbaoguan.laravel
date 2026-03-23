@@ -145,7 +145,7 @@ class ImageUpload
         } else {
             $extension = 'png';
         }
-        
+
         // 构建存储的文件夹规则，值如：uploads/images/avatars/201709/21/
         // 文件夹切割能让查找效率更高。
         $file_name = sprintf('%s.%s', $name, $extension);
@@ -173,7 +173,7 @@ class ImageUpload
     }
 
     // 保存 base64 (2023-06-19 这里需要改造，改造前使用不合适 todo)
-    public function saveBase64Image($file, $folder, $name, $max_width = null, $thumbnail_name = null, $min_width = null)
+    public function saveBase64Image($file, $folder, $name, $max_width = null, $thumbnail_name = null, $min_width = null, $text = '')
     {
         $upload_path = public_path() . '/' . $folder;
         try {
@@ -200,23 +200,26 @@ class ImageUpload
         // 如果限制了图片宽度，就进行裁剪
         if ($max_width && $max_width > 0) {
             // 此类中封装的函数，用于裁剪图片
-            $this->reduceSize($upload_path . $name, $max_width);
+            $this->reduceSize($upload_path . $name, $max_width, null, $text);
         }
- 
+
         // 缩略图
         if ($min_width && $min_width > 0 && $thumbnail_name) {
-            $this->reduceSize($upload_path . $name, $min_width, $upload_path . $thumbnail_name);
+            $this->reduceSize($upload_path . $name, $min_width, $upload_path . $thumbnail_name, $text);
             return ['url' => $folder . $name, 'thumbnail' => $folder . $thumbnail_name];
         }
         return ['url' => $folder . $name, 'thumbnail' => ''];
     }
 
-    private function reduceSize($file_path, $max_width = null, $new_path = null)
+    private function reduceSize($file_path, $max_width = null, $new_path = null, $text = '')
     {
         Log::info('filepath', ['filepath' => $file_path, 'newpath' => $new_path]);
 
         // 先实例化，传参是文件的磁盘物理路径
         $image = Image::make($file_path);
+
+        $imageWidth = $image->width();
+        $imageHeight = $image->height();
 
         if ($max_width) {
             // 进行大小调整的操作
@@ -226,13 +229,47 @@ class ImageUpload
                 // 防止裁图时图片尺寸变大
                 $constraint->upsize();
             });
+
+            if ($imageWidth > $max_width) {
+                $imageHeight = (int)($max_width * $imageHeight / $imageWidth);
+                $imageWidth = $max_width;
+            }
         }
 
-        // 对图片修改后进行保存
-        if ($new_path) {
-            $image->save($new_path);
+        if ($text) {
+            $textHeight = 80;
+            $newWidth = $imageWidth;
+            $newHeight = $imageHeight + $textHeight;
+
+            $canvas = Image::canvas($newWidth, $newHeight, '#ffffff');
+
+            $canvas->insert($image, 'top-left', 0, 0);
+
+            $textX = $newWidth / 2;
+            $textY = $imageHeight + ($textHeight / 2);
+
+            $canvas->text($text, $textX, $textY, function ($font) {
+                // 设置字体文件（必须使用绝对路径）
+                // $font->file($fontPath);
+                // 设置字体大小（单位：像素）
+                $font->size(20);
+                $font->color('#333333');
+                $font->align('center');
+                $font->valign('center'); // 垂直居中
+            });
+
+            if ($new_path) {
+                $canvas->save($new_path);
+            } else {
+                $canvas->save($file_path);
+            }
         } else {
-            $image->save();
+            // 对图片修改后进行保存
+            if ($new_path) {
+                $image->save($new_path);
+            } else {
+                $image->save();
+            }
         }
     }
 }
