@@ -10,7 +10,7 @@ class CheckOrder extends Command
 {
     protected $signature = 'app:check-order';
 
-    protected $description = 'Command description';
+    protected $description = '检查订单,关闭卡着的订单';
 
     public function handle()
     {
