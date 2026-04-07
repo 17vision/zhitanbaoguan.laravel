@@ -130,6 +130,14 @@ return [
             'days' => 365,
         ],
 
+        // 定时任务
+        'cron' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/cron/laravel.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 365,
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
