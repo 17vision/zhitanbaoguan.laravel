@@ -12,7 +12,6 @@ return new class extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->index();
-            $table->unsignedTinyInteger('type')->default(1)->comment('通知类型 1 仅仅阅读 2 可进详情');
             $table->string('title')->nullable();
             $table->text('content')->comment('消息内容');
             $table->unsignedBigInteger('messageable_id')->nullable()->comment('父模型的 id');

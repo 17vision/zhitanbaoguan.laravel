@@ -23,8 +23,7 @@ class UserObserver
                 'title' => '欢迎注册',
                 'content' => '[nickname]，花径不曾缘客扫，蓬门今始为君开。',
                 'messageable_id' => $user->id,
-                'messageable_type' => get_class($user),
-                'type' => 1
+                'messageable_type' => get_class($user)
             ]);
 
             $role = Role::where('name', 'default')->first();

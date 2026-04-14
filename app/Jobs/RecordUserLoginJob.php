@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -15,8 +14,11 @@ class RecordUserLoginJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $tries = 3;          // 失败重试 3 次
-    public $backoff = [2, 10];  // 第一次 2s，第二次 10s
+    // 失败重试 3 次
+    public $tries = 3;
+
+    // 第一次 2s，第二次 10s
+    public $backoff = [2, 10];  
 
     private $user_id;
     private $client_type;

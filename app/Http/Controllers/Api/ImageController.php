@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use App\Utils\ImageUpload;
 
 class ImageController extends Controller

@@ -6,13 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
-use App\Models\UserBodyMetric;
-use App\Models\UserDailyStep;
 use App\Models\UserLogin;
 use Illuminate\Http\Request;
 use App\Traits\Authorization;
 use Carbon\Carbon;
-use Illuminate\Support\Arr;
 
 class UserController extends Controller
 {
@@ -251,109 +248,5 @@ class UserController extends Controller
         }
 
         return response()->json($days);
-    }
-
-    public function getUserBodyMetrics(Request $request)
-    {
-        $request->validate([
-            'page' => 'required|integer|min:1',
-            'limit' => 'filled|integer|min:1',
-        ], [], [
-            'page' => '当前页',
-            'limit' => '单页显示多少',
-        ]);
-
-        $limit = $request->input('limit', 20);
-
-        $user = $request->user();
-
-        $user_body_metrics = UserBodyMetric::query()->where('user_id', $user->id)->orderByDesc('id')->simplePaginate($limit);
-
-        return response()->json($user_body_metrics);
-    }
-
-    public function getUserDailySteps(Request $request)
-    {
-        $request->validate([
-            'type' => 'required_without:date|in:day,week,month',
-            'date' => 'filled|date'
-        ], [], [
-            'type' => '类型',
-            'date' => '日'
-        ]);
-
-        $date = $request->input('date');
-        $type = $request->input('type');
-        $user = $request->user();
-
-        if ($date || $type == 'day') {
-            $date = $date ?? Carbon::now()->toDateString();
-            $userDailySteps = UserDailyStep::query()->where('user_id', $user->id)->where('date', $date)->get()->toArray();
-
-            $userDailySteps = Arr::keyBy($userDailySteps, 'hour');
-
-            $start = Carbon::parse($date)->startOfDay();
-            $end = $start->copy()->endOfDay();
-            for ($i = $start; $i->lt($end); $start->addHour()) {
-                $hour = $i->hour;
-                if (isset($userDailySteps[$hour])) {
-                    $userDailySteps[$hour] = self::transDailyStep($userDailySteps[$hour]);
-                } else {
-                    $userDailySteps[$hour] = self::transDailyStep(null, $user->id, $date, $hour);
-                }
-            }
-
-            sort($userDailySteps);
-
-            return response()->json($userDailySteps);
-        }
-
-        $end = Carbon::now();
-
-        $start = $type == 'week' ? $end->copy()->addDays(-6) : $end->copy()->addDays(-29);
-
-        $userDailySteps = UserDailyStep::query()->where('user_id', $user->id)
-            ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
-            ->groupBy(['user_id', 'date'])
-            ->selectRaw('user_id,date,SUM(steps) AS steps,SUM(calories) AS calories,SUM(distance) AS distance')
-            ->get()
-            ->toArray();
-
-        $userDailySteps = Arr::keyBy($userDailySteps, 'date');
-
-        $results = [];
-
-        for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
-            $dateStr = $d->toDateString();
-            if (isset($userDailySteps[$dateStr])) {
-                $results[] = self::transDailyStep($userDailySteps[$dateStr]);
-            } else {
-                $results[] = self::transDailyStep(null, $user->id, $dateStr, null);
-            }
-        }
-        return response()->json($results);
-    }
-
-    private static function transDailyStep($item = null, $user_id = null, $date = null, $hour = null)
-    {
-        if ($item) {
-            return [
-                'user_id' => $item['user_id'],
-                'date' => $item['date'],
-                'hour' => $item['hour'] ?? null,
-                'steps' => $item['steps'],
-                'calories' => $item['calories'],
-                'distance' => $item['distance'],
-            ];
-        }
-
-        return [
-            'user_id' => $user_id,
-            'date' => $date,
-            'hour' => $hour,
-            'steps' => 0,
-            'calories' => 0,
-            'distance' => 0,
-        ];
     }
 }

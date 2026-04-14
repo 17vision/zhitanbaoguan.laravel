@@ -3,210 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Course;
-use App\Models\CourseCollect;
-use App\Models\CourseLike;
-use App\Models\CourseMessage;
-use App\Models\CourseStatistics;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
-
 class DashboardController extends Controller
 {
     public function basicInfo()
     {
-        $course = Course::query()
-            ->where('status', 1)
-            ->selectRaw('COUNT(*) as course_count, COALESCE(SUM(like_count),0) as like_count, COALESCE(SUM(collect_count),0) as collect_count, COALESCE(SUM(message_count),0) as message_count')
-            ->first();
-
-        $today     = Carbon::now()->startOfDay();
-        $yesterday = $today->copy()->subDay()->startOfDay();
-
-        // 课程
-        $courseCmp = Course::whereBetween('created_at', [$yesterday, $today->copy()->endOfDay()])
-            ->selectRaw('
-                SUM(CASE WHEN created_at >= ? AND created_at < ? THEN 1 ELSE 0 END) as ytd,
-                SUM(CASE WHEN created_at >= ? AND created_at < ? THEN 1 ELSE 0 END) as today
-            ', [$yesterday, $today, $today, $today->copy()->addDay()])
-            ->first();
-
-        // 喜欢
-        $likeCmp = CourseLike::whereBetween('created_at', [$yesterday, $today->copy()->endOfDay()])
-            ->selectRaw('
-                SUM(CASE WHEN created_at >= ? AND created_at < ? THEN 1 ELSE 0 END) as ytd,
-                SUM(CASE WHEN created_at >= ? AND created_at < ? THEN 1 ELSE 0 END) as today
-            ', [$yesterday, $today, $today, $today->copy()->addDay()])
-            ->first();
-
-        // 收藏
-        $collectCmp = CourseCollect::whereBetween('created_at', [$yesterday, $today->copy()->endOfDay()])
-            ->selectRaw('
-                SUM(CASE WHEN created_at >= ? AND created_at < ? THEN 1 ELSE 0 END) as ytd,
-                SUM(CASE WHEN created_at >= ? AND created_at < ? THEN 1 ELSE 0 END) as today
-            ', [$yesterday, $today, $today, $today->copy()->addDay()])
-            ->first();
-
-        // 消息（主贴 + 回复）
-        $msgCmp = CourseMessage::whereBetween('created_at', [$yesterday, $today->copy()->endOfDay()])
-            ->selectRaw('
-                SUM(CASE WHEN created_at >= ? AND created_at < ? THEN 1 ELSE 0 END) as ytd_count,
-                SUM(CASE WHEN created_at >= ? AND created_at < ? THEN 1 ELSE 0 END) as today_count,
-                COALESCE(SUM(CASE WHEN created_at >= ? AND created_at < ? THEN reply_nums ELSE 0 END), 0) as ytd_reply,
-                COALESCE(SUM(CASE WHEN created_at >= ? AND created_at < ? THEN reply_nums ELSE 0 END), 0) as today_reply
-            ', [
-                $yesterday,
-                $today,
-                $today,
-                $today->copy()->addDay(),
-                $yesterday,
-                $today,
-                $today,
-                $today->copy()->addDay(),
-            ])
-            ->first();
-
-        $data = [
-            'course_count' => (int)$course['course_count'] ?? 0,
-            'like_count' => (int)$course['like_count'] ?? 0,
-            'collect_count' => (int)$course['collect_count'] ?? 0,
-            'message_count' => (int)$course['message_count'] ?? 0,
-            // 对比（今日 - 昨日）
-            'course_count_compare'  => (int) ($courseCmp->today ?? 0) - (int) ($courseCmp->ytd ?? 0),
-            'like_count_compare'    => (int) ($likeCmp->today ?? 0)   - (int) ($likeCmp->ytd ?? 0),
-            'collect_count_compare' => (int) ($collectCmp->today ?? 0) - (int) ($collectCmp->ytd ?? 0),
-            'message_count_compare' => (int) ($msgCmp->today_count + $msgCmp->today_reply) -
-                (int) ($msgCmp->ytd_count + $msgCmp->ytd_reply),
-        ];
-
-        return response()->json($data);
+        return response()->json([]);
     }
 
     public function singleData(Request $request)
     {
-        $request->validate([
-            'title' => 'filled|string'
-        ], [], [
-            'title' => '课程名称'
-        ]);
-
-        $title = $request->title;
-
-        $query = Course::query()->where('status', 1);
-
-        if ($title) {
-            $query->where('title', 'like', '%' . $title . '%');
-        }
-
-        $course = $query->selectRaw('id, title, COALESCE(SUM(like_count),0) as like_count, COALESCE(SUM(collect_count),0) as collect_count, COALESCE(SUM(message_count),0) as message_count')
-            ->groupBy(['id'])
-            ->get();
-
-        $course->transform(function ($item) {
-            return [
-                'id' => $item['id'],
-                'title' => $item['title'],
-                'like_count' => (int)$item['like_count'],
-                'collect_count' => (int)$item['collect_count'],
-                'message_count' => (int)$item['message_count'],
-            ];
-        });
-
-        return response()->json($course);
+        return response()->json([]);
     }
 
     public function viewData(Request $request)
     {
-        $request->validate([
-            'title' => 'filled|string',
-            'type' => 'required|in:1,2,3'
-        ], [], [
-            'title' => '课程名称',
-            'type' => '类型'
-        ]);
-
-        $title = $request->title;
-        $type = $request->type;
-
-        $query = CourseStatistics::query()->with(['course:id,title']);
-        if ($title) {
-            $query->whereHas('course', function ($query) use ($title) {
-                $query->where('title', 'like', '%' . $title . '%');
-            });
-        }
-  
-        // 日周月
-        // 1 日的话取 20 天内的
-        // 2 周的话取 2 个月内的
-        // 3 月的话取 6 个月内的
-        if ($type == 1) {
-            $endDate = Carbon::now();
-            $startDay = $endDate->clone()->addDays(-20);
-            $query->whereBetween('date', [$startDay->startOfDay()->toDateString(), $endDate->endOfDay()->toDateString()]);
-            $query->selectRaw('date, COUNT(*) as count');
-            $query->groupBy('date')->orderByDesc('date');
-            $courseStatistics = $query->get();
-        } elseif ($type == 2) {
-            $endDate = Carbon::now();
-            $startDay = $endDate->clone()->addMonths(-2);
-            $query->whereBetween('date', [$startDay->startOfDay()->toDateString(), $endDate->endOfDay()->toDateString()]);
-            $query->selectRaw('YEARWEEK(date, 1) as week, COUNT(*) as count');
-            $query->groupBy('week')->orderByDesc('week');
-            $courseStatistics = $query->get();
-        } elseif ($type == 3) {
-            $endDate = Carbon::now();
-            $startDay = $endDate->clone()->addMonths(-6);
-            $query->whereBetween('date', [$startDay->startOfDay()->toDateString(), $endDate->endOfDay()->toDateString()]);
-
-            // $query->selectRaw('course_id, CONCAT(YEAR(created_at), LPAD(MONTH(created_at), 2, "0")) as month, COUNT(*) as count');
-            // $query->groupBy(['course_id', 'month'])->orderByDesc('month');
-    
-            $query->selectRaw('CONCAT(YEAR(date), LPAD(MONTH(date), 2, "0")) as month, COUNT(*) as count');
-            $query->groupBy('month')->orderByDesc('month');
-            
-            $courseStatistics = $query->get();
-        }
-
-        $courseStatistics = array_reverse($courseStatistics->toArray());
-        return response()->json($courseStatistics);
-
-        // if ($type == 1) {
-        //     $endDate = Carbon::now();
-        //     $startDay = $endDate->clone()->addDays(-20);
-        //     $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay()]);
-        //     if ($title) {
-        //         $query->selectRaw('course_id, DATE(created_at) as date, COUNT(*) as count');
-        //         $query->groupBy(['course_id', 'date'])->orderByDesc('date');
-        //     } else {
-        //         $query->selectRaw('DATE(created_at) as date, COUNT(*) as count');
-        //         $query->groupBy('date')->orderByDesc('date');
-        //     }
-        //     $courseStatistics = $query->get();
-        // } elseif ($type == 2) {
-        //     $endDate = Carbon::now();
-        //     $startDay = $endDate->clone()->addMonths(-2);
-        //     $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay()]);
-        //     if ($title) {
-        //         $query->selectRaw('course_id, YEARWEEK(created_at, 1) as week, COUNT(*) as count');
-        //         $query->groupBy(['course_id', 'week'])->orderByDesc('week');
-        //     } else {
-        //         $query->selectRaw('YEARWEEK(created_at, 1) as week, COUNT(*) as count');
-        //         $query->groupBy('week')->orderByDesc('week');
-        //     }
-        //     $courseStatistics = $query->get();
-        // } elseif ($type == 3) {
-        //     $endDate = Carbon::now();
-        //     $startDay = $endDate->clone()->addMonths(-6);
-        //     $query->whereBetween('created_at', [$startDay->startOfDay(), $endDate->endOfDay()]);
-        //     if ($title) {
-        //         $query->selectRaw('course_id, CONCAT(YEAR(created_at), LPAD(MONTH(created_at), 2, "0")) as month, COUNT(*) as count');
-        //         $query->groupBy(['course_id', 'month'])->orderByDesc('month');
-        //     } else {
-        //         $query->selectRaw('CONCAT(YEAR(created_at), LPAD(MONTH(created_at), 2, "0")) as month, COUNT(*) as count');
-        //         $query->groupBy('month')->orderByDesc('month');
-        //     }
-        //     $courseStatistics = $query->get();
-        // }
-        // return response()->json($courseStatistics);
+        return [];
     }
 }
