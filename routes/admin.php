@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\FileController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\VenueController;
+use App\Http\Controllers\Admin\PlaceController;
 
 Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(function () {
     // 获取验证码
@@ -133,6 +134,19 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::put('venues', [VenueController::class, 'update'])->middleware('permission:venue.create|venue.edit');
 
                 Route::delete('venues', [VenueController::class, 'delete'])->middleware('permission:venue.delete');
+            });
+
+            // 点位管理
+            Route::group(['middleware' => 'permission:place'], function () {
+                Route::get('places', [PlaceController::class, 'index'])->middleware('permission:place.index');
+
+                Route::get('places/{id}', [PlaceController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:place.create|place.edit');
+
+                Route::post('places', [PlaceController::class, 'store'])->middleware('permission:place.create|place.edit');
+
+                Route::put('places', [PlaceController::class, 'update'])->middleware('permission:place.create|place.edit');
+
+                Route::delete('places', [PlaceController::class, 'delete'])->middleware('permission:place.delete');
             });
         });
     });
