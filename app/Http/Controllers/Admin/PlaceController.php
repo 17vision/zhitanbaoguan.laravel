@@ -12,14 +12,28 @@ class PlaceController extends Controller
     public function index(Request $request)
     {
         $request->validate([
-            'limit' => 'filled|integer'
+            'limit' => 'filled|integer',
+            'venue_id' => 'required|integer|exists:venues,id',
+            'parent_id' => 'required|integer|exists:places,id'
         ], [], [
             'limit' => '单页显示条数',
+            'venue_id' => '场馆 id',
+            'parent_id' => '父点位 id',
         ]);
 
         $limit = $request->input('limit', 30);
 
-        $places = Place::with(['introductions', 'medias'])->paginate($limit);
+        $venue_id = $request->input('venue_id');
+
+        $parent_id = $request->input('parent_id');
+
+        $query = Place::with(['introductions', 'medias'])->where('venue_id', $venue_id);
+
+        if ($parent_id) {
+            $query->where('parent_id', $parent_id);
+        }
+
+        $places = $query->paginate($limit);
 
         return response()->json($places);
     }
