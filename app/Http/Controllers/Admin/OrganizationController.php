@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Organization;
+use App\Models\Venue;
 use App\Rules\Phone;
 
 class OrganizationController extends Controller
@@ -65,7 +66,7 @@ class OrganizationController extends Controller
 
         $organization = Organization::create($data);
 
-        return response()->json($organization); 
+        return response()->json($organization);
     }
 
     public function update(Request $request)
@@ -95,9 +96,15 @@ class OrganizationController extends Controller
 
         $organization = Organization::query()->where('id', $request->id)->first();
 
+        if (isset($data['phone'])) {
+            if (Organization::query()->where('phone',   $data['phone'])->where('id', '<>', $organization->id)->exists()) {
+                return response()->json(['message' => '该手机号已使用，请更换手机号码'], 403);
+            }
+        }
+
         $organization->update($data);
 
-        return response()->json($organization); 
+        return response()->json($organization);
     }
 
     public function delete(Request $request)
@@ -109,6 +116,10 @@ class OrganizationController extends Controller
         ]);
 
         $id = $request->id;
+
+        if (Venue::query()->where('organization_id', $id)->exists()) {
+            return response()->json(['message' => '该组织还有场馆，不能删除'], 403);
+        }
 
         $delete = Organization::where('id', $id)->delete();
 

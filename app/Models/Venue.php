@@ -35,4 +35,9 @@ class Venue extends Model
         }
         return '';
     }
+
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class);
+    }
 }
