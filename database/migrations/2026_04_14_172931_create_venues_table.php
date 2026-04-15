@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('address')->nullable()->comment('地址');
             $table->string('phone')->nullable()->comment('联系方式');
             $table->string('introduction')->nullable()->comment('介绍');
-            $table->dateTime('open_at')->nullable()->comment('运营开始时间');
-            $table->dateTime('close_at')->nullable()->comment('运营结束时间');
+            $table->time('open_time')->nullable()->comment('运营开始时间');
+            $table->time('close_time')->nullable()->comment('运营结束时间');
             $table->decimal('longitude', 9, 6)->nullable()->comment('经度');
             $table->decimal('latitude', 9, 6)->nullable()->comment('纬度');
             $table->unsignedTinyInteger('status')->default(1)->comment('状态 1 上线 2 下线');

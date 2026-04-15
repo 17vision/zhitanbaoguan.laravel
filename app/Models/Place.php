@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Place extends Model
 {
     use HasFactory;
-    protected $fillable = ['organization_id', 'venue_id', 'parent_id', 'name', 'cover', 'address', 'introduction', 'open_at', 'close_at', 'longitude', 'latitude', 'tag', 'level', 'status'];
+    protected $fillable = ['organization_id', 'venue_id', 'parent_id', 'name', 'cover', 'address', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'tag', 'level', 'status'];
 
         protected $appends = ['status_str'];
 

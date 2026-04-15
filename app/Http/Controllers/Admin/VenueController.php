@@ -43,8 +43,8 @@ class VenueController extends Controller
                 new Phone(),
             ],
             'introduction' => 'filled|string|max:255',
-            'open_at' => 'filled|date',
-            'close_at' => 'required_with:open_at|date|after:open_at',
+            'open_time' => 'filled|date_format:H:i',
+            'close_time' => 'required_with:open_time|date_format:H:i|after:open_time',
             'longitude' => 'filled|numeric',
             'latitude' => 'filled|numeric',
             'status' => 'filled|in:1,2',
@@ -55,14 +55,14 @@ class VenueController extends Controller
             'address' => '地址',
             'phone' => '手机号',
             'introduction' => '介绍',
-            'open_at' => '开园时间',
-            'close_at' => '闭园时间',
+            'open_time' => '开园时间',
+            'close_time' => '闭园时间',
             'longitude' => '经度',
             'latitude' => '纬度',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['organization_id', 'name', 'cover', 'address', 'phone', 'introduction', 'open_at', 'close_at', 'longitude', 'latitude', 'status']);
+        $data = $request->only(['organization_id', 'name', 'cover', 'address', 'phone', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'status']);
 
         $venue = Venue::create($data);
 
@@ -82,8 +82,8 @@ class VenueController extends Controller
                 new Phone(),
             ],
             'introduction' => 'filled|string|max:255',
-            'open_at' => 'filled|date',
-            'close_at' => 'required_with:open_at|date|after:open_at',
+            'open_time' => 'filled|date',
+            'close_time' => 'required_with:open_time|date|after:open_time',
             'longitude' => 'filled|numeric',
             'latitude' => 'filled|numeric',
             'status' => 'filled|in:1,2',
@@ -95,14 +95,14 @@ class VenueController extends Controller
             'address' => '地址',
             'phone' => '手机号',
             'introduction' => '介绍',
-            'open_at' => '开园时间',
-            'close_at' => '闭园时间',
+            'open_time' => '开园时间',
+            'close_time' => '闭园时间',
             'longitude' => '经度',
             'latitude' => '纬度',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['organization_id', 'name', 'cover', 'address', 'phone', 'introduction', 'open_at', 'close_at', 'longitude', 'latitude', 'status']);
+        $data = $request->only(['organization_id', 'name', 'cover', 'address', 'phone', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'status']);
 
         if (empty($data)) {
             return response()->json(['message' => '请输入要更新的内容'], 403);

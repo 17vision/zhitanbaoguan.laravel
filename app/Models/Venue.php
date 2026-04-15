@@ -14,8 +14,8 @@ class Venue extends Model
         'address',
         'phone',
         'introduction',
-        'open_at',
-        'close_at',
+        'open_time',
+        'close_time',
         'longitude',
         'latitude',
         'status'
