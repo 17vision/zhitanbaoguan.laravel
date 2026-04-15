@@ -100,7 +100,7 @@ class PlaceController extends Controller
             'parent_id' => '父点位 id',
             'name' => '点位名',
             'cover' => '封面',
-            'address' => '地址',,
+            'address' => '地址',
             'introduction' => '介绍',
             'open_time' => '开园时间',
             'close_time' => '闭园时间',
