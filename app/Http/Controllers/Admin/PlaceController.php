@@ -14,7 +14,7 @@ class PlaceController extends Controller
         $request->validate([
             'limit' => 'filled|integer',
             'venue_id' => 'required|integer|exists:venues,id',
-            'parent_id' => 'required|integer|exists:places,id'
+            'parent_id' => 'filled|integer|exists:places,id'
         ], [], [
             'limit' => '单页显示条数',
             'venue_id' => '场馆 id',
