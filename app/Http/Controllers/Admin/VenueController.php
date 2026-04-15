@@ -20,14 +20,15 @@ class VenueController extends Controller
 
         $limit = $request->input('limit', 30);
 
-        $venues = Venue::with(['venue:id,name'])->paginate($limit);
+        $venues = Venue::with(['organization:id,name'])->paginate($limit);
 
         return response()->json($venues);
     }
 
     public function detail(Request $request, $id)
     {
-        $venue = Venue::where('id', $id)->with(['venue:id,name'])->first();
+        $venue = Venue::where('id', $id)->with(['organization:id,name'])->first();
+
         return response()->json($venue);
     }
 
