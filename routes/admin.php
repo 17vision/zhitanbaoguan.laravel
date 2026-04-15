@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\FileController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\OrganizationController;
 
 Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(function () {
     // 获取验证码
@@ -106,7 +107,19 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
 
         // 业务管理
         Route::group(['middleware' => 'permission:business'], function () {
-           
+
+            // 组织管理（整个系统都是面向组织的）
+            Route::group(['middleware' => 'permission:organization'], function () {
+                Route::get('organizations', [OrganizationController::class, 'index'])->middleware('permission:organization.index');
+
+                Route::get('organizations/{id}', [OrganizationController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:organization.create|organization.edit');
+
+                Route::post('organizations', [OrganizationController::class, 'store'])->middleware('permission:organization.create|organization.edit');
+
+                Route::put('organizations', [OrganizationController::class, 'update'])->middleware('permission:organization.create|organization.edit');
+
+                Route::delete('organizations', [OrganizationController::class, 'delete'])->middleware('permission:organization.delete');
+            });
         });
     });
 });

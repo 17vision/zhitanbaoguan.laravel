@@ -10,7 +10,7 @@ class Organization extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['user_id', 'name', 'phone', 'status'];
+    protected $fillable = ['user_id', 'name', 'phone', 'introduction', 'status'];
 
     protected $appends = ['status_str'];
 

@@ -14,6 +14,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->index();
             $table->string('name', 64)->comment('组织名');
             $table->string('phone', 20)->nullable()->comment('联系方式');
+            $table->string('introduction')->nullable()->comment('介绍');
             $table->boolean('status')->default(1)->comment('状态 1 上线 2 下线');
             $table->softDeletes();
             $table->timestamps();
