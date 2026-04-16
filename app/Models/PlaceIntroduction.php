@@ -23,4 +23,18 @@ class PlaceIntroduction extends Model
         }
         return '';
     }
+
+    public function getVoiceAttribute()
+    {
+        if (isset($this->attributes['voice'])) {
+            $voice = $this->attributes['voice'];
+            return pathToOss($voice);
+        }
+        return '';
+    }
+
+    public function place()
+    {
+        return $this->belongsTo(Place::class);
+    }
 }
