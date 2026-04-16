@@ -33,7 +33,7 @@ class FileController extends Controller
         }
 
         $referers = ['organization', 'venue', 'place'];
-        if (\in_array($referer, $referers)) {
+        if (!\in_array($referer, $referers)) {
             return response()->json(['message' => 'referer 不在白名单内'], 403);
         }
 
@@ -44,7 +44,7 @@ class FileController extends Controller
         }
 
         $types = ['video', 'audio', 'image'];
-        if (\in_array($type, $types)) {
+        if (!\in_array($type, $types)) {
             return response()->json(['message' => 'type 不在白名单内'], 403);
         }
 
