@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Place;
+use App\Models\Venue;
 
 class PlaceController extends Controller
 {
@@ -48,7 +49,6 @@ class PlaceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'organization_id' => 'required|integer|exists:organizations,id',
             'venue_id' => 'required|integer|exists:venues,id',
             'parent_id' => 'filled|integer|exists:places,id',
             'name' => 'required|string|max:16',
@@ -62,7 +62,6 @@ class PlaceController extends Controller
             'tag' => 'filled|string',
             'status' => 'filled|in:1,2',
         ], [], [
-            'organization_id' => '组织 id',
             'venue_id' => '场馆 id',
             'parent_id' => '父点位 id',
             'name' => '点位名',
@@ -77,10 +76,14 @@ class PlaceController extends Controller
             'status' => '状态',
         ]);
 
-        $data = $request->only(['organization_id', 'venue_id', 'parent_id', 'name', 'cover', 'address', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'tag', 'status']);
+        $data = $request->only(['venue_id', 'parent_id', 'name', 'cover', 'address', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'tag', 'status']);
+
+        $venue = Venue::query()->where('id', $data['id'])->first();
+
+        $data['organization_id'] = $venue['organization_id'];
 
         if (isset($data['parent_id'])) {
-            Place::query()->with(['parents'])->get();
+            // Place::query()->with(['parents'])->get();
         } else {
             $data['level'] = 1;
         }
@@ -94,8 +97,6 @@ class PlaceController extends Controller
     {
         $request->validate([
             'id' => 'required|integer|exists:places,id',
-            'organization_id' => 'filled|integer|exists:organizations,id',
-            'venue_id' => 'filled|integer|exists:venues,id',
             'parent_id' => 'filled|integer|exists:places,id',
             'name' => 'filled|string|max:16',
             'cover' => 'filled|string|max:255',
@@ -109,8 +110,6 @@ class PlaceController extends Controller
             'status' => 'filled|in:1,2',
         ], [], [
             'id' => '点位 id',
-            'organization_id' => '组织 id',
-            'venue_id' => '场馆 id',
             'parent_id' => '父点位 id',
             'name' => '点位名',
             'cover' => '封面',
@@ -124,7 +123,7 @@ class PlaceController extends Controller
             'status' => '状态',
         ]);
 
-        $data = $request->only(['organization_id', 'venue_id', 'parent_id', 'name', 'cover', 'address', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'tag', 'status']);
+        $data = $request->only(['parent_id', 'name', 'cover', 'address', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'tag', 'status']);
 
         if (empty($data)) {
             return response()->json(['message' => '请输入要更新的内容'], 403);
