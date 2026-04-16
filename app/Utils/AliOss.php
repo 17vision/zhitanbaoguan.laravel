@@ -37,7 +37,7 @@ class AliOss
             $cfg = Oss\Config::loadDefault();
             $cfg->setCredentialsProvider($credentialsProvider);
             $cfg->setRegion($this->region);
-            $cfg->setEndpoint($this->endPoint);
+            // $cfg->setEndpoint($this->endPoint);
 
             $client = new Oss\Client($cfg);
 
