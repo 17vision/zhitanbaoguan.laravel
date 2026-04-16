@@ -80,7 +80,7 @@ class PlaceController extends Controller
 
         $data = $request->only(['venue_id', 'parent_id', 'name', 'cover', 'address', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'tag', 'status']);
 
-        $venue = Venue::query()->where('id', $data['id'])->first();
+        $venue = Venue::query()->where('id', $data['venue_id'])->first();
 
         $data['organization_id'] = $venue['organization_id'];
 
