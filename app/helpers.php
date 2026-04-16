@@ -370,10 +370,10 @@ function ossToPath($url)
 
 function pathToOss($url)
 {
-    if (empty($path)) return '';
+    if (empty($url)) return '';
     // 如果已经是完整 URL，直接返回
-    if (str_starts_with($path, 'http')) {
-        return $path;
+    if (str_starts_with($url, 'http')) {
+        return $url;
     }
-    return 'https://ztbg-oss.17vision.com' . ltrim($path, '/');
+    return 'https://ztbg-oss.17vision.com' . ltrim($url, '/');
 }
