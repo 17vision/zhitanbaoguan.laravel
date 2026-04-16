@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Place;
+use App\Models\PlaceIntroduction;
+use App\Models\PlaceMedia;
 use App\Models\Venue;
 
 class PlaceController extends Controller
@@ -162,6 +164,14 @@ class PlaceController extends Controller
 
         if (Place::query()->where('parent_id', $id)->exists()) {
             return response()->json(['该点位还有子点位，不能删除'], 403);
+        }
+
+        if (PlaceIntroduction::query()->where('place_id', $id)->exists()) {
+            return response()->json(['该点位还有介绍数据，不能删除'], 403);
+        }
+
+        if (PlaceMedia::query()->where('place_id', $id)->exists()) {
+            return response()->json(['该点位还有媒体数据，不能删除'], 403);
         }
 
         $delete = Place::where('id', $id)->delete();

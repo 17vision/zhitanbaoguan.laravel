@@ -149,7 +149,6 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
 
                 Route::delete('places', [PlaceController::class, 'delete'])->middleware('permission:place.delete');
 
-
                 // 获取点位介绍信息
                 Route::get('place_introductions', [PlaceIntroductionController::class, 'index'])->middleware('permission:place.index');
 
