@@ -363,8 +363,9 @@ function getAccessToken($appid, $appsecret)
 
 function ossToPath($url)
 {
-    if (empty($url)) return '';
-    return str_replace('https://ztbg-oss.17vision.com/', '', $url);
+    if (!$url) return '';
+    $parse = parse_url($url);
+    return $parse['path'] ?? ''; // 直接返回 /zhitanbaoguan/...
 }
 
 function pathToOss($url)
@@ -374,5 +375,5 @@ function pathToOss($url)
     if (str_starts_with($path, 'http')) {
         return $path;
     }
-    return 'https://ztbg-oss.17vision.com/'. ltrim($path, '/');
+    return 'https://ztbg-oss.17vision.com' . ltrim($path, '/');
 }

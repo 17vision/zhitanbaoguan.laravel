@@ -9,7 +9,7 @@ class AliOss
 {
     private $region = 'cn-shanghai';
     private $bucket = 'zhi-tan-bao-guan';
-    private $endPoint = 'https://oss-ztbg.17vision.com';
+    private $endPoint = 'https://ztbg-oss.17vision.com';
 
       /**
      * 上传 Laravel $request->file('file') 到 OSS
