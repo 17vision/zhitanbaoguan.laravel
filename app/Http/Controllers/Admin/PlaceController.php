@@ -32,6 +32,8 @@ class PlaceController extends Controller
 
         if ($parent_id) {
             $query->where('parent_id', $parent_id);
+        } else {
+            $query->whereNull('parent_id');
         }
 
         $places = $query->paginate($limit);
