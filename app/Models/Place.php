@@ -24,6 +24,15 @@ class Place extends Model
         return '';
     }
 
+    public function getCoverAttribute()
+    {
+        if (isset($this->attributes['cover'])) {
+            $cover = $this->attributes['cover'];
+            return pathToOss($cover);
+        }
+        return '';
+    }
+
     public function introductions()
     {
         return $this->hasMany(PlaceIntroduction::class);

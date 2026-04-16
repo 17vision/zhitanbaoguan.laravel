@@ -40,4 +40,13 @@ class Venue extends Model
     {
         return $this->belongsTo(Organization::class);
     }
+
+    public function getCoverAttribute()
+    {
+        if (isset($this->attributes['cover'])) {
+            $cover = $this->attributes['cover'];
+            return pathToOss($cover);
+        }
+        return '';
+    }
 }

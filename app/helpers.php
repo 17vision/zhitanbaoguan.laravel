@@ -360,3 +360,19 @@ function getAccessToken($appid, $appsecret)
     }
     return false;
 }
+
+function ossToPath($url)
+{
+    if (empty($url)) return '';
+    return str_replace('https://ztbg-oss.17vision.com/', '', $url);
+}
+
+function pathToOss($url)
+{
+    if (empty($path)) return '';
+    // 如果已经是完整 URL，直接返回
+    if (str_starts_with($path, 'http')) {
+        return $path;
+    }
+    return 'https://ztbg-oss.17vision.com/'. ltrim($path, '/');
+}

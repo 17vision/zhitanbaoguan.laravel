@@ -44,8 +44,8 @@ class VenueController extends Controller
                 new Phone(),
             ],
             'introduction' => 'filled|string|max:255',
-            'open_time' => 'filled|date_format:H:i',
-            'close_time' => 'required_with:open_time|date_format:H:i|after:open_time',
+            'open_time' => 'filled|date_format:H:i:s',
+            'close_time' => 'required_with:open_time|date_format:H:i:s|after:open_time',
             'longitude' => 'filled|numeric',
             'latitude' => 'filled|numeric',
             'status' => 'filled|in:1,2',
@@ -64,6 +64,10 @@ class VenueController extends Controller
         ]);
 
         $data = $request->only(['organization_id', 'name', 'cover', 'address', 'phone', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'status']);
+
+        if (isset($data['cover'])) {
+            $data['cover'] = ossToPath($data['cover']);
+        }
 
         $venue = Venue::create($data);
 
@@ -107,6 +111,10 @@ class VenueController extends Controller
 
         if (empty($data)) {
             return response()->json(['message' => '请输入要更新的内容'], 403);
+        }
+
+        if (isset($data['cover'])) {
+            $data['cover'] = ossToPath($data['cover']);
         }
 
         $venue = Venue::query()->where('id', $request->id)->first();

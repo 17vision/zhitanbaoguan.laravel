@@ -57,8 +57,8 @@ class PlaceController extends Controller
             'cover' => 'filled|string|max:255',
             'address' => 'filled|string|max:255',
             'introduction' => 'filled|string|max:255',
-            'open_time' => 'filled|date_format:H:i',
-            'close_time' => 'required_with:open_time|date_format:H:i|after:open_time',
+            'open_time' => 'filled|date_format:H:i:s',
+            'close_time' => 'required_with:open_time|date_format:H:i:s|after:open_time',
             'longitude' => 'filled|numeric',
             'latitude' => 'filled|numeric',
             'tag' => 'filled|string',
@@ -90,6 +90,10 @@ class PlaceController extends Controller
             $data['level'] = 1;
         }
 
+        if (isset($data['cover'])) {
+            $data['cover'] = ossToPath($data['cover']);
+        }
+
         $venue = Place::create($data);
 
         return response()->json($venue);
@@ -104,8 +108,8 @@ class PlaceController extends Controller
             'cover' => 'filled|string|max:255',
             'address' => 'filled|string|max:255',
             'introduction' => 'filled|string|max:255',
-            'open_time' => 'filled|date_format:H:i',
-            'close_time' => 'required_with:open_time|date_format:H:i|after:open_time',
+            'open_time' => 'filled|date_format:H:i:s',
+            'close_time' => 'required_with:open_time|date_format:H:i:s|after:open_time',
             'longitude' => 'filled|numeric',
             'latitude' => 'filled|numeric',
             'tag' => 'filled|string',
@@ -135,6 +139,10 @@ class PlaceController extends Controller
             Place::query()->with(['parents'])->get();
         }
 
+        if (isset($data['cover'])) {
+            $data['cover'] = ossToPath($data['cover']);
+        }
+
         $venue = Place::query()->where('id', $request->id)->first();
 
         $venue->update($data);
@@ -151,6 +159,10 @@ class PlaceController extends Controller
         ]);
 
         $id = $request->id;
+
+        if (Place::query()->where('parent_id', $id)->exists()) {
+            return response()->json(['该点位还有子点位，不能删除'], 403);
+        }
 
         $delete = Place::where('id', $id)->delete();
 
