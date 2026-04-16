@@ -375,5 +375,5 @@ function pathToOss($url)
     if (str_starts_with($url, 'http')) {
         return $url;
     }
-    return 'https://ztbg-oss.17vision.com' . ltrim($url, '/');
+    return 'https://ztbg-oss.17vision.com' . $url;
 }
