@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name')->comment('名称');
             $table->string('cover')->nullable()->comment('封面');
             $table->string('address')->nullable()->comment('地址');
-            $table->string('introduction')->nullable()->comment('介绍');
+            $table->text('introduction')->nullable()->comment('介绍');
             $table->time('open_time')->nullable()->comment('运营开始时间');
             $table->time('close_time')->nullable()->comment('运营结束时间');
             $table->decimal('longitude', 9, 6)->nullable()->comment('经度');

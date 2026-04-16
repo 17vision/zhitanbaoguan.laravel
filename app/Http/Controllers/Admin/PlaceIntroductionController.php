@@ -42,7 +42,7 @@ class PlaceIntroductionController extends Controller
         $request->validate([
             'place_id' => 'required|integer|exists:places,id',
             'name' => 'required|string|max:16',
-            'content' => 'filled|string|max:2500',
+            'content' => 'required|string|max:2500',
             'voice' => 'filled|string|max:255',
             'status' => 'filled|in:1,2',
         ], [], [
@@ -70,7 +70,7 @@ class PlaceIntroductionController extends Controller
             'id' => 'required|integer|exists:place_introductions,id',
             'place_id' => 'required|integer|exists:places,id',
             'name' => 'required|string|max:16',
-            'content' => 'filled|string|max:2500',
+            'content' => 'required|string|max:2500',
             'voice' => 'filled|string|max:255',
             'status' => 'filled|in:1,2',
         ], [], [
