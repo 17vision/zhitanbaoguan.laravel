@@ -24,16 +24,20 @@ class AliOss
             // 3. 读取文件流（Laravel 临时文件）
             $filePath = $file->getPathname();
             $stream = fopen($filePath, 'r');
+            $body = Oss\Utils::streamFor($stream);
 
             // 4. OSS 配置
             $credentialsProvider = new Oss\Credentials\EnvironmentVariableCredentialsProvider();
             $cfg = Oss\Config::loadDefault();
             $cfg->setCredentialsProvider($credentialsProvider);
             $cfg->setRegion($this->region);
+            $cfg->setEndpoint('https://oss-ztbg.17vision.com');
+            
             $client = new Oss\Client($cfg);
 
             // 5. 上传请求
             $request = new PutObjectRequest($this->bucket, $ossKey);
+            $request->body = $body;
   
             // 执行上传
             $client->putObject($request);
