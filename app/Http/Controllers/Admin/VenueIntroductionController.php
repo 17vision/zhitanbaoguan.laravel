@@ -67,9 +67,9 @@ class VenueIntroductionController extends Controller
     {
         $request->validate([
             'id' => 'required|integer|exists:place_introductions,id',
-            'venue_id' => 'required|integer|exists:places,id',
-            'name' => 'required|string|max:16',
-            'content' => 'required|string|max:2500',
+            'venue_id' => 'filled|integer|exists:places,id',
+            'name' => 'filled|string|max:16',
+            'content' => 'filled|string|max:2500',
             'voice' => 'filled|string|max:255',
             'status' => 'filled|in:1,2',
         ], [], [
@@ -81,7 +81,7 @@ class VenueIntroductionController extends Controller
             'status' => '状态',
         ]);
 
-        $data = $request->only(['venue_id', 'name', 'content', 'voice', 'status']);
+        $data = $request->only(['name', 'content', 'voice', 'status']);
 
         if (empty($data)) {
             return response()->json(['message' => '请输入要更新的内容'], 403);
