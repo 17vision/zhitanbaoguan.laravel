@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\FileController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\VenueController;
+use App\Http\Controllers\Admin\VenueIntroductionController;
 use App\Http\Controllers\Admin\PlaceController;
 use App\Http\Controllers\Admin\PlaceIntroductionController;
 
@@ -135,6 +136,17 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::put('venues', [VenueController::class, 'update'])->middleware('permission:venue.create|venue.edit');
 
                 Route::delete('venues', [VenueController::class, 'delete'])->middleware('permission:venue.delete');
+
+                // 场馆介绍信息
+                Route::get('venue_introductions', [VenueIntroductionController::class, 'index'])->middleware('permission:venue.index');
+
+                Route::get('venue_introductions/{id}', [VenueIntroductionController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:venue.create|venue.edit');
+
+                Route::post('venue_introductions', [VenueIntroductionController::class, 'store'])->middleware('permission:venue.create|venue.edit');
+
+                Route::put('venue_introductions', [VenueIntroductionController::class, 'update'])->middleware('permission:venue.create|venue.edit');
+
+                Route::delete('venue_introductions', [VenueIntroductionController::class, 'delete'])->middleware('permission:venue.delete');
             });
 
             // 点位管理

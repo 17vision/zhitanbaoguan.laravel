@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    // 点位媒体介绍
     public function up(): void
     {
         Schema::create('place_media', function (Blueprint $table) {
