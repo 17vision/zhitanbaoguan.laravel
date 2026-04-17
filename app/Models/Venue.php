@@ -49,4 +49,14 @@ class Venue extends Model
         }
         return '';
     }
+
+    public function introductions()
+    {
+        return $this->hasMany(VenueIntroduction::class);
+    }
+
+    public function medias()
+    {
+        return $this->hasMany(VenueMedia::class);
+    }
 }

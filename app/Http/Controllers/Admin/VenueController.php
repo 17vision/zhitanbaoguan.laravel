@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Place;
 use Illuminate\Http\Request;
+use App\Models\Place;
 use App\Rules\Phone;
 use App\Models\Venue;
 
@@ -27,7 +27,7 @@ class VenueController extends Controller
 
     public function detail(Request $request, $id)
     {
-        $venue = Venue::where('id', $id)->with(['organization:id,name'])->first();
+        $venue = Venue::where('id', $id)->with(['organization:id,name', 'introductions', 'medias'])->first();
 
         return response()->json($venue);
     }

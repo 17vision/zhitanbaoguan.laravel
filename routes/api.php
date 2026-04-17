@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PayController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\PlaceController;
+use App\Http\Controllers\Api\VenueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +44,12 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
 // 'request', 去掉验证
 // 'user.login' 这个也不要
 Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', 'user.login'])->group(function () {
+
+    Route::get('venues/{id}', [VenueController::class, 'detail'])->where('id', '^[1-9]\d*$');
+
+    Route::get('places', [PlaceController::class, 'index']);
+
+    Route::get('places/{id}', [PlaceController::class, 'detail'])->where('id', '^[1-9]\d*$');
 
     // 下边需要授权才可以
     Route::middleware(['auth:api'])->group(function () {
