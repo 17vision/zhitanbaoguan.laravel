@@ -66,7 +66,7 @@ class VenueIntroductionController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'id' => 'required|integer|exists:place_introductions,id',
+            'id' => 'required|integer|exists:venue_introductions,id',
             'venue_id' => 'filled|integer|exists:places,id',
             'name' => 'filled|string|max:16',
             'content' => 'filled|string|max:2500',
