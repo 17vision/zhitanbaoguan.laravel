@@ -20,7 +20,7 @@ class VenueController extends Controller
 
         $limit = $request->input('limit', 30);
 
-        $venues = Venue::with(['organization:id,name'])->paginate($limit);
+        $venues = Venue::with(['organization:id,name'])->orderByDesc('id')->orderBy('status', 'asc')->paginate($limit);
 
         return response()->json($venues);
     }

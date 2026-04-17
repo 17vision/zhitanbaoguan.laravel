@@ -22,7 +22,7 @@ class VenueIntroductionController extends Controller
 
         $venue_id = $request->input('venue_id');
 
-        $query = VenueIntroduction::query()->where('venue_id', $venue_id);
+        $query = VenueIntroduction::query()->where('venue_id', $venue_id)->orderByDesc('id')->orderBy('status', 'asc');
 
         $venueIntroductions = $query->paginate($limit);
 

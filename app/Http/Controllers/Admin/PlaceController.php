@@ -30,7 +30,7 @@ class PlaceController extends Controller
 
         $parent_id = $request->input('parent_id');
 
-        $query = Place::with(['introductions', 'medias'])->where('venue_id', $venue_id);
+        $query = Place::with(['introductions', 'medias'])->where('venue_id', $venue_id)->orderByDesc('id')->orderBy('status', 'asc');
 
         if ($parent_id) {
             $query->where('parent_id', $parent_id);
