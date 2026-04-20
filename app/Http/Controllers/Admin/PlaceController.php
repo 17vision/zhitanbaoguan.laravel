@@ -230,7 +230,7 @@ class PlaceController extends Controller
         }
 
         $data = [
-            'scene' =>  \sprintf('id=%d', $id),
+            'scene' =>  \sprintf('venue_id=%d&id=%d', $place['venue_id'], $id),
             'page' =>  $page,
             'check_path' => config('auth.wxmini.check_path'),
             'width' => $request->input('width', 640)
