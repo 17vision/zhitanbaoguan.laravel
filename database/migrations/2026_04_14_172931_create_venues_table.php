@@ -21,6 +21,7 @@ return new class extends Migration
             $table->time('close_time')->nullable()->comment('运营结束时间');
             $table->decimal('longitude', 9, 6)->nullable()->comment('经度');
             $table->decimal('latitude', 9, 6)->nullable()->comment('纬度');
+            $table->string('qrcode')->nullable()->comment('小程序二维码');
             $table->unsignedTinyInteger('status')->default(1)->comment('状态 1 上线 2 下线');
             $table->timestamps();
         });

@@ -8,7 +8,7 @@ class VenueMedia extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['venue_id', 'type', 'name', 'path', 'thumbnail', 'duration', 'status'];
+    protected $fillable = ['venue_id', 'type', 'name', 'path', 'thumbnail', 'duration', 'sort', 'status'];
     protected $appends = ['status_str'];
 
     public function getStatusStrAttribute()

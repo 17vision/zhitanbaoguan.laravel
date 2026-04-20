@@ -30,7 +30,7 @@ class PlaceController extends Controller
 
         $parent_id = $request->input('parent_id');
 
-        $query = Place::with(['introductions', 'medias'])->where('venue_id', $venue_id)->orderByDesc('id')->orderBy('status', 'asc');
+        $query = Place::with(['introductions', 'medias'])->where('venue_id', $venue_id)->orderByDesc('id')->orderBy('status', 'asc')->orderBy('sort');
 
         if ($parent_id) {
             $query->where('parent_id', $parent_id);
@@ -64,6 +64,7 @@ class PlaceController extends Controller
             'longitude' => 'filled|numeric',
             'latitude' => 'filled|numeric',
             'tag' => 'filled|string',
+            'qrcode' => 'filled|string',
             'status' => 'filled|in:1,2',
         ], [], [
             'venue_id' => '场馆 id',
@@ -77,10 +78,11 @@ class PlaceController extends Controller
             'longitude' => '经度',
             'latitude' => '纬度',
             'tag' => '标签',
+            'qrcode' => '小程序码',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['venue_id', 'parent_id', 'name', 'cover', 'address', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'tag', 'status']);
+        $data = $request->only(['venue_id', 'parent_id', 'name', 'cover', 'address', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'tag', 'qrcode', 'status']);
 
         $venue = Venue::query()->where('id', $data['venue_id'])->first();
 
@@ -114,6 +116,7 @@ class PlaceController extends Controller
             'close_time' => 'required_with:open_time|date_format:H:i:s|after:open_time',
             'longitude' => 'filled|numeric',
             'latitude' => 'filled|numeric',
+            'qrcode' => 'filled|string',
             'tag' => 'filled|string',
             'status' => 'filled|in:1,2',
         ], [], [
@@ -127,11 +130,12 @@ class PlaceController extends Controller
             'close_time' => '闭园时间',
             'longitude' => '经度',
             'latitude' => '纬度',
+            'qrcode' => '小程序码',
             'tag' => '标签',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['parent_id', 'name', 'cover', 'address', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'tag', 'status']);
+        $data = $request->only(['parent_id', 'name', 'cover', 'address', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'tag', 'qrcode', 'status']);
 
         if (empty($data)) {
             return response()->json(['message' => '请输入要更新的内容'], 403);
@@ -150,6 +154,23 @@ class PlaceController extends Controller
         $venue->update($data);
 
         return response()->json($venue);
+    }
+
+    public function saveSort(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+        ], [], [
+            'ids' => '点位 id',
+        ]);
+
+        $ids = $request->input('ids');
+
+        foreach ($ids as $index => $id) {
+            Place::query()->where('id', $id)->update(['sort' => $index]);
+        }
+
+        return response()->json(['message' => '已排序']);
     }
 
     public function delete(Request $request)

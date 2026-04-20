@@ -22,7 +22,7 @@ class VenueIntroductionController extends Controller
 
         $venue_id = $request->input('venue_id');
 
-        $query = VenueIntroduction::query()->where('venue_id', $venue_id)->orderByDesc('id')->orderBy('status', 'asc');
+        $query = VenueIntroduction::query()->where('venue_id', $venue_id)->orderByDesc('id')->orderBy('status', 'asc')->orderBy('sort');
 
         $venueIntroductions = $query->paginate($limit);
 
@@ -96,6 +96,23 @@ class VenueIntroductionController extends Controller
         $placeIntroduction->update($data);
 
         return response()->json($placeIntroduction);
+    }
+
+    public function saveSort(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+        ], [], [
+            'ids' => '点位 id',
+        ]);
+
+        $ids = $request->input('ids');
+
+        foreach ($ids as $index => $id) {
+            VenueIntroduction::query()->where('id', $id)->update(['sort' => $index]);
+        }
+
+        return response()->json(['message' => '已排序']);
     }
 
     public function delete(Request $request)

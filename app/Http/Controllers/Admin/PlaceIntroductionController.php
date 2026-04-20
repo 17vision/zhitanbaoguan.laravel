@@ -23,7 +23,7 @@ class PlaceIntroductionController extends Controller
 
         $place_id = $request->input('place_id');
 
-        $query = PlaceIntroduction::query()->where('place_id', $place_id)->orderByDesc('id')->orderBy('status', 'asc');
+        $query = PlaceIntroduction::query()->where('place_id', $place_id)->orderByDesc('id')->orderBy('status', 'asc')->orderBy('sort');
 
         $placeIntroductions = $query->paginate($limit);
 
@@ -98,6 +98,24 @@ class PlaceIntroductionController extends Controller
 
         return response()->json($placeIntroduction);
     }
+
+    public function saveSort(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+        ], [], [
+            'ids' => '点位 id',
+        ]);
+
+        $ids = $request->input('ids');
+
+        foreach ($ids as $index => $id) {
+            PlaceIntroduction::query()->where('id', $id)->update(['sort' => $index]);
+        }
+
+        return response()->json(['message' => '已排序']);
+    }
+
 
     public function delete(Request $request)
     {

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Place;
+use Illuminate\Http\Request;
 use App\Rules\Phone;
 use App\Models\Venue;
 
@@ -48,6 +48,7 @@ class VenueController extends Controller
             'close_time' => 'required_with:open_time|date_format:H:i:s|after:open_time',
             'longitude' => 'filled|numeric',
             'latitude' => 'filled|numeric',
+            'qrcode' => 'filled|string',
             'status' => 'filled|in:1,2',
         ], [], [
             'organization_id' => '组织 id',
@@ -60,10 +61,11 @@ class VenueController extends Controller
             'close_time' => '闭园时间',
             'longitude' => '经度',
             'latitude' => '纬度',
+            'qrcode' => '小程序码',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['organization_id', 'name', 'cover', 'address', 'phone', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'status']);
+        $data = $request->only(['organization_id', 'name', 'cover', 'address', 'phone', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'qrcode', 'status']);
 
         if (isset($data['cover'])) {
             $data['cover'] = ossToPath($data['cover']);
@@ -91,6 +93,7 @@ class VenueController extends Controller
             'close_time' => 'required_with:open_time|date_format:H:i:s|after:open_time',
             'longitude' => 'filled|numeric',
             'latitude' => 'filled|numeric',
+            'qrcode' => 'filled|string',
             'status' => 'filled|in:1,2',
         ], [], [
             'id' => '场馆 id',
@@ -104,10 +107,11 @@ class VenueController extends Controller
             'close_time' => '闭园时间',
             'longitude' => '经度',
             'latitude' => '纬度',
+            'qrcode' => '小程序码',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['organization_id', 'name', 'cover', 'address', 'phone', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'status']);
+        $data = $request->only(['organization_id', 'name', 'cover', 'address', 'phone', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'qrcode', 'status']);
 
         if (empty($data)) {
             return response()->json(['message' => '请输入要更新的内容'], 403);

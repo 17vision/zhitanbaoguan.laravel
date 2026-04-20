@@ -23,6 +23,8 @@ return new class extends Migration
             $table->decimal('longitude', 9, 6)->nullable()->comment('经度');
             $table->decimal('latitude', 9, 6)->nullable()->comment('纬度');
             $table->string('tag')->nullable()->comment('标签');
+            $table->string('qrcode')->nullable()->comment('小程序二维码');
+            $table->unsignedInteger('sort')->default(0)->comment('排序');
             $table->unsignedTinyInteger('level')->nullable()->comment('层级 1 一级 2 二级 3 三级');
             $table->unsignedTinyInteger('status')->default(1)->comment('状态 1 上线 2 下线');
             $table->timestamps();

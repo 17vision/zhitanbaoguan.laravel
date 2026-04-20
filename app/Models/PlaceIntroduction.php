@@ -8,7 +8,7 @@ class PlaceIntroduction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['place_id', 'name', 'content', 'voice', 'status'];
+    protected $fillable = ['place_id', 'name', 'content', 'voice', 'sort', 'status'];
     protected $appends = ['status_str'];
 
     public function getStatusStrAttribute()

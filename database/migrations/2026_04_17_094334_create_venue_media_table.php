@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('name')->comment('名称');
             $table->text('content')->comment('内容');
             $table->string('voice')->nullable()->comment('语音');
+            $table->unsignedInteger('sort')->default(0)->comment('排序');
             $table->unsignedTinyInteger('status')->default(1)->comment('状态 1 上线 2 下线');
             $table->timestamps();
         });

@@ -8,7 +8,7 @@ class PlaceMedia extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['place_id', 'type', 'name', 'path', 'thumbnail', 'duration', 'status'];
+    protected $fillable = ['place_id', 'type', 'name', 'path', 'thumbnail', 'duration', 'sort', 'status'];
     protected $appends = ['status_str'];
 
     public function getStatusStrAttribute()

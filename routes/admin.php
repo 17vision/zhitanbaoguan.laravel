@@ -144,6 +144,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
 
                 Route::post('venue_introductions', [VenueIntroductionController::class, 'store'])->middleware('permission:venue.create|venue.edit');
 
+                Route::post('venue_introductions/sorts', [VenueIntroductionController::class, 'saveSort'])->middleware('permission:venue.create|venue.edit');
+
                 Route::put('venue_introductions', [VenueIntroductionController::class, 'update'])->middleware('permission:venue.create|venue.edit');
 
                 Route::delete('venue_introductions', [VenueIntroductionController::class, 'delete'])->middleware('permission:venue.delete');
@@ -157,6 +159,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
 
                 Route::post('places', [PlaceController::class, 'store'])->middleware('permission:place.create|place.edit');
 
+                Route::post('places/sorts', [PlaceController::class, 'saveSort'])->middleware('permission:place.create|place.edit');
+
                 Route::put('places', [PlaceController::class, 'update'])->middleware('permission:place.create|place.edit');
 
                 Route::delete('places', [PlaceController::class, 'delete'])->middleware('permission:place.delete');
@@ -167,6 +171,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::get('place_introductions/{id}', [PlaceIntroductionController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:place.create|place.edit');
 
                 Route::post('place_introductions', [PlaceIntroductionController::class, 'store'])->middleware('permission:place.create|place.edit');
+
+                Route::post('place_introductions/sorts', [PlaceIntroductionController::class, 'saveSort'])->middleware('permission:place.create|place.edit');
 
                 Route::put('place_introductions', [PlaceIntroductionController::class, 'update'])->middleware('permission:place.create|place.edit');
 

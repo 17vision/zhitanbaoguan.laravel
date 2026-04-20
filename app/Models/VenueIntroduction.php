@@ -7,7 +7,7 @@ class VenueIntroduction extends Model
 {
     use HasFactory;
 
-     protected $fillable = ['venue_id', 'name', 'content', 'voice', 'status'];
+     protected $fillable = ['venue_id', 'name', 'content', 'voice', 'sort', 'status'];
     protected $appends = ['status_str'];
 
     public function getStatusStrAttribute()
