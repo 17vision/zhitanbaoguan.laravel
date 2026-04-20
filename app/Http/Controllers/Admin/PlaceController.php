@@ -30,7 +30,7 @@ class PlaceController extends Controller
 
         $parent_id = $request->input('parent_id');
 
-        $query = Place::with(['introductions', 'medias'])->where('venue_id', $venue_id)->with(['father:id,parent_id,name'])->orderBy('status', 'asc')->orderBy('sort')->orderByDesc('id');
+        $query = Place::with(['introductions', 'medias'])->where('venue_id', $venue_id)->orderBy('status', 'asc')->orderBy('sort')->orderByDesc('id');
 
         if ($parent_id) {
             $query->where('parent_id', $parent_id);
@@ -39,9 +39,6 @@ class PlaceController extends Controller
         }
 
         $places = $query->paginate($limit);
-        foreach ($places as &$place) {
-            $place['has_children'] = Place::query()->where('parent_id', $place['id'])->exists();
-        }
 
         return response()->json($places);
     }

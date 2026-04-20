@@ -38,6 +38,15 @@ class Venue extends Model
         return '';
     }
 
+    public function getQrcodeAttribute()
+    {
+        if (isset($this->attributes['qrcode'])) {
+            $qrcode = $this->attributes['qrcode'];
+            return storageUrl($qrcode);
+        }
+        return '';
+    }
+
     public function organization()
     {
         return $this->belongsTo(Organization::class);
