@@ -33,6 +33,15 @@ class Place extends Model
         return '';
     }
 
+    public function getQrcodeAttribute()
+    {
+        if (isset($this->attributes['qrcode'])) {
+            $qrcode = $this->attributes['qrcode'];
+            return storageUrl($qrcode);
+        }
+        return '';
+    }
+
     public function introductions()
     {
         return $this->hasMany(PlaceIntroduction::class);
