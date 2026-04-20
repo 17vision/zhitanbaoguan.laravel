@@ -127,7 +127,8 @@ return [
     // 小程序
     'wxmini' => [
         'appid' => env('WXMINI_APPID', ''),
-        'secret' => env('WXMINI_SECRET', '')
+        'secret' => env('WXMINI_SECRET', ''),
+        'check_path' => env('WXMINI_CHECK_PATH', true)
     ],
 
     // 公众号

@@ -159,11 +159,15 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
 
                 Route::post('places', [PlaceController::class, 'store'])->middleware('permission:place.create|place.edit');
 
-                Route::post('places/sorts', [PlaceController::class, 'saveSort'])->middleware('permission:place.create|place.edit');
-
                 Route::put('places', [PlaceController::class, 'update'])->middleware('permission:place.create|place.edit');
 
                 Route::delete('places', [PlaceController::class, 'delete'])->middleware('permission:place.delete');
+
+                // 排序
+                Route::post('places/sorts', [PlaceController::class, 'saveSort'])->middleware('permission:place.create|place.edit');
+
+                // 生成小程序码
+                Route::post('places/qrcode', [PlaceController::class, 'qrcode'])->middleware('permission:place.create|place.edit');
 
                 // 获取点位介绍信息
                 Route::get('place_introductions', [PlaceIntroductionController::class, 'index'])->middleware('permission:place.index');

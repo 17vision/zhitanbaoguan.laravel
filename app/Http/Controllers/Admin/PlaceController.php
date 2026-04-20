@@ -39,8 +39,8 @@ class PlaceController extends Controller
         }
 
         $places = $query->paginate($limit);
-        foreach($places as &$place) {
-            $place['has_children'] = Place::query()->where('parent_id', $place['id'])->exists();   
+        foreach ($places as &$place) {
+            $place['has_children'] = Place::query()->where('parent_id', $place['id'])->exists();
         }
 
         return response()->json($places);
@@ -215,14 +215,26 @@ class PlaceController extends Controller
 
         $id = $request->input('id');
 
-        $width = $request->input('width', 640);
+        $place = Place::query()->where('id', $id)->with(['venue:id,qrcode_root'])->first();
+
+        $qrcode_root = $place['venue']['qrcode_root'] ?? '';
+        if (!$qrcode_root) {
+            return response()->json(['message' => '请配置场馆小程序码根路径'], 403);
+        }
+
+        $hasChildren = Place::query()->where('parent_id', $id)->exists();
+        if ($hasChildren) {
+            $page = \sprintf("%s/pages/pavilion/part/list", $qrcode_root);
+        } else {
+            $page = \sprintf("%s/pages/pavilion/part/detail", $qrcode_root);
+        }
 
         $data = [
-            'scene' => 'place_id=' . $id,
-            'page' => 'jinniu-lake-zoo/pages/pavilion/part/detail',
-            'width' => $width
+            'scene' =>  \sprintf('id=%d', $id),
+            'page' =>  $page,
+            'check_path' => config('auth.wxmini.check_path'),
+            'width' => $request->input('width', 640)
         ];
-
         $base64Image = app(ImageController::class)->getWxcode($data);
         if (!$base64Image) {
             return response()->json(['message' => '生成失败[1]'], 403);
@@ -243,10 +255,9 @@ class PlaceController extends Controller
         $data = $result->getData();
 
         if ($data->url) {
-            Place::query()->where('id', $id)->update(['qrcode' => reverseStorageUrl($data->url) . '?time=' . time()]); 
+            Place::query()->where('id', $id)->update(['qrcode' => reverseStorageUrl($data->url) . '?time=' . time()]);
             return  $result;
         }
-
         return response()->json(['message' => '生成小程序码失败']);
     }
 }
