@@ -255,7 +255,7 @@ class PlaceController extends Controller
         $data = $result->getData();
 
         if ($data->url) {
-            Place::query()->where('id', $id)->update(['qrcode' => reverseStorageUrl($data->url) . '?time=' . time()]);
+            $place->update(['qrcode' => reverseStorageUrl($data->url) . '?time=' . time()]);
             return  $result;
         }
         return response()->json(['message' => '生成小程序码失败']);

@@ -132,10 +132,13 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::get('venues/{id}', [VenueController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:venue.create|venue.edit');
 
                 Route::post('venues', [VenueController::class, 'store'])->middleware('permission:venue.create|venue.edit');
-
+                
                 Route::put('venues', [VenueController::class, 'update'])->middleware('permission:venue.create|venue.edit');
-
+                
                 Route::delete('venues', [VenueController::class, 'delete'])->middleware('permission:venue.delete');
+
+                // 生成小程序码
+                Route::post('venues/qrcode', [VenueController::class, 'qrcode'])->middleware('permission:venue.create|venue.edit');
 
                 // 场馆介绍信息
                 Route::get('venue_introductions', [VenueIntroductionController::class, 'index'])->middleware('permission:venue.index');

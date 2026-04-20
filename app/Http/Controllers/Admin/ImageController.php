@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Utils\ImageUpload;
 use App\Models\Place;
+use App\Models\Venue;
 
 class ImageController extends Controller
 {
@@ -41,7 +42,8 @@ class ImageController extends Controller
         $use = $info['use'] ?? '';
 
         $uses = [
-            'place' => ['qrcode']
+            'place' => ['qrcode'],
+            'venue' => ['qrcode']
         ];
 
         if ($use && isset($uses[$referer])) {
@@ -71,6 +73,22 @@ class ImageController extends Controller
                 $place = Place::query()->where('id', $info['id'])->first();
                 $packageName = $place->created_at->format('Ym');
                 $name = $place->id;
+            } else {
+                $packageName = date('Ym', time());
+                $name = randStr(8);
+            }
+
+            if ($use) {
+                $folder = sprintf('resource/upload/image/%s/%s/%s/', $referer, $use, $packageName);
+            } else {
+                $folder = sprintf('resource/upload/image/%s/%s/', $referer, $packageName);
+            }
+        } elseif ($referer == 'venue') {
+            $max_width = null;
+            if (isset($info['id']) && $info['id']) {
+                $venue = Venue::query()->where('id', $info['id'])->first();
+                $packageName = $venue->created_at->format('Ym');
+                $name = $venue->id;
             } else {
                 $packageName = date('Ym', time());
                 $name = randStr(8);
