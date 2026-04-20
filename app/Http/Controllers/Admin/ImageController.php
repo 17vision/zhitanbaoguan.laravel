@@ -62,7 +62,7 @@ class ImageController extends Controller
         }
 
         if ($referer == 'avatar') {
-            $folder = sprintf('storage/upload/image/avatar/%s/', date('Ym', strtotime($user->created_at)));
+            $folder = sprintf('resource/upload/image/avatar/%s/', date('Ym', strtotime($user->created_at)));
             $name = $user->id;
             $max_width = 320;
         } elseif ($referer == 'place') {
@@ -77,15 +77,15 @@ class ImageController extends Controller
             }
 
             if ($use) {
-                $folder = sprintf('storage/upload/image/%s/%s/%s/', $referer, $use, $packageName);
+                $folder = sprintf('resource/upload/image/%s/%s/%s/', $referer, $use, $packageName);
             } else {
-                $folder = sprintf('storage/upload/image/%s/%s/', $referer, $packageName);
+                $folder = sprintf('resource/upload/image/%s/%s/', $referer, $packageName);
             }
         } else {
             if ($use) {
-                $folder = sprintf('storage/upload/image/%s/%s/%s/', $referer, $use, date('Ym', time()));
+                $folder = sprintf('resource/upload/image/%s/%s/%s/', $referer, $use, date('Ym', time()));
             } else {
-                $folder = sprintf('storage/upload/image/%s/%s/', $referer, date('Ym', time()));
+                $folder = sprintf('resource/upload/image/%s/%s/', $referer, date('Ym', time()));
             }
             $name = randStr(8);
             $max_width = 240;

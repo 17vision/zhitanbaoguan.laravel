@@ -35,12 +35,6 @@ function storageUrl($value, $way = 0)
     if (Illuminate\Support\Str::startsWith($value, ['http://', 'https://'])) {
         return $value;
     }
-
-    if (config('filesystems.use_oss') && $way == 1 && (preg_match("/meet\//i", $value) ||
-        preg_match("/moment_video_thumbnail\//i", $value) || (preg_match("/moment\//i", $value)))) {
-        return App\Services\Oss::signUrl($value);
-    }
-
     return url($value);
 }
 
@@ -50,15 +44,9 @@ function reverseStorageUrl($value)
     if (!$value || !is_string($value)) {
         return false;
     }
-
-    // 先去掉后边的时间戳参数 . 匹配除换行符\n以外的任何字符
-    $value = preg_replace('/\?.*/', '', $value);
-
-    $begin = strpos($value, 'storage/upload/');
-    if ($begin && $begin > 0) {
-        return substr($value, $begin);
-    }
-    return $value;
+    
+    $parse = parse_url($value);
+    return $parse['path'] ?? '';
 }
 
 /**
