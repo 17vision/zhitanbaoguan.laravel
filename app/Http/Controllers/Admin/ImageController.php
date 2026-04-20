@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Utils\ImageUpload;
+use App\Models\Place;
 
 class ImageController extends Controller
 {
@@ -29,7 +30,24 @@ class ImageController extends Controller
 
         $referer = $info['referer'] ?? '';
         if (!$referer) {
-            return response()->json(['message' => '缺少 info 信息'], 403);
+            return response()->json(['message' => '缺少 referer 信息'], 403);
+        }
+
+        $referers = ['avatar', 'place', 'venue'];
+        if (!\in_array($referer, $referers)) {
+            return response()->json(['message' => 'referer 不在白名单呢'], 403);
+        }
+
+        $use = $info['use'] ?? '';
+
+        $uses = [
+            'place' => ['qrcode']
+        ];
+
+        if ($use && isset($uses[$referer])) {
+            if (!\in_array($use, $uses[$referer])) {
+                return response()->json(['message' => 'use 不在白名单呢'], 403);
+            }
         }
 
         $user = $request->user();
@@ -47,35 +65,35 @@ class ImageController extends Controller
             $folder = sprintf('storage/upload/image/avatar/%s/', date('Ym', strtotime($user->created_at)));
             $name = $user->id;
             $max_width = 320;
-        } elseif ($referer == 'resource') {
-            $type = $info['type'] ?? '';
-            $types = ['image', 'video', 'audio', 'model'];
-
-            if (!in_array($type, $types)) {
-                return response()->json(['message' => '资源类型不正确'], 403);
+        } elseif ($referer == 'place') {
+            if (isset($info['id']) && $info['id']) {
+                $place = Place::query()->where('id', $info['id'])->first();
+                $packageName = $place->created_at->format('Ym');
+                $name = $place->id;
+            } else {
+                $packageName = date('Ym', time());
+                $name = randStr(8);
             }
-            // 资源
-            $folder = sprintf('storage/upload/image/resource/%s/%s/', $type, date('Ym', time()));
-            $name = 'max_' . randStr(8);
-            $max_width = null;
-        } elseif ($referer == 'course' || $referer == 'course_chapter') {
-            // 课程
-            $folder = sprintf('storage/upload/image/%s/%s/', $referer, date('Ym', time()));
-            $name = randStr(8);
-            $max_width = null;
-        } elseif ($referer == 'tutor') {
-            $folder = sprintf('storage/upload/image/tutor/%s/', date('Ym', time()));
+
+            if ($use) {
+                $folder = sprintf('storage/upload/image/%s/%s/%s/', $referer, $use, $packageName);
+            } else {
+                $folder = sprintf('storage/upload/image/%s/%s/', $referer, $packageName);
+            }
+        } else {
+            if ($use) {
+                $folder = sprintf('storage/upload/image/%s/%s/%s/', $referer, $use, date('Ym', time()));
+            } else {
+                $folder = sprintf('storage/upload/image/%s/%s/', $referer, date('Ym', time()));
+            }
             $name = randStr(8);
             $max_width = 240;
-        } else {
-            return  response()->json(['message' => '没有对应的 referer'], 403);
         }
 
         if ($request->hasFile('file')) {
             $res = app(ImageUpload::class)->saveFileImage($file, $folder, $name, $max_width, $thumbnail_name, $min_width);
         } else {
             $name = $name . '.jpg';
-
             $res = app(ImageUpload::class)->saveBase64Image($file, $folder, $name, $max_width, $thumbnail_name, $min_width);
         }
 

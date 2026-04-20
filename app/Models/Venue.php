@@ -18,6 +18,7 @@ class Venue extends Model
         'close_time',
         'longitude',
         'latitude',
+        'qrcode_root',
         'qrcode',
         'status'
     ];

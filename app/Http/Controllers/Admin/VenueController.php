@@ -48,6 +48,7 @@ class VenueController extends Controller
             'close_time' => 'required_with:open_time|date_format:H:i:s|after:open_time',
             'longitude' => 'filled|numeric',
             'latitude' => 'filled|numeric',
+            'qrcode_root' => 'nullable|string',
             'qrcode' => 'filled|string',
             'status' => 'filled|in:1,2',
         ], [], [
@@ -61,11 +62,12 @@ class VenueController extends Controller
             'close_time' => '闭园时间',
             'longitude' => '经度',
             'latitude' => '纬度',
+            'qrcode_root' => '小程序码根路径',
             'qrcode' => '小程序码',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['organization_id', 'name', 'cover', 'address', 'phone', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'qrcode', 'status']);
+        $data = $request->only(['organization_id', 'name', 'cover', 'address', 'phone', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'qrcode_root', 'qrcode', 'status']);
 
         if (isset($data['cover'])) {
             $data['cover'] = ossToPath($data['cover']);
@@ -93,6 +95,7 @@ class VenueController extends Controller
             'close_time' => 'required_with:open_time|date_format:H:i:s|after:open_time',
             'longitude' => 'filled|numeric',
             'latitude' => 'filled|numeric',
+            'qrcode_root' => 'nullable|string',
             'qrcode' => 'filled|string',
             'status' => 'filled|in:1,2',
         ], [], [
@@ -107,11 +110,12 @@ class VenueController extends Controller
             'close_time' => '闭园时间',
             'longitude' => '经度',
             'latitude' => '纬度',
+            'qrcode_root' => '小程序码根路径',
             'qrcode' => '小程序码',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['organization_id', 'name', 'cover', 'address', 'phone', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'qrcode', 'status']);
+        $data = $request->only(['organization_id', 'name', 'cover', 'address', 'phone', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'qrcode_root', 'qrcode', 'status']);
 
         if (empty($data)) {
             return response()->json(['message' => '请输入要更新的内容'], 403);

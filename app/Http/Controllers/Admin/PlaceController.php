@@ -30,7 +30,7 @@ class PlaceController extends Controller
 
         $parent_id = $request->input('parent_id');
 
-        $query = Place::with(['introductions', 'medias'])->where('venue_id', $venue_id)->orderBy('status', 'asc')->orderBy('sort')->orderByDesc('id');
+        $query = Place::with(['introductions', 'medias'])->where('venue_id', $venue_id)->with(['father:id,parent_id,name'])->orderBy('status', 'asc')->orderBy('sort')->orderByDesc('id');
 
         if ($parent_id) {
             $query->where('parent_id', $parent_id);
@@ -39,6 +39,9 @@ class PlaceController extends Controller
         }
 
         $places = $query->paginate($limit);
+        foreach($places as &$place) {
+            $place['has_children'] = Place::query()->where('parent_id', $place['id'])->exists();   
+        }
 
         return response()->json($places);
     }
@@ -198,5 +201,52 @@ class PlaceController extends Controller
         $delete = Place::where('id', $id)->delete();
 
         return response()->json(['delete' => $delete]);
+    }
+
+    public function qrcode(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|integer|exists:places,id',
+            'width' => 'filled|integer|min:240',
+        ], [], [
+            'id' => '点位 id',
+            'width' => '小程序码宽度'
+        ]);
+
+        $id = $request->input('id');
+
+        $width = $request->input('width', 640);
+
+        $data = [
+            'scene' => 'place_id=' . $id,
+            'page' => 'jinniu-lake-zoo/pages/pavilion/part/detail',
+            'width' => $width
+        ];
+
+        $base64Image = app(ImageController::class)->getWxcode($data);
+        if (!$base64Image) {
+            return response()->json(['message' => '生成失败[1]'], 403);
+        }
+
+        // 将小程序码，存到 oss 上
+        $request->replace([
+            'info' => [
+                'referer' => 'place',
+                'use' => 'qrcode',
+                'id' => $id
+            ],
+            'file' => $base64Image
+        ]);
+
+        $result = app(ImageController::class)->store($request);
+
+        $data = $result->getData();
+
+        if ($data->url) {
+            Place::query()->where('id', $id)->update(['qrcode' => reverseStorageUrl($data->url) . '?time=' . time()]); 
+            return  $result;
+        }
+
+        return response()->json(['message' => '生成小程序码失败']);
     }
 }
