@@ -23,7 +23,7 @@ class PlaceIntroductionController extends Controller
 
         $place_id = $request->input('place_id');
 
-        $query = PlaceIntroduction::query()->where('place_id', $place_id)->orderByDesc('id')->orderBy('status', 'asc')->orderBy('sort');
+        $query = PlaceIntroduction::query()->where('place_id', $place_id)->orderBy('status', 'asc')->orderBy('sort')->orderByDesc('id');
 
         $placeIntroductions = $query->paginate($limit);
 
