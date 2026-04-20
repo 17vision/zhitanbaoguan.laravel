@@ -66,6 +66,7 @@ class ImageController extends Controller
             $name = $user->id;
             $max_width = 320;
         } elseif ($referer == 'place') {
+            $max_width = null;
             if (isset($info['id']) && $info['id']) {
                 $place = Place::query()->where('id', $info['id'])->first();
                 $packageName = $place->created_at->format('Ym');

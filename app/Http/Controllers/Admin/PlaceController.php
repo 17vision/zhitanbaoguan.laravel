@@ -240,7 +240,7 @@ class PlaceController extends Controller
             return response()->json(['message' => '生成失败[1]'], 403);
         }
 
-        // 将小程序码，存到 oss 上
+        // 将小程序码，存到本地
         $request->replace([
             'info' => [
                 'referer' => 'place',
