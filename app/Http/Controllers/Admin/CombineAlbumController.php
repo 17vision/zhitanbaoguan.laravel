@@ -46,16 +46,18 @@ class CombineAlbumController extends Controller
             'name' => 'required|string|max:32',
             'cover' => 'filled|string|max:255',
             'introduction' => 'filled|string|max:2500',
+            'sort' => 'filled|integer',
             'status' => 'filled|in:0,1,2',
         ], [], [
             'venue_id' => '场馆 id',
             'name' => '相册分类名称',
             'cover' => '分类封面图',
             'introduction' => '分类介绍文案',
+            'sort' => '排序权重',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['venue_id', 'name', 'cover', 'introduction', 'status']);
+        $data = $request->only(['venue_id', 'name', 'cover', 'introduction', 'sort', 'status']);
 
         $venue = Venue::query()->where('id', $data['venue_id'])->first();
 
@@ -77,16 +79,18 @@ class CombineAlbumController extends Controller
             'name' => 'filled|string|max:32',
             'cover' => 'filled|string|max:255',
             'introduction' => 'filled|string|max:2500',
+            'sort' => 'filled|integer',
             'status' => 'filled|in:0,1,2',
         ], [], [
             'id' => '相册分类 id',
             'name' => '相册分类名称',
             'cover' => '分类封面图',
             'introduction' => '分类介绍文案',
+            'sort' => '排序权重',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['name', 'cover', 'introduction', 'status']);
+        $data = $request->only(['name', 'cover', 'introduction', 'sort', 'status']);
 
         if (empty($data)) {
             return response()->json(['message' => '请输入要更新的内容'], 403);

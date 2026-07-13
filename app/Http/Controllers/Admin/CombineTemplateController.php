@@ -45,16 +45,18 @@ class CombineTemplateController extends Controller
             'name' => 'required|string|max:32',
             'cover' => 'required|string|max:255',
             'introduction' => 'filled|string|max:2500',
+            'sort' => 'filled|integer',
             'status' => 'filled|in:1,2',
         ], [], [
             'combine_album_id' => '相册分类 id',
             'name' => '模板名称',
             'cover' => '模板封面图',
             'introduction' => '模板介绍文案',
+            'sort' => '排序权重',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['combine_album_id', 'name', 'cover', 'introduction', 'status']);
+        $data = $request->only(['combine_album_id', 'name', 'cover', 'introduction', 'sort', 'status']);
 
         $data['cover'] = ossToPath($data['cover']);
 
@@ -70,16 +72,18 @@ class CombineTemplateController extends Controller
             'name' => 'filled|string|max:32',
             'cover' => 'filled|string|max:255',
             'introduction' => 'filled|string|max:2500',
+            'sort' => 'filled|integer',
             'status' => 'filled|in:1,2',
         ], [], [
             'id' => '模板 id',
             'name' => '模板名称',
             'cover' => '模板封面图',
             'introduction' => '模板介绍文案',
+            'sort' => '排序权重',
             'status' => '状态',
         ]);
 
-        $data = $request->only(['name', 'cover', 'introduction', 'status']);
+        $data = $request->only(['name', 'cover', 'introduction', 'sort', 'status']);
 
         if (empty($data)) {
             return response()->json(['message' => '请输入要更新的内容'], 403);
