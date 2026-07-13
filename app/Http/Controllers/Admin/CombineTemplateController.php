@@ -17,7 +17,7 @@ class CombineTemplateController extends Controller
             'combine_album_id' => 'required|integer|exists:combine_albums,id',
         ], [], [
             'limit' => '单页显示条数',
-            'combine_album_id' => '相册分类 id',
+            'combine_album_id' => '相册专辑 id',
         ]);
 
         $limit = $request->input('limit', 30);

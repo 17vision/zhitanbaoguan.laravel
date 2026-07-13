@@ -199,16 +199,19 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::put('combine_albums', [CombineAlbumController::class, 'update'])->middleware('permission:album.create|album.update');
 
                 Route::delete('combine_albums', [CombineAlbumController::class, 'delete'])->middleware('permission:album.delete');
+            });
 
-                Route::get('combine_templates', [CombineTemplateController::class, 'index'])->middleware('permission:album.templatelist');
+            // 模板管理
+            Route::group(['middleware' => 'permission:template'], function () {
+                Route::get('combine_templates', [CombineTemplateController::class, 'index'])->middleware('permission:template.index');
 
-                Route::get('combine_templates/{id}', [CombineTemplateController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:album.templatelist');
+                Route::get('combine_templates/{id}', [CombineTemplateController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:template.detail');
 
-                Route::post('combine_templates', [CombineTemplateController::class, 'store'])->middleware('permission:album.templateedit');
+                Route::post('combine_templates', [CombineTemplateController::class, 'store'])->middleware('permission:template.create|template.update');
 
-                Route::put('combine_templates', [CombineTemplateController::class, 'update'])->middleware('permission:album.templateedit');
+                Route::put('combine_templates', [CombineTemplateController::class, 'update'])->middleware('permission:template.create|template.update');
 
-                Route::delete('combine_templates', [CombineTemplateController::class, 'delete'])->middleware('permission:album.templateedit');
+                Route::delete('combine_templates', [CombineTemplateController::class, 'delete'])->middleware('permission:template.delete');
             });
         });
     });
