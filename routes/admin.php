@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\VenueController;
 use App\Http\Controllers\Admin\VenueIntroductionController;
 use App\Http\Controllers\Admin\PlaceController;
 use App\Http\Controllers\Admin\PlaceIntroductionController;
+use App\Http\Controllers\Admin\CombineAlbumController;
+use App\Http\Controllers\Admin\CombineTemplateController;
 
 Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(function () {
     // 获取验证码
@@ -132,9 +134,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::get('venues/{id}', [VenueController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:venue.create|venue.edit');
 
                 Route::post('venues', [VenueController::class, 'store'])->middleware('permission:venue.create|venue.edit');
-                
+
                 Route::put('venues', [VenueController::class, 'update'])->middleware('permission:venue.create|venue.edit');
-                
+
                 Route::delete('venues', [VenueController::class, 'delete'])->middleware('permission:venue.delete');
 
                 // 生成小程序码
@@ -184,6 +186,29 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::put('place_introductions', [PlaceIntroductionController::class, 'update'])->middleware('permission:place.create|place.edit');
 
                 Route::delete('place_introductions', [PlaceIntroductionController::class, 'delete'])->middleware('permission:place.delete');
+            });
+
+            // 专辑管理
+            Route::group(['middleware' => 'permission:album'], function () {
+                Route::get('combine_albums', [CombineAlbumController::class, 'index'])->middleware('permission:album.index');
+
+                Route::get('combine_albums/{id}', [CombineAlbumController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:album.detail');
+
+                Route::post('combine_albums', [CombineAlbumController::class, 'store'])->middleware('permission:album.create|album.update');
+
+                Route::put('combine_albums', [CombineAlbumController::class, 'update'])->middleware('permission:album.create|album.update');
+
+                Route::delete('combine_albums', [CombineAlbumController::class, 'delete'])->middleware('permission:album.delete');
+
+                Route::get('combine_templates', [CombineTemplateController::class, 'index'])->middleware('permission:album.templatelist');
+
+                Route::get('combine_templates/{id}', [CombineTemplateController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:album.templatelist');
+
+                Route::post('combine_templates', [CombineTemplateController::class, 'store'])->middleware('permission:album.templateedit');
+
+                Route::put('combine_templates', [CombineTemplateController::class, 'update'])->middleware('permission:album.templateedit');
+
+                Route::delete('combine_templates', [CombineTemplateController::class, 'delete'])->middleware('permission:album.templateedit');
             });
         });
     });
