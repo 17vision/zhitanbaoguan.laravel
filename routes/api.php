@@ -8,6 +8,9 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PayController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PlaceController;
+use App\Http\Controllers\Api\CombineAlbumController;
+use App\Http\Controllers\Api\CombineTemplateController;
+use App\Http\Controllers\Api\CombinePhotoController;
 use App\Http\Controllers\Api\VenueController;
 
 /*
@@ -47,6 +50,12 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
     Route::get('venues/{id}', [VenueController::class, 'detail'])->where('id', '^[1-9]\d*$');
 
+    // 合成图片用专辑
+    Route::get('combine_albums', [CombineAlbumController::class, 'index']);
+    Route::get('combine_albums/{id}', [CombineAlbumController::class, 'detail'])->where('id', '^[1-9]\d*$');
+    // 合成图片用模板
+    Route::get('combine_templates/{id}', [CombineTemplateController::class, 'detail'])->where('id', '^[1-9]\d*$');
+
     Route::get('places', [PlaceController::class, 'index']);
 
     Route::get('places/{id}', [PlaceController::class, 'detail'])->where('id', '^[1-9]\d*$');
@@ -67,6 +76,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
         // 获取用户每个月的登录信息
         Route::get('user/logins', [UserController::class, 'logins']);
+
+        // 用户合成图片列表
+        Route::get('combine_photos', [CombinePhotoController::class, 'index']);
 
         // 获取自己的身高体重等数据
         Route::get('user_body_metrics', action: [UserController::class, 'getUserBodyMetrics']);
