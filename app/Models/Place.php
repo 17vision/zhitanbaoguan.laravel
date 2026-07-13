@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Place extends Model
 {
     use HasFactory;
-    protected $fillable = ['organization_id', 'venue_id', 'parent_id', 'name', 'cover', 'address', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'tag', 'qrcode', 'sort', 'level', 'status'];
+    protected $fillable = ['organization_id', 'venue_id', 'parent_id', 'name', 'cover', 'placepic', 'address', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'tag', 'qrcode', 'sort', 'level', 'status'];
 
     protected $appends = ['status_str'];
 
@@ -29,6 +29,15 @@ class Place extends Model
         if (isset($this->attributes['cover'])) {
             $cover = $this->attributes['cover'];
             return pathToOss($cover);
+        }
+        return '';
+    }
+
+    public function getPlacepicAttribute()
+    {
+        if (isset($this->attributes['placepic'])) {
+            $placepic = $this->attributes['placepic'];
+            return pathToOss($placepic);
         }
         return '';
     }

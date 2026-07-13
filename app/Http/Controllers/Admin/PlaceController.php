@@ -57,6 +57,7 @@ class PlaceController extends Controller
             'parent_id' => 'filled|integer|exists:places,id',
             'name' => 'required|string|max:16',
             'cover' => 'filled|string|max:255',
+            'placepic' => 'filled|string|max:255',
             'address' => 'filled|string|max:255',
             'introduction' => 'filled|string|max:2500',
             'open_time' => 'filled|date_format:H:i:s',
@@ -71,6 +72,7 @@ class PlaceController extends Controller
             'parent_id' => '父点位 id',
             'name' => '点位名',
             'cover' => '封面',
+            'placepic' => '点位图片',
             'address' => '地址',
             'introduction' => '介绍',
             'open_time' => '开园时间',
@@ -82,7 +84,7 @@ class PlaceController extends Controller
             'status' => '状态',
         ]);
 
-        $data = $request->only(['venue_id', 'parent_id', 'name', 'cover', 'address', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'tag', 'qrcode', 'status']);
+        $data = $request->only(['venue_id', 'parent_id', 'name', 'cover', 'placepic', 'address', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'tag', 'qrcode', 'status']);
 
         $venue = Venue::query()->where('id', $data['venue_id'])->first();
 
@@ -98,6 +100,10 @@ class PlaceController extends Controller
             $data['cover'] = ossToPath($data['cover']);
         }
 
+        if (isset($data['placepic'])) {
+            $data['placepic'] = ossToPath($data['placepic']);
+        }
+
         $venue = Place::create($data);
 
         return response()->json($venue);
@@ -110,6 +116,7 @@ class PlaceController extends Controller
             'parent_id' => 'filled|integer|exists:places,id',
             'name' => 'filled|string|max:16',
             'cover' => 'filled|string|max:255',
+            'placepic' => 'filled|string|max:255',
             'address' => 'filled|string|max:255',
             'introduction' => 'filled|string|max:2500',
             'open_time' => 'filled|date_format:H:i:s',
@@ -124,6 +131,7 @@ class PlaceController extends Controller
             'parent_id' => '父点位 id',
             'name' => '点位名',
             'cover' => '封面',
+            'placepic' => '点位图片',
             'address' => '地址',
             'introduction' => '介绍',
             'open_time' => '开园时间',
@@ -135,7 +143,7 @@ class PlaceController extends Controller
             'status' => '状态',
         ]);
 
-        $data = $request->only(['parent_id', 'name', 'cover', 'address', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'tag', 'qrcode', 'status']);
+        $data = $request->only(['parent_id', 'name', 'cover', 'placepic', 'address', 'introduction', 'open_time', 'close_time', 'longitude', 'latitude', 'tag', 'qrcode', 'status']);
 
         if (empty($data)) {
             return response()->json(['message' => '请输入要更新的内容'], 403);
@@ -147,6 +155,10 @@ class PlaceController extends Controller
 
         if (isset($data['cover'])) {
             $data['cover'] = ossToPath($data['cover']);
+        }
+
+        if (isset($data['placepic'])) {
+            $data['placepic'] = ossToPath($data['placepic']);
         }
 
         $venue = Place::query()->where('id', $request->id)->first();
