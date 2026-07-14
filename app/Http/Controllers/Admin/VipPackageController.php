@@ -56,9 +56,9 @@ class VipPackageController extends Controller
             'original_price' => 'required|numeric|min:0',
             'is_recommend' => 'filled|in:0,1',
             'is_only_once' => 'filled|in:0,1',
-            'combine_count' => 'filled|integer|min:0',
-            'chinese_explain' => 'filled|in:0,1',
-            'multi_explain' => 'filled|in:0,1',
+            'combine_count' => 'required|integer|min:0',
+            'chinese_explain' => 'required|in:0,1',
+            'multi_explain' => 'required|in:0,1',
             'sort' => 'filled|integer',
             'status' => 'filled|in:0,1,2',
         ], [], [
