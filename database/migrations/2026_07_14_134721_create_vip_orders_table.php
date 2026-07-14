@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('organization_id')->comment('组织 id');
             $table->unsignedBigInteger('venue_id')->comment('场馆 id');
             $table->unsignedBigInteger('user_id')->index()->comment('用户 id');
-            $table->unsignedBigInteger('vip_package_id')->index()->comment('vip套餐 id');
+            $table->unsignedBigInteger('vip_package_id')->nullable()->index()->comment('vip套餐 id');
             $table->string('number', 32)->index()->comment('订单编号');
             $table->decimal('total_amount', 8, 2)->comment('总金额');
             $table->decimal('pay_amount', 8, 2)->comment('付款金额');
