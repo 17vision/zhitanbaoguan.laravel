@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('vip_packages', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('organization_id')->comment('组织 id');
+            $table->unsignedBigInteger('venue_id')->comment('场馆 id');
             $table->string('package_name', 100)->comment('套餐名称');
             $table->text('description')->nullable()->comment('套餐详细描述');
             $table->decimal('price', 10, 2)->comment('实际售价');

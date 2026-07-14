@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('vip_orders', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('organization_id')->comment('组织 id');
+            $table->unsignedBigInteger('venue_id')->comment('场馆 id');
             $table->unsignedBigInteger('user_id')->index()->comment('用户 id');
             $table->unsignedBigInteger('vip_package_id')->index()->comment('vip套餐 id');
             $table->string('number', 32)->index()->comment('订单编号');

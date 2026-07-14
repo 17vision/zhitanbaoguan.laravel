@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Venue;
 use App\Models\VipOrder;
 use App\Models\VipPackage;
 use Illuminate\Http\Request;
@@ -14,14 +15,19 @@ class VipPackageController extends Controller
         $request->validate([
             'page' => 'filled|integer|min:1',
             'limit' => 'filled|integer',
+            'venue_id' => 'required|integer|exists:venues,id',
         ], [], [
             'page' => '当前页',
             'limit' => '单页显示条数',
+            'venue_id' => '场馆 id',
         ]);
 
         $limit = $request->input('limit', 30);
 
+        $venue_id = $request->input('venue_id');
+
         $packages = VipPackage::query()
+            ->where('venue_id', $venue_id)
             ->orderBy('sort')
             ->orderByDesc('id')
             ->paginate($limit);
@@ -43,6 +49,7 @@ class VipPackageController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'venue_id' => 'required|integer|exists:venues,id',
             'package_name' => 'required|string|max:100',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
@@ -55,6 +62,7 @@ class VipPackageController extends Controller
             'sort' => 'filled|integer',
             'status' => 'filled|in:0,1,2',
         ], [], [
+            'venue_id' => '场馆 id',
             'package_name' => '套餐名称',
             'description' => '套餐描述',
             'price' => '实际售价',
@@ -69,6 +77,7 @@ class VipPackageController extends Controller
         ]);
 
         $data = $request->only([
+            'venue_id',
             'package_name',
             'description',
             'price',
@@ -82,13 +91,9 @@ class VipPackageController extends Controller
             'status',
         ]);
 
-        $data['status'] = $data['status'] ?? 0;
-        $data['sort'] = $data['sort'] ?? 0;
-        $data['is_recommend'] = $data['is_recommend'] ?? 0;
-        $data['is_only_once'] = $data['is_only_once'] ?? 0;
-        $data['combine_count'] = $data['combine_count'] ?? 0;
-        $data['chinese_explain'] = $data['chinese_explain'] ?? 0;
-        $data['multi_explain'] = $data['multi_explain'] ?? 0;
+        $venue = Venue::query()->where('id', $data['venue_id'])->first();
+
+        $data['organization_id'] = $venue['organization_id'];
 
         $package = VipPackage::create($data);
 
@@ -98,7 +103,7 @@ class VipPackageController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'id' => 'required|integer',
+            'id' => 'required|integer|exists:vip_packages,id',
             'package_name' => 'filled|string|max:100',
             'description' => 'nullable|string',
             'price' => 'filled|numeric|min:0',
@@ -125,14 +130,6 @@ class VipPackageController extends Controller
             'status' => '套餐状态',
         ]);
 
-        $id = $request->id;
-
-        $package = VipPackage::query()->where('id', $id)->first();
-
-        if (!$package) {
-            return response()->json(['message' => '套餐不存在'], 403);
-        }
-
         $data = $request->only([
             'package_name',
             'description',
@@ -148,12 +145,14 @@ class VipPackageController extends Controller
         ]);
 
         if (empty($data)) {
-            return response()->json(['message' => '请提交数据'], 403);
+            return response()->json(['message' => '请输入要更新的内容'], 403);
         }
 
-        $result = $package->update($data);
+        $package = VipPackage::query()->where('id', $request->id)->first();
 
-        return response()->json(['result' => $result]);
+        $package->update($data);
+
+        return response()->json($package);
     }
 
     public function delete(Request $request)
@@ -176,8 +175,8 @@ class VipPackageController extends Controller
             return response()->json(['message' => '已有套餐购买记录，无法删除套餐'], 403);
         }
 
-        $package->delete();
+        $delete = $package->delete();
 
-        return response()->json(['delete' => true]);
+        return response()->json(['delete' => $delete]);
     }
 }

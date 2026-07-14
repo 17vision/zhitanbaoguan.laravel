@@ -11,6 +11,8 @@ class VipPackage extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'organization_id',
+        'venue_id',
         'package_name',
         'description',
         'price',
@@ -39,6 +41,16 @@ class VipPackage extends Model
             }
         }
         return '';
+    }
+
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class);
+    }
+
+    public function venue()
+    {
+        return $this->belongsTo(Venue::class);
     }
 
     public function orders()

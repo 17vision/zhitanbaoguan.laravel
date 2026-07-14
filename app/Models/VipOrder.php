@@ -11,6 +11,8 @@ class VipOrder extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'organization_id',
+        'venue_id',
         'user_id',
         'vip_package_id',
         'number',
@@ -101,6 +103,16 @@ class VipOrder extends Model
             return '退款被驳回';
         }
         return '';
+    }
+
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class);
+    }
+
+    public function venue()
+    {
+        return $this->belongsTo(Venue::class);
     }
 
     public function user()
