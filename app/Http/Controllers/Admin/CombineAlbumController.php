@@ -107,6 +107,23 @@ class CombineAlbumController extends Controller
         return response()->json($album);
     }
 
+    public function saveSort(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+        ], [], [
+            'ids' => '相册分类 id',
+        ]);
+
+        $ids = $request->input('ids');
+
+        foreach ($ids as $index => $id) {
+            CombineAlbum::query()->where('id', $id)->update(['sort' => $index]);
+        }
+
+        return response()->json(['message' => '已排序']);
+    }
+
     public function delete(Request $request)
     {
         $request->validate([

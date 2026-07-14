@@ -199,6 +199,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::put('combine_albums', [CombineAlbumController::class, 'update'])->middleware('permission:album.create|album.update');
 
                 Route::delete('combine_albums', [CombineAlbumController::class, 'delete'])->middleware('permission:album.delete');
+
+                Route::post('combine_albums/sorts', [CombineAlbumController::class, 'saveSort'])->middleware('permission:album.create|album.update');
             });
 
             // 模板管理
@@ -212,6 +214,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::put('combine_templates', [CombineTemplateController::class, 'update'])->middleware('permission:template.create|template.update');
 
                 Route::delete('combine_templates', [CombineTemplateController::class, 'delete'])->middleware('permission:template.delete');
+
+                Route::post('combine_templates/sorts', [CombineTemplateController::class, 'saveSort'])->middleware('permission:template.create|template.update');
             });
         });
     });

@@ -100,6 +100,23 @@ class CombineTemplateController extends Controller
         return response()->json($template);
     }
 
+    public function saveSort(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+        ], [], [
+            'ids' => '模板 id',
+        ]);
+
+        $ids = $request->input('ids');
+
+        foreach ($ids as $index => $id) {
+            CombineTemplate::query()->where('id', $id)->update(['sort' => $index]);
+        }
+
+        return response()->json(['message' => '已排序']);
+    }
+
     public function delete(Request $request)
     {
         $request->validate([
