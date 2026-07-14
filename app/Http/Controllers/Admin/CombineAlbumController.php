@@ -25,7 +25,7 @@ class CombineAlbumController extends Controller
 
         $venue_id = $request->input('venue_id');
 
-        $query = CombineAlbum::query()->where('venue_id', $venue_id)->orderByDesc('id');
+        $query = CombineAlbum::query()->where('venue_id', $venue_id)->orderBy('status', 'asc')->orderBy('sort')->orderByDesc('id');
 
         $albums = $query->paginate($limit);
 
