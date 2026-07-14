@@ -24,6 +24,19 @@ class UserController extends Controller
         return response()->json($this->auth($user['id'], false));
     }
 
+    public function getPermittedAction(Request $request)
+    {
+        $user = $request->user();
+
+        $result = [
+            'combine_count' => $user->combine_count,
+            'can_explain' => ($user->chinese_explain_expire && $user->chinese_explain_expire->isFuture())
+                || ($user->multi_explain_expire && $user->multi_explain_expire->isFuture()),
+        ];
+
+        return response()->json($result);
+    }
+
     public function wxminiLogin(Request $request)
     {
         $request->validate([

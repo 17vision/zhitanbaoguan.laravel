@@ -81,6 +81,9 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
         // 获取用户每个月的登录信息
         Route::get('user/logins', [UserController::class, 'logins']);
 
+        // 被允许的操作行为
+        Route::get('permitted-action', [UserController::class, 'getPermittedAction']);
+
         // 用户合成图片列表
         Route::get('combine_photos', [CombinePhotoController::class, 'index']);
 
