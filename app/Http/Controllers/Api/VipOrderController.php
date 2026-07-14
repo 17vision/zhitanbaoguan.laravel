@@ -46,6 +46,7 @@ class VipOrderController extends Controller
         return response()->json($orders);
     }
 
+    // 该方法赞不启用，如果启用，需要vippackage中新增字段 讲解有效期，然后支付回调和退款回调时，处理有效期问题
     public function payment(Request $request)
     {
         $request->validate([
