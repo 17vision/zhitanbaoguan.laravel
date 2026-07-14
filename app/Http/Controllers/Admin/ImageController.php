@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use App\Utils\ImageUpload;
 use App\Models\Place;
 use App\Models\Venue;
+use App\Models\CombineTemplate;
 
 class ImageController extends Controller
 {
@@ -34,7 +35,7 @@ class ImageController extends Controller
             return response()->json(['message' => '缺少 referer 信息'], 403);
         }
 
-        $referers = ['avatar', 'place', 'venue'];
+        $referers = ['avatar', 'place', 'venue', 'template'];
         if (!\in_array($referer, $referers)) {
             return response()->json(['message' => 'referer 不在白名单呢'], 403);
         }
@@ -43,7 +44,8 @@ class ImageController extends Controller
 
         $uses = [
             'place' => ['qrcode'],
-            'venue' => ['qrcode']
+            'venue' => ['qrcode'],
+            'template' => ['qrcode'],
         ];
 
         if ($use && isset($uses[$referer])) {
@@ -89,6 +91,22 @@ class ImageController extends Controller
                 $venue = Venue::query()->where('id', $info['id'])->first();
                 $packageName = $venue->created_at->format('Ym');
                 $name = $venue->id;
+            } else {
+                $packageName = date('Ym', time());
+                $name = randStr(8);
+            }
+
+            if ($use) {
+                $folder = sprintf('resource/upload/image/%s/%s/%s/', $referer, $use, $packageName);
+            } else {
+                $folder = sprintf('resource/upload/image/%s/%s/', $referer, $packageName);
+            }
+        } elseif ($referer == 'template') {
+            $max_width = null;
+            if (isset($info['id']) && $info['id']) {
+                $template = CombineTemplate::query()->where('id', $info['id'])->first();
+                $packageName = $template->created_at->format('Ym');
+                $name = $template->id;
             } else {
                 $packageName = date('Ym', time());
                 $name = randStr(8);

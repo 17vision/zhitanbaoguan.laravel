@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('introduction')->nullable()->comment('模板介绍文案');
             $table->unsignedInteger('sort')->default(0)->comment('排序权重');
             $table->unsignedTinyInteger('status')->default(1)->comment('状态 1上线 2下线');
+            $table->string('qrcode')->nullable()->comment('小程序二维码');
             $table->timestamps();
         });
     }

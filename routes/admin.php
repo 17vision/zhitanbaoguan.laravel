@@ -216,6 +216,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::delete('combine_templates', [CombineTemplateController::class, 'delete'])->middleware('permission:template.delete');
 
                 Route::post('combine_templates/sorts', [CombineTemplateController::class, 'saveSort'])->middleware('permission:template.create|template.update');
+
+                Route::post('combine_templates/qrcode', [CombineTemplateController::class, 'qrcode'])->middleware('permission:template.create|template.update');
             });
         });
     });

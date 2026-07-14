@@ -138,59 +138,57 @@ class CombineTemplateController extends Controller
 
     public function qrcode(Request $request)
     {
-//        $request->validate([
-//            'id' => 'required|integer|exists:places,id',
-//            'width' => 'filled|integer|min:240',
-//        ], [], [
-//            'id' => '点位 id',
-//            'width' => '小程序码宽度'
-//        ]);
-//
-//        $id = $request->input('id');
-//
-//        $place = Place::query()->where('id', $id)->with(['venue:id,qrcode_root'])->first();
-//
-//        $qrcode_root = $place['venue']['qrcode_root'] ?? '';
-//        if (!$qrcode_root) {
-//            return response()->json(['message' => '请配置场馆小程序码根路径'], 403);
-//        }
-//
-//        $hasChildren = Place::query()->where('parent_id', $id)->exists();
-//        if ($hasChildren) {
-//            $page = \sprintf("%s/pages/pavilion/part/list", $qrcode_root);
-//        } else {
-//            $page = \sprintf("%s/pages/pavilion/part/detail", $qrcode_root);
-//        }
-//
-//        $data = [
-//            'scene' =>  \sprintf('venue_id=%d&id=%d', $place['venue_id'], $id),
-//            'page' =>  $page,
-//            'check_path' => config('auth.wxmini.check_path'),
-//            'width' => $request->input('width', 640)
-//        ];
-//        $base64Image = app(ImageController::class)->getWxcode($data);
-//        if (!$base64Image) {
-//            return response()->json(['message' => '生成失败[1]'], 403);
-//        }
-//
-//        // 将小程序码，存到本地
-//        $request->replace([
-//            'info' => [
-//                'referer' => 'place',
-//                'use' => 'qrcode',
-//                'id' => $id
-//            ],
-//            'file' => $base64Image
-//        ]);
-//
-//        $result = app(ImageController::class)->store($request);
-//
-//        $data = $result->getData();
-//
-//        if ($data->url) {
-//            $place->update(['qrcode' => reverseStorageUrl($data->url) . '?time=' . time()]);
-//            return  $result;
-//        }
-//        return response()->json(['message' => '生成小程序码失败']);
+        $request->validate([
+            'id' => 'required|integer|exists:combine_templates,id',
+            'width' => 'filled|integer|min:240',
+        ], [], [
+            'id' => '模板 id',
+            'width' => '小程序码宽度'
+        ]);
+
+        $id = $request->input('id');
+
+        $template = CombineTemplate::query()->where('id', $id)->with(['combineAlbum.venue:id,qrcode_root'])->first();
+
+        $venue = $template['combineAlbum']['venue'] ?? null;
+        $qrcode_root = $venue['qrcode_root'] ?? '';
+        if (!$qrcode_root) {
+            return response()->json(['message' => '请配置场馆小程序码根路径'], 403);
+        }
+
+        $venue_id = $template['combineAlbum']['venue_id'] ?? 0;
+
+        $page = \sprintf("%s/pages/photo/part/create", $qrcode_root);
+
+        $data = [
+            'scene' => \sprintf('venue_id=%d&id=%d', $venue_id, $id),
+            'page' => $page,
+            'check_path' => config('auth.wxmini.check_path'),
+            'width' => $request->input('width', 640)
+        ];
+        $base64Image = app(ImageController::class)->getWxcode($data);
+        if (!$base64Image) {
+            return response()->json(['message' => '生成失败[1]'], 403);
+        }
+
+        // 将小程序码，存到本地
+        $request->replace([
+            'info' => [
+                'referer' => 'template',
+                'use' => 'qrcode',
+                'id' => $id
+            ],
+            'file' => $base64Image
+        ]);
+
+        $result = app(ImageController::class)->store($request);
+
+        $data = $result->getData();
+
+        if ($data->url) {
+            $template->update(['qrcode' => reverseStorageUrl($data->url) . '?time=' . time()]);
+            return $result;
+        }
+        return response()->json(['message' => '生成小程序码失败']);
     }
 }

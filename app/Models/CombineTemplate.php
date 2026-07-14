@@ -8,7 +8,7 @@ class CombineTemplate extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['combine_album_id', 'name', 'cover', 'introduction', 'sort', 'status'];
+    protected $fillable = ['combine_album_id', 'name', 'cover', 'introduction', 'sort', 'status', 'qrcode'];
 
     protected $appends = ['status_str'];
 
@@ -30,6 +30,15 @@ class CombineTemplate extends Model
         if (isset($this->attributes['cover'])) {
             $cover = $this->attributes['cover'];
             return pathToOss($cover);
+        }
+        return '';
+    }
+
+    public function getQrcodeAttribute()
+    {
+        if (isset($this->attributes['qrcode'])) {
+            $qrcode = $this->attributes['qrcode'];
+            return storageUrl($qrcode);
         }
         return '';
     }
