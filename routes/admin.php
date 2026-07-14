@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\PlaceController;
 use App\Http\Controllers\Admin\PlaceIntroductionController;
 use App\Http\Controllers\Admin\CombineAlbumController;
 use App\Http\Controllers\Admin\CombineTemplateController;
+use App\Http\Controllers\Admin\VipPackageController;
 
 Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(function () {
     // 获取验证码
@@ -218,6 +219,20 @@ Route::middleware(['throttle:' . config('api.rate_limits.sign')])->group(functio
                 Route::post('combine_templates/sorts', [CombineTemplateController::class, 'saveSort'])->middleware('permission:template.create|template.update');
 
                 Route::post('combine_templates/qrcode', [CombineTemplateController::class, 'qrcode'])->middleware('permission:template.create|template.update');
+            });
+
+            // 套餐管理
+            Route::group(['middleware' => 'permission:vippackage'], function () {
+                // 套餐列表
+                Route::get('vippackages', [VipPackageController::class, 'index'])->middleware('permission:vippackage.index');
+                // 套餐详情
+                Route::get('vippackages/{id}', [VipPackageController::class, 'detail'])->where('id', '^[1-9]\d*$')->middleware('permission:vippackage.detail');
+                // 添加套餐
+                Route::post('vippackages', [VipPackageController::class, 'store'])->middleware('permission:vippackage.create');
+                // 修改套餐
+                Route::put('vippackages', [VipPackageController::class, 'update'])->middleware('permission:vippackage.update');
+                // 删除套餐
+                Route::delete('vippackages', [VipPackageController::class, 'delete'])->middleware('permission:vippackage.delete');
             });
         });
     });
