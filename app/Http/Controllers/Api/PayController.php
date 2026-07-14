@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Exception;
 use Yansongda\Pay\Pay;
 use App\Models\Order;
+use App\Models\VipOrder;
 
 class PayController extends Controller
 {
@@ -37,65 +38,86 @@ class PayController extends Controller
             }
 
             if (isset($res['attach'])) {
-                // 支付
-                if ($res['attach'] == 'workflows') {
+
+                // 支付通知
+                if ($res['attach'] == 'vip') {
                     $order_number = $this->getOrderNumber($res['out_trade_no']);
-                    $amount = $res['amount']['payer_total'] / 100;
                     $payment_number = $res['transaction_id'];
 
                     if ($res['trade_state'] != 'SUCCESS') {
                         return throw new Exception('支付失败');
                     }
 
-                    $order = Order::query()->where('number', $order_number)->first();
+                    $order = VipOrder::query()->where('number', $order_number)->first();
                     if (!$order) {
                         return throw new Exception('无法获取订单');
-                    }
-
-                    if ($amount != $order->pay_amount) {
-                        return throw new Exception('付款价格和订单价格不一样');
                     }
 
                     if ($order->status >= 2) {
                         return response()->json(['code' => 'SUCCESS', 'message' => '成功']);
                     }
 
+                    $tradeInfo = $order->trade_info ?? [];
+                    $tradeInfo['pay_notify'] = $res;
+
                     $order->update([
                         'status' => 2,
-                        'order_status' => 2,
                         'payment_number' => $payment_number,
-                        'paid_at' => Carbon::now()->toDateTimeString()
+                        'paid_at' => isset($res['success_time'])
+                            ? Carbon::parse($res['success_time'])->toDateTimeString()
+                            : Carbon::now()->toDateTimeString(),
+                        'trade_info' => $tradeInfo,
                     ]);
 
-                    Log::channel('pay-notify')->info('payNotify', ['resource' => $res, 'order' => $order]);
+                    $order->grantUserVipRights();
 
-                    // return Pay::wechat()->success();
+                    Log::channel('pay-notify')->info('vipPayNotify', ['resource' => $res, 'order' => $order]);
+
                     return response()->json(['code' => 'SUCCESS', 'message' => '成功']);
                 }
             } elseif (isset($res['refund_id'])) {
-                // 退款
-                 // 退款通知 退款通知
+                // 退款通知
                 if ($res['refund_status'] == 'SUCCESS') {
-                    $order = Order::query()->where('payment_number', $res['transaction_id'])->first();
-                    if ($order->refund_status == 2) {
+                    $outRefundNo = $res['out_refund_no'] ?? '';
+
+                    if (str_starts_with($outRefundNo, 'vip')) {
+                        $order = VipOrder::query()->where('payment_number', $res['transaction_id'])->first();
+                        if (!$order) {
+                            return throw new Exception('无法获取VIP订单');
+                        }
+
+                        if ($order->refund_status == 2) {
+                            return response()->json(['code' => 'SUCCESS', 'message' => '成功']);
+                        }
+
+                        $tradeInfo = $order->trade_info ?? [];
+                        $tradeInfo['refund_response'] = $res;
+
+                        if (!isset($tradeInfo['is_vip_rights_back']) || $tradeInfo['is_vip_rights_back'] != 1) {
+                            if ($order->rollbackUserVipRights()) {
+                                $tradeInfo['is_vip_rights_back'] = 1;
+                            }
+                        }
+
+                        $data = [
+                            'status' => 3,
+                            'refund_status' => 2,
+                            'refund_at' => isset($res['success_time'])
+                                ? Carbon::parse($res['success_time'])->toDateTimeString()
+                                : Carbon::now()->toDateTimeString(),
+                            'trade_info' => $tradeInfo,
+                        ];
+
+                        if ($order->user_refund_status == 2) {
+                            $data['user_refund_status'] = 3;
+                        }
+
+                        $order->update($data);
+
+                        Log::channel('pay-notify')->info('vipRefundNotify', ['resource' => $res, 'order' => $order]);
+
                         return response()->json(['code' => 'SUCCESS', 'message' => '成功']);
                     }
-
-                    $data = [
-                        'status' => 3,
-                        'refund_status' => 2,
-                        'refund_at' => $res['success_time'] ?? Carbon::now()->toDateTimeString()
-                    ];
-
-                    if ($order->user_refund_status == 2) {
-                        $data['user_refund_status'] = 3;
-                    }
-
-                    $order->update($data);
-
-                    Log::channel('pay-notify')->info('refundNotify', ['resource' => $res, 'order' => $order]);
-
-                    return response()->json(['code' => 'SUCCESS', 'message' => '成功']);
                 }
             } else {
                 return throw new Exception('行为异常');

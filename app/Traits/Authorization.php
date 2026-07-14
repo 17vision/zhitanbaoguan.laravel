@@ -17,6 +17,10 @@ trait Authorization
 
         $user['in_days'] = Carbon::now()->diffInDays($user->created_at);
 
+        $user['can_combine'] = $user->combine_count > 0;
+        $user['can_explain'] = ($user->chinese_explain_expire && $user->chinese_explain_expire->isFuture())
+            || ($user->multi_explain_expire && $user->multi_explain_expire->isFuture());
+
         return $user;
     }
 }

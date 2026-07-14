@@ -139,14 +139,54 @@ class VipOrder extends Model
             'combine_count' => (int) $user->combine_count + (int) $this->combine_count,
         ];
 
+        // 默认加 1 年有效期；若当前仍在有效期内，则在原有效期上续期
         if ($this->chinese_explain) {
-            $data['chinese_explain'] = 1;
+            $base = $user->chinese_explain_expire && $user->chinese_explain_expire->isFuture()
+                ? $user->chinese_explain_expire
+                : now();
+            $data['chinese_explain_expire'] = $base->copy()->addYear();
         }
 
         if ($this->multi_explain) {
-            $data['multi_explain'] = 1;
+            $base = $user->multi_explain_expire && $user->multi_explain_expire->isFuture()
+                ? $user->multi_explain_expire
+                : now();
+            $data['multi_explain_expire'] = $base->copy()->addYear();
         }
 
         $user->update($data);
+    }
+
+    /**
+     * 退款成功后回滚用户权益（合成次数 / 讲解有效期）
+     */
+    public function rollbackUserVipRights(): bool
+    {
+        $user = User::query()->where('id', $this->user_id)->first();
+        if (!$user) {
+            return false;
+        }
+
+        $data = [];
+
+        if ((int) $this->combine_count > 0) {
+            $data['combine_count'] = max(0, (int) $user->combine_count - (int) $this->combine_count);
+        }
+
+        if ($this->chinese_explain && $user->chinese_explain_expire && $user->chinese_explain_expire->isFuture()) {
+            $data['chinese_explain_expire'] = $user->chinese_explain_expire->copy()->subYear()->toDateTimeString();
+        }
+
+        if ($this->multi_explain && $user->multi_explain_expire && $user->multi_explain_expire->isFuture()) {
+            $data['multi_explain_expire'] = $user->multi_explain_expire->copy()->subYear()->toDateTimeString();
+        }
+
+        if (empty($data)) {
+            return false;
+        }
+
+        $user->update($data);
+
+        return true;
     }
 }
