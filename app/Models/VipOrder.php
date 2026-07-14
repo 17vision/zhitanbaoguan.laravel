@@ -124,4 +124,29 @@ class VipOrder extends Model
     {
         return $this->belongsTo(VipPackage::class);
     }
+
+    /**
+     * 支付成功后发放用户权益（合成次数 / 讲解权限）
+     */
+    public function grantUserVipRights(): void
+    {
+        $user = User::query()->where('id', $this->user_id)->first();
+        if (!$user) {
+            return;
+        }
+
+        $data = [
+            'combine_count' => (int) $user->combine_count + (int) $this->combine_count,
+        ];
+
+        if ($this->chinese_explain) {
+            $data['chinese_explain'] = 1;
+        }
+
+        if ($this->multi_explain) {
+            $data['multi_explain'] = 1;
+        }
+
+        $user->update($data);
+    }
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\PlaceController;
 use App\Http\Controllers\Api\CombineAlbumController;
 use App\Http\Controllers\Api\CombineTemplateController;
 use App\Http\Controllers\Api\VipPackageController;
+use App\Http\Controllers\Api\VipOrderController;
 use App\Http\Controllers\Api\CombinePhotoController;
 use App\Http\Controllers\Api\VenueController;
 
@@ -93,6 +94,19 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
         Route::post('pay/payment', [PayController::class, 'payment']);
 
         Route::post('pay/payment/status', [PayController::class, 'paymentStatus']);
+
+        // vip订单列表
+        Route::get('vip/orders', [VipOrderController::class, 'index']);
+        // 查看 vip 订单状态
+        Route::post('vip/payments/status', [VipOrderController::class, 'paymentStatus']);
+        // 取消 vip 订单
+        Route::post('vip/orders/cancel', [VipOrderController::class, 'cancel']);
+        // 发起 vip 订单退款
+        Route::post('vip/orders/refund', [VipOrderController::class, 'refund']);
+        // vip 支付
+        Route::post('vip/payments', [VipOrderController::class, 'payment']);
+        // vip 快捷支付
+        Route::post('vip/payments/quick', [VipOrderController::class, 'quickPayment']);
     });
 });
 
