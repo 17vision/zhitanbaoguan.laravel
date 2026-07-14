@@ -24,7 +24,7 @@ class CombineTemplateController extends Controller
 
         $combine_album_id = $request->input('combine_album_id');
 
-        $query = CombineTemplate::query()->where('combine_album_id', $combine_album_id)->orderBy('status', 'asc')->orderBy('sort')->orderByDesc('id');
+        $query = CombineTemplate::query()->where('combine_album_id', $combine_album_id)->orderBy('sort')->orderByDesc('id');
 
         $templates = $query->paginate($limit);
 
