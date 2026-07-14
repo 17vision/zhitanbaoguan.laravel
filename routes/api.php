@@ -103,8 +103,6 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
         Route::post('vip/orders/cancel', [VipOrderController::class, 'cancel']);
         // 发起 vip 订单退款
         Route::post('vip/orders/refund', [VipOrderController::class, 'refund']);
-        // vip 支付
-        Route::post('vip/payments', [VipOrderController::class, 'payment']);
         // vip 快捷支付
         Route::post('vip/payments/quick', [VipOrderController::class, 'quickPayment']);
     });
