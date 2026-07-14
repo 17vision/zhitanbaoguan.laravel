@@ -52,6 +52,12 @@ class PlaceController extends Controller
 
     public function store(Request $request)
     {
+        foreach (['open_time', 'close_time'] as $field) {
+            if ($request->exists($field) && $request->input($field) === '') {
+                $request->merge([$field => null]);
+            }
+        }
+
         $request->validate([
             'venue_id' => 'required|integer|exists:venues,id',
             'parent_id' => 'nullable|integer|exists:places,id',
@@ -61,7 +67,7 @@ class PlaceController extends Controller
             'address' => 'nullable|string|max:255',
             'introduction' => 'nullable|string|max:2500',
             'open_time' => 'nullable|date_format:H:i:s',
-            'close_time' => 'required_with:open_time|date_format:H:i:s|after:open_time',
+            'close_time' => 'nullable|required_with:open_time|date_format:H:i:s|after:open_time',
             'longitude' => 'nullable|numeric',
             'latitude' => 'nullable|numeric',
             'tag' => 'nullable|string',
@@ -111,6 +117,12 @@ class PlaceController extends Controller
 
     public function update(Request $request)
     {
+        foreach (['open_time', 'close_time'] as $field) {
+            if ($request->exists($field) && $request->input($field) === '') {
+                $request->merge([$field => null]);
+            }
+        }
+
         $request->validate([
             'id' => 'required|integer|exists:places,id',
             'parent_id' => 'nullable|integer|exists:places,id',
@@ -120,7 +132,7 @@ class PlaceController extends Controller
             'address' => 'nullable|string|max:255',
             'introduction' => 'nullable|string|max:2500',
             'open_time' => 'nullable|date_format:H:i:s',
-            'close_time' => 'required_with:open_time|date_format:H:i:s|after:open_time',
+            'close_time' => 'nullable|required_with:open_time|date_format:H:i:s|after:open_time',
             'longitude' => 'nullable|numeric',
             'latitude' => 'nullable|numeric',
             'qrcode' => 'nullable|string',
