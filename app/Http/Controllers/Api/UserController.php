@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 use App\Models\User;
 use App\Models\UserLogin;
 use Illuminate\Http\Request;
@@ -28,10 +29,15 @@ class UserController extends Controller
     {
         $user = $request->user();
 
+        $canExplain = ($user->chinese_explain_expire && $user->chinese_explain_expire->isFuture())
+            || ($user->multi_explain_expire && $user->multi_explain_expire->isFuture());
+        if (!$canExplain) {
+            $canExplain = !Redis::exists('can_explain:' . $user->id);
+        }
+
         $result = [
             'combine_count' => $user->combine_count,
-            'can_explain' => ($user->chinese_explain_expire && $user->chinese_explain_expire->isFuture())
-                || ($user->multi_explain_expire && $user->multi_explain_expire->isFuture()),
+            'can_explain' => $canExplain,
         ];
 
         return response()->json($result);
