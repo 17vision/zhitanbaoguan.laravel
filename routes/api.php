@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\PlaceController;
 use App\Http\Controllers\Api\CombineAlbumController;
 use App\Http\Controllers\Api\CombineTemplateController;
 use App\Http\Controllers\Api\VipPackageController;
+use App\Http\Controllers\Api\BehaviorStatisticsController;
 use App\Http\Controllers\Api\VipOrderController;
 use App\Http\Controllers\Api\CombinePhotoController;
 use App\Http\Controllers\Api\VenueController;
@@ -63,6 +64,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
     Route::get('places/{id}', [PlaceController::class, 'detail'])->where('id', '^[1-9]\d*$');
 
     Route::get('vippackages', [VipPackageController::class, 'index']);
+
+    Route::post('behavior_statistics', [BehaviorStatisticsController::class, 'store']);
 
     // 下边需要授权才可以
     Route::middleware(['auth:api'])->group(function () {

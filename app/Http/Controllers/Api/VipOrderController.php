@@ -17,7 +17,7 @@ class VipOrderController extends Controller
     public function index(Request $request)
     {
         $request->validate([
-            'venue_id' => 'required|integer|exists:venues,id',
+            'venue_id' => 'nullable|integer|exists:venues,id',
             'limit' => 'filled|integer|min:1',
             'status' => 'filled|in:0,1,2,3',
         ], [], [
@@ -34,7 +34,10 @@ class VipOrderController extends Controller
             'user:id,nickname,avatar,gender',
         ])->orderByDesc('id');
 
-        $query->where('user_id', $user->id)->where('venue_id', $request->input('venue_id'));
+        $query->where('user_id', $user->id);
+        if ($venue_id = (int) $request->input('venue_id')) {
+            $query->where('venue_id', $venue_id);
+        }
 
         if (isset($request['status'])) {
             $query->where('status', $request['status']);
