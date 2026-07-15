@@ -247,10 +247,59 @@ class VipOrderController extends Controller
             }
         }
 
-        $result = $order->update(['user_refund_status' => 1, 'user_refund_reason' => $reason]);
+        if (!$order->payment_number) {
+            return response()->json(['message' => '缺少支付单号，无法退款'], 403);
+        }
 
-        Log::channel('pay')->info('doVipRefund', ['order_id' => $order_id, 'user_id' => $user->id, 'reason' => $reason, 'result' => $result, 'sign' => 2]);
+        if ($order->pay_amount == 0) {
+            return response()->json(['message' => '订单金额为0，无需退款'], 403);
+        }
 
-        return response()->json(['result' => $result]);
+        $data = [
+            'transaction_id' => $order->payment_number,
+            'out_refund_no' => 'vip' . $order->payment_number . $order->number,
+            'amount' => [
+                'refund' => (int) bcmul($order->pay_amount, '100', 0),
+                'total' => (int) bcmul($order->pay_amount, '100', 0),
+                'currency' => 'CNY',
+            ],
+            'reason' => mb_substr($reason, 0, 80),
+            '_action' => 'mini',
+        ];
+
+        try {
+            $result = Pay::wechat(config('pay'))->refund($data)->toArray();
+        } catch (Exception $e) {
+            Log::channel('pay')->error('doVipRefundFail', [
+                'order_id' => $order_id,
+                'user_id' => $user->id,
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ]);
+            return response()->json(['message' => '退款发起失败'], 403);
+        }
+
+        $tradeInfo = $order->trade_info ?? [];
+        $tradeInfo['refund_request'] = $data;
+        $tradeInfo['refund_response'] = $result;
+
+        $order->update([
+            'refund_status' => 1,
+            'user_refund_status' => 2,
+            'user_refund_reason' => $reason,
+            'trade_info' => $tradeInfo,
+        ]);
+
+        Log::channel('pay')->info('doVipRefund', [
+            'order_id' => $order_id,
+            'user_id' => $user->id,
+            'reason' => $reason,
+            'data' => $data,
+            'result' => $result,
+            'sign' => 2,
+        ]);
+
+        return response()->json(['message' => '退款处理中', 'result' => $result]);
     }
 }

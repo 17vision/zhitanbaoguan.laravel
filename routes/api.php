@@ -89,6 +89,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
         // 用户合成图片列表
         Route::get('combine_photos', [CombinePhotoController::class, 'index']);
+        // 发起合成照片
+        Route::post('combine_photos/generate', [CombinePhotoController::class, 'generatePhoto']);
 
         // 获取自己的身高体重等数据
         Route::get('user_body_metrics', action: [UserController::class, 'getUserBodyMetrics']);
