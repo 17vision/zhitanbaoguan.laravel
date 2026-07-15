@@ -51,58 +51,82 @@ class VipOrderController extends Controller
     public function quickPayment(Request $request)
     {
         $request->validate([
-            'venue_id' => 'required|integer|exists:venues,id',
-            'quick_type' => 'filled|integer|in:1',
+            'order_id' => 'nullable|integer|exists:vip_orders,id',
+            'venue_id' => 'required_without:order_id|integer|exists:venues,id',
+            'quick_type' => 'nullable|integer|in:1',
         ], [], [
+            'order_id' => '订单 id',
             'venue_id' => '场馆 id',
             'quick_type' => '快捷购买类型',
         ]);
 
         $user = $request->user();
-        $venue_id = $request->input('venue_id');
-        $quick_type = (int) ($request->input('quick_type', 1));
 
         if (!$user->wxmini_openid) {
             return response()->json(['message' => '未绑定微信小程序，无法支付'], 403);
         }
 
-        $venue = Venue::query()->where('id', $venue_id)->first();
-        if (!$venue) {
-            return response()->json(['message' => '场馆不存在'], 403);
-        }
+        $description = '快捷购买';
+        $order = null;
+        $out_trade_no = null;
 
-        if ($quick_type === 1) {
-            $total_amount = '9.90';
-            $pay_amount = '9.90';
-            $combine_count = 3; // 默认3次合成照片次数
-            $vip_duration = 86400 * 7; // 默认7天会员有效期
-            $client_type = 1;
-            $description = '快捷购买';
+        if ($request->filled('order_id')) {
+            $order = VipOrder::query()
+                ->where('id', $request->input('order_id'))
+                ->where('user_id', $user->id)
+                ->first();
+
+            if (!$order) {
+                return response()->json(['message' => '订单不存在'], 403);
+            }
+
+            if ((int) $order->status !== 1) {
+                return response()->json(['message' => '订单状态不允许支付'], 403);
+            }
+
+            $order_number = explode('-', $order->number)[0];
+            $out_trade_no = $order_number . '-' . rand(1000000, 9999999);
         } else {
-            return response()->json(['message' => '不支持的快捷购买类型'], 403);
-        }
+            $venue_id = $request->input('venue_id');
+            $quick_type = (int) ($request->input('quick_type', 1));
 
-        DB::beginTransaction();
-        try {
-            $order = VipOrder::create([
-                'organization_id' => $venue->organization_id,
-                'venue_id' => $venue_id,
-                'user_id' => $user->id,
-                'vip_package_id' => null,
-                'combine_count' => $combine_count,
-                'vip_duration' => $vip_duration,
-                'total_amount' => $total_amount,
-                'pay_amount' => $pay_amount,
-                'payment_type' => 1,
-                'status' => 1,
-                'client_type' => $client_type,
-            ]);
-            $out_trade_no = $order->number;
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::channel('error')->error('vip快捷订单创建失败: ', ['message' => $e->getMessage(), 'line' => $e->getLine(), 'file' => $e->getFile()]);
-            return response()->json(['message' => '创建订单失败'], 403);
+            $venue = Venue::query()->where('id', $venue_id)->first();
+            if (!$venue) {
+                return response()->json(['message' => '场馆不存在'], 403);
+            }
+
+            if ($quick_type === 1) {
+                $total_amount = '9.90';
+                $pay_amount = '9.90';
+                $combine_count = 3; // 默认3次合成照片次数
+                $vip_duration = 86400; // 默认1天会员有效期
+                $client_type = 1;
+            } else {
+                return response()->json(['message' => '不支持的快捷购买类型'], 403);
+            }
+
+            DB::beginTransaction();
+            try {
+                $order = VipOrder::create([
+                    'organization_id' => $venue->organization_id,
+                    'venue_id' => $venue_id,
+                    'user_id' => $user->id,
+                    'vip_package_id' => null,
+                    'combine_count' => $combine_count,
+                    'vip_duration' => $vip_duration,
+                    'total_amount' => $total_amount,
+                    'pay_amount' => $pay_amount,
+                    'payment_type' => 1,
+                    'status' => 1,
+                    'client_type' => $client_type,
+                ]);
+                $out_trade_no = $order->number;
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollBack();
+                Log::channel('error')->error('vip快捷订单创建失败: ', ['message' => $e->getMessage(), 'line' => $e->getLine(), 'file' => $e->getFile()]);
+                return response()->json(['message' => '创建订单失败'], 403);
+            }
         }
 
         $payParams = [
