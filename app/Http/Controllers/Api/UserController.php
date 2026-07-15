@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use App\Models\User;
 use App\Models\UserLogin;
+use App\Models\VipUser;
 use Illuminate\Http\Request;
 use App\Traits\Authorization;
 use Carbon\Carbon;
@@ -27,16 +28,27 @@ class UserController extends Controller
 
     public function getPermittedAction(Request $request)
     {
-        $user = $request->user();
+        $request->validate([
+            'venue_id' => 'required|integer|exists:venues,id',
+        ], [], [
+            'venue_id' => '场馆 id',
+        ]);
 
-        $canExplain = ($user->chinese_explain_expire && $user->chinese_explain_expire->isFuture())
-            || ($user->multi_explain_expire && $user->multi_explain_expire->isFuture());
+        $user = $request->user();
+        $venue_id = $request->input('venue_id');
+
+        $vipUser = VipUser::query()
+            ->where('user_id', $user->id)
+            ->where('venue_id', $venue_id)
+            ->first();
+
+        $canExplain = $vipUser && $vipUser->expired_at && $vipUser->expired_at->isFuture();
         if (!$canExplain) {
-            $canExplain = !Redis::exists('can_explain:' . $user->id);
+            $canExplain = !Redis::exists("can_explain:{$venue_id}:" . $user->id);
         }
 
         $result = [
-            'combine_count' => $user->combine_count,
+            'combine_count' => $vipUser ? (int) $vipUser->combine_count : 0,
             'can_explain' => $canExplain,
         ];
 

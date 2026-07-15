@@ -71,9 +71,8 @@ class VipOrderController extends Controller
         if ($quick_type === 1) {
             $total_amount = '9.90';
             $pay_amount = '9.90';
-            $combine_count = 3;
-            $chinese_explain = 1;
-            $multi_explain = 1;
+            $combine_count = 3; // 默认3次合成照片次数
+            $vip_duration = 86400 * 7; // 默认7天会员有效期
             $client_type = 1;
             $description = '快捷购买';
         } else {
@@ -88,8 +87,7 @@ class VipOrderController extends Controller
                 'user_id' => $user->id,
                 'vip_package_id' => null,
                 'combine_count' => $combine_count,
-                'chinese_explain' => $chinese_explain,
-                'multi_explain' => $multi_explain,
+                'vip_duration' => $vip_duration,
                 'total_amount' => $total_amount,
                 'pay_amount' => $pay_amount,
                 'payment_type' => 1,

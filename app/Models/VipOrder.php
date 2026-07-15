@@ -30,8 +30,7 @@ class VipOrder extends Model
         'user_refund_reason',
         'refund_reject_reason',
         'combine_count',
-        'chinese_explain',
-        'multi_explain',
+        'vip_duration',
         'trade_info',
     ];
 
@@ -126,66 +125,65 @@ class VipOrder extends Model
     }
 
     /**
-     * 支付成功后发放用户权益（合成次数 / 讲解权限）
+     * 支付成功后发放场馆维度会员权益（合成次数 / 会员有效期）
      */
     public function grantUserVipRights(): void
     {
-        $user = User::query()->where('id', $this->user_id)->first();
-        if (!$user) {
-            return;
-        }
+        $vipUser = VipUser::query()->firstOrCreate(
+            [
+                'user_id' => $this->user_id,
+                'venue_id' => $this->venue_id,
+            ],
+            [
+                'organization_id' => $this->organization_id,
+                'combine_count' => 0,
+                'expired_at' => null,
+            ]
+        );
 
         $data = [
-            'combine_count' => (int) $user->combine_count + (int) $this->combine_count,
+            'combine_count' => (int) $vipUser->combine_count + (int) $this->combine_count,
         ];
 
-        // 默认加 1 年有效期；若当前仍在有效期内，则在原有效期上续期
-        if ($this->chinese_explain) {
-            $base = $user->chinese_explain_expire && $user->chinese_explain_expire->isFuture()
-                ? $user->chinese_explain_expire
+        if ((int) $this->vip_duration > 0) {
+            $base = $vipUser->expired_at && $vipUser->expired_at->isFuture()
+                ? $vipUser->expired_at
                 : now();
-            $data['chinese_explain_expire'] = $base->copy()->addYear();
+            $data['expired_at'] = $base->copy()->addSeconds((int) $this->vip_duration);
         }
 
-        if ($this->multi_explain) {
-            $base = $user->multi_explain_expire && $user->multi_explain_expire->isFuture()
-                ? $user->multi_explain_expire
-                : now();
-            $data['multi_explain_expire'] = $base->copy()->addYear();
-        }
-
-        $user->update($data);
+        $vipUser->update($data);
     }
 
     /**
-     * 退款成功后回滚用户权益（合成次数 / 讲解有效期）
+     * 退款成功后回滚场馆维度会员权益
      */
     public function rollbackUserVipRights(): bool
     {
-        $user = User::query()->where('id', $this->user_id)->first();
-        if (!$user) {
+        $vipUser = VipUser::query()
+            ->where('user_id', $this->user_id)
+            ->where('venue_id', $this->venue_id)
+            ->first();
+
+        if (!$vipUser) {
             return false;
         }
 
         $data = [];
 
         if ((int) $this->combine_count > 0) {
-            $data['combine_count'] = max(0, (int) $user->combine_count - (int) $this->combine_count);
+            $data['combine_count'] = max(0, (int) $vipUser->combine_count - (int) $this->combine_count);
         }
 
-        if ($this->chinese_explain && $user->chinese_explain_expire && $user->chinese_explain_expire->isFuture()) {
-            $data['chinese_explain_expire'] = $user->chinese_explain_expire->copy()->subYear()->toDateTimeString();
-        }
-
-        if ($this->multi_explain && $user->multi_explain_expire && $user->multi_explain_expire->isFuture()) {
-            $data['multi_explain_expire'] = $user->multi_explain_expire->copy()->subYear()->toDateTimeString();
+        if ((int) $this->vip_duration > 0 && $vipUser->expired_at && $vipUser->expired_at->isFuture()) {
+            $data['expired_at'] = $vipUser->expired_at->copy()->subSeconds((int) $this->vip_duration)->toDateTimeString();
         }
 
         if (empty($data)) {
             return false;
         }
 
-        $user->update($data);
+        $vipUser->update($data);
 
         return true;
     }

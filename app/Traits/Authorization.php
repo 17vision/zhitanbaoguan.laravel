@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\User;
+use App\Models\VipUser;
 use Carbon\Carbon;
 
 trait Authorization
@@ -17,10 +18,13 @@ trait Authorization
 
         $user['in_days'] = Carbon::now()->diffInDays($user->created_at);
 
-        $canCombine = $user->combine_count > 0;
-        $canExplain = ($user->chinese_explain_expire && $user->chinese_explain_expire->isFuture())
-            || ($user->multi_explain_expire && $user->multi_explain_expire->isFuture());
-        $user['is_vip'] = $canCombine || $canExplain;
+        $user['is_vip'] = VipUser::query()
+            ->where('user_id', $id)
+            ->where(function ($query) {
+                $query->where('combine_count', '>', 0)
+                    ->orWhere('expired_at', '>', now());
+            })
+            ->exists();
 
         return $user;
     }

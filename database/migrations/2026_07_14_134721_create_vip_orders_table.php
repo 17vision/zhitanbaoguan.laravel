@@ -32,8 +32,7 @@ return new class extends Migration
             $table->string('user_refund_reason')->nullable()->comment('用户退款的理由');
             $table->string('refund_reject_reason')->nullable()->comment('用户退款驳回的理由');
             $table->unsignedInteger('combine_count')->default(0)->comment('合成照片次数');
-            $table->unsignedTinyInteger('chinese_explain')->default(0)->comment('中文讲解');
-            $table->unsignedTinyInteger('multi_explain')->default(0)->comment('多语言讲解');
+            $table->unsignedInteger('vip_duration')->default(0)->comment('会员时长，单位秒');
             $table->text('trade_info')->nullable()->comment('交易信息json');
             $table->timestamps();
             $table->softDeletes();

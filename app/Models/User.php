@@ -23,7 +23,6 @@ class User extends Authenticatable
     protected $fillable = [
         'wx_unionid', 'wxmini_openid', 'wxmini_session_key', 'wxapp_openid', 'wxgzh_openid', 'viewid', 'account', 'password',
         'nickname', 'phone_prefix', 'phone', 'gender', 'avatar', 'email', 'qq', 'wechat', 'birthday', 'height', 'weight', 'age', 'body_fat_pct',
-        'combine_count', 'chinese_explain_expire', 'multi_explain_expire',
         'province', 'city', 'town', 'address',
         'position', 'signature', 'referer', 'territory_ip', 'register_ip', 'remember_token', 'last_login_at', 'email_verified_at'
     ];
@@ -35,8 +34,6 @@ class User extends Authenticatable
     protected $casts = [
         'last_login_at' => 'datetime',
         'email_verified_at' => 'datetime',
-        'chinese_explain_expire' => 'datetime',
-        'multi_explain_expire' => 'datetime',
     ];
 
     protected $appends = ['gender_str'];
@@ -74,6 +71,11 @@ class User extends Authenticatable
     public function vipOrders()
     {
         return $this->hasMany(VipOrder::class);
+    }
+
+    public function vipUsers()
+    {
+        return $this->hasMany(VipUser::class);
     }
 
     protected static function boot()
