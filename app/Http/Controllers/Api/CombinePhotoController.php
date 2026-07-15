@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CombinePhoto;
 use App\Models\CombineTemplate;
 use App\Models\Venue;
-use App\Utils\ImageUpload;
+use App\Utils\AliOss;
 use Illuminate\Http\Request;
 
 class CombinePhotoController extends Controller
@@ -43,7 +43,7 @@ class CombinePhotoController extends Controller
         $request->validate([
             'venue_id' => 'required|integer|exists:venues,id',
             'template_id' => 'required|integer|exists:combine_templates,id',
-            'photo' => 'required',
+            'photo' => 'required|file|image',
         ], [], [
             'venue_id' => '场馆 id',
             'template_id' => '模板 id',
@@ -66,23 +66,22 @@ class CombinePhotoController extends Controller
             return response()->json(['message' => '模板不存在或已下架'], 403);
         }
 
-        $folder = sprintf('storage/upload/image/combine/%s/', date('Ym'));
-        $name = $user->id . '_' . time() . '_' . randStr(6);
-        $max_width = null;
-        $file = $request->photo;
-
-        if ($request->hasFile('photo')) {
-            $result = app(ImageUpload::class)->saveFileImage($file, $folder, $name, $max_width);
-        } else {
-            $name = $name . '.jpg';
-            $result = app(ImageUpload::class)->saveBase64Image($file, $folder, $name, $max_width);
+        $file = $request->file('photo');
+        if (!$file || !$file->isValid()) {
+            return response()->json(['message' => 'photo 不是有效的文件'], 403);
         }
 
-        if ($result && isset($result['error']) && $result['error']) {
-            return response()->json(['message' => $result['error']], 403);
+        $folder = sprintf('zhitanbaoguan/upload/combine/image/%s/', date('Ym'));
+        $ext = $file->getClientOriginalExtension() ?: 'jpg';
+        $fileName = $user->id . '_' . uniqid() . '.' . $ext;
+        $ossKey = $folder . $fileName;
+
+        $result = app(AliOss::class)->uploadWebFile($file, $ossKey);
+        if (!($result['success'] ?? false)) {
+            return response()->json(['message' => $result['error'] ?? '照片上传失败'], 403);
         }
 
-        $photoPath = $result['url'] ?? '';
+        $photoPath = ossToPath($result['url'] ?? '');
         if (!$photoPath) {
             return response()->json(['message' => '照片上传失败'], 403);
         }
@@ -96,7 +95,7 @@ class CombinePhotoController extends Controller
             'combine_album_id' => $template->combine_album_id,
             'combine_template_id' => $template->id,
             'cover' => $cover,
-            'photo' => reverseStorageUrl($photoPath),
+            'photo' => $photoPath,
             'product_img' => null,
             'combine_date' => now()->toDateString(),
         ]);
