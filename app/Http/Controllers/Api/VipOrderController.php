@@ -96,8 +96,10 @@ class VipOrderController extends Controller
             }
 
             if ($quick_type === 1) {
-                $total_amount = '9.90';
-                $pay_amount = '9.90';
+//                $total_amount = '9.90';
+//                $pay_amount = '9.90';
+                $total_amount = '0.01';
+                $pay_amount = '0.01';
                 $combine_count = 3; // 默认3次合成照片次数
                 $vip_duration = 86400; // 默认1天会员有效期
                 $client_type = 1;
