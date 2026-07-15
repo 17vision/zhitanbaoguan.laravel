@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redis;
 use App\Models\User;
 use App\Models\UserLogin;
+use App\Models\UserReceive;
 use App\Models\VipUser;
 use Illuminate\Http\Request;
 use App\Traits\Authorization;
@@ -43,13 +43,16 @@ class UserController extends Controller
             ->first();
 
         $canExplain = $vipUser && $vipUser->expired_at && $vipUser->expired_at->isFuture();
-        if (!$canExplain) {
-            $canExplain = !Redis::exists("can_explain:{$venue_id}:" . $user->id);
-        }
+
+        $receive = UserReceive::query()
+            ->where('user_id', $user->id)
+            ->where('venue_id', $venue_id)
+            ->whereDate('date', now()->toDateString())
+            ->first();
 
         $result = [
-            'combine_count' => $vipUser ? (int) $vipUser->combine_count : 0,
-            'can_explain' => $canExplain,
+            'combine_count' => ($vipUser ? (int) $vipUser->combine_count : 0) + ($receive ? (int) $receive->combine_count : 0),
+            'can_explain' => $canExplain || ($receive && (int) $receive->explain_count > 0),
         ];
 
         return response()->json($result);

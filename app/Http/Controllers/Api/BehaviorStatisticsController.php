@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\BehaviorStatistic;
+use App\Models\UserReceive;
 use App\Models\Venue;
 use App\Models\VipUser;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
 
 class BehaviorStatisticsController extends Controller
 {
@@ -38,18 +38,21 @@ class BehaviorStatisticsController extends Controller
             }
 
             $vipUser = VipUser::query()
-            ->where('user_id', $user->id)
-            ->where('venue_id', $venue_id)
-            ->first();
+                ->where('user_id', $user->id)
+                ->where('venue_id', $venue_id)
+                ->first();
 
-            $canExplain = $vipUser && $vipUser->expired_at && $vipUser->expired_at->isFuture();
-            if (!$canExplain) {
-                // 讲解标记（包含免费的一次）
-                $key = "can_explain:{$venue_id}:{$user->id}";
-                $ttl = max(1, now()->endOfDay()->getTimestamp() - now()->getTimestamp());
-                Redis::set($key, 1, 'EX', $ttl, 'NX');
+            $isVipValid = $vipUser && $vipUser->expired_at && $vipUser->expired_at->isFuture();
+
+            // VIP 不在有效期内：消耗当天领取的讲解次数
+            if (!$isVipValid) {
+                UserReceive::query()
+                    ->where('user_id', $user->id)
+                    ->where('venue_id', $venue_id)
+                    ->whereDate('date', now()->toDateString())
+                    ->where('explain_count', '>', 0)
+                    ->decrement('explain_count');
             }
-
         }
 
         BehaviorStatistic::create([

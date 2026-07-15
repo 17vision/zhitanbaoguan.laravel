@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\CombinePhoto;
 use App\Models\CombineTemplate;
+use App\Models\UserReceive;
 use App\Models\Venue;
+use App\Models\VipUser;
 use App\Utils\AliOss;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CombinePhotoController extends Controller
 {
@@ -52,6 +55,7 @@ class CombinePhotoController extends Controller
 
         $user = $request->user();
         $venue_id = $request->input('venue_id');
+        $today = now()->toDateString();
 
         $venue = Venue::query()->where('id', $venue_id)->first();
         if (!$venue) {
@@ -64,6 +68,24 @@ class CombinePhotoController extends Controller
             ->first();
         if (!$template) {
             return response()->json(['message' => '模板不存在或已下架'], 403);
+        }
+
+        $receive = UserReceive::query()
+            ->where('user_id', $user->id)
+            ->where('venue_id', $venue_id)
+            ->whereDate('date', $today)
+            ->first();
+
+        $vipUser = VipUser::query()
+            ->where('user_id', $user->id)
+            ->where('venue_id', $venue_id)
+            ->first();
+
+        $receiveCombineCount = $receive ? (int) $receive->combine_count : 0;
+        $vipCombineCount = $vipUser ? (int) $vipUser->combine_count : 0;
+
+        if ($receiveCombineCount <= 0 && $vipCombineCount <= 0) {
+            return response()->json(['message' => '合成次数不足'], 403);
         }
 
         $file = $request->file('photo');
@@ -88,17 +110,42 @@ class CombinePhotoController extends Controller
 
         $cover = $template->getRawOriginal('cover') ?: '';
 
-        $photo = CombinePhoto::create([
-            'organization_id' => $venue->organization_id,
-            'venue_id' => $venue_id,
-            'user_id' => $user->id,
-            'combine_album_id' => $template->combine_album_id,
-            'combine_template_id' => $template->id,
-            'cover' => $cover,
-            'photo' => $photoPath,
-            'product_img' => null,
-            'combine_date' => now()->toDateString(),
-        ]);
+        $photo = DB::transaction(function () use ($venue, $venue_id, $user, $template, $cover, $photoPath, $today) {
+            $photo = CombinePhoto::create([
+                'organization_id' => $venue->organization_id,
+                'venue_id' => $venue_id,
+                'user_id' => $user->id,
+                'combine_album_id' => $template->combine_album_id,
+                'combine_template_id' => $template->id,
+                'cover' => $cover,
+                'photo' => $photoPath,
+                'product_img' => null,
+                'combine_date' => $today,
+            ]);
+
+            $receive = UserReceive::query()
+                ->where('user_id', $user->id)
+                ->where('venue_id', $venue_id)
+                ->whereDate('date', $today)
+                ->lockForUpdate()
+                ->first();
+
+            if ($receive && (int) $receive->combine_count > 0) {
+                $receive->decrement('combine_count');
+            } else {
+                $vipUser = VipUser::query()
+                    ->where('user_id', $user->id)
+                    ->where('venue_id', $venue_id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($vipUser && (int) $vipUser->combine_count > 0) {
+                    $vipUser->decrement('combine_count');
+                }
+            }
+
+            return $photo;
+        });
 
         return response()->json([
             'message' => '图片生成中',

@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\VipPackageController;
 use App\Http\Controllers\Api\BehaviorStatisticsController;
 use App\Http\Controllers\Api\VipOrderController;
 use App\Http\Controllers\Api\CombinePhotoController;
+use App\Http\Controllers\Api\UserReceiveController;
 use App\Http\Controllers\Api\VenueController;
 
 /*
@@ -83,6 +84,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
         // 获取用户每个月的登录信息
         Route::get('user/logins', [UserController::class, 'logins']);
+
+        Route::post('user/receive', [UserReceiveController::class, 'receive']);
 
         // 被允许的操作行为
         Route::get('permitted-action', [UserController::class, 'getPermittedAction']);
