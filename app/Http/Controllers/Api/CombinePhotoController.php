@@ -148,10 +148,7 @@ class CombinePhotoController extends Controller
             return $photo;
         });
 
-        return response()->json([
-            'message' => '图片生成中',
-            'id' => $photo->id,
-        ]);
+        return response()->json($photo);
     }
 
     public function combinePicture(Request $request)
