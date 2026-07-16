@@ -18,7 +18,7 @@ class CombinePhotoWorker extends Command
 
     private const WORKER_TTL = 150;
     private const RECORD_LOCK_TTL = 120;
-    private const RUN_SECONDS = 7200;
+    private const RUN_SECONDS = 3600;
 
     public function handle()
     {

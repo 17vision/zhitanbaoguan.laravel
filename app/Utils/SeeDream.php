@@ -54,7 +54,7 @@ class SeeDream
                 $faceUrl,     // 图2：用户人脸
             ],
             'response_format' => 'url',
-            'size' => '2K',
+            'size' => '1K',
             'stream' => false,
             'watermark' => false,
         ];
