@@ -44,7 +44,7 @@ class CombinePhotoWorker extends Command
                 $photo = CombinePhoto::query()
                     ->where('status', CombinePhoto::STATUS_PENDING)
                     ->where('combine_date', '>=', now()->subDays(3)->toDateString())
-                    ->orderBy('id')
+                    ->inRandomOrder()
                     ->first();
 
                 if (!$photo) {
