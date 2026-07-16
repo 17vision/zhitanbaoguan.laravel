@@ -9,7 +9,6 @@ use App\Models\UserReceive;
 use App\Models\Venue;
 use App\Models\VipUser;
 use App\Utils\AliOss;
-use App\Utils\SeeDream;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -152,6 +151,9 @@ class CombinePhotoController extends Controller
         return response()->json($photo);
     }
 
+    /**
+     * 查询合成结果（合成由异步脚本 app:combine-photo 处理）
+     */
     public function combinePicture(Request $request)
     {
         $request->validate([
@@ -160,104 +162,48 @@ class CombinePhotoController extends Controller
             'id' => '合成记录 id',
         ]);
 
-        $user = $request->user();
         $photo = CombinePhoto::query()
             ->where('id', $request->input('id'))
+            ->where('user_id', $request->user()->id)
             ->first();
 
         if (!$photo) {
             return response()->json(['message' => '合成记录不存在'], 403);
         }
 
-        // 已合成成功，直接返回
-        if ((int) $photo->status === CombinePhoto::STATUS_SUCCESS || $photo->getRawOriginal('product_img')) {
-            if ((int) $photo->status !== CombinePhoto::STATUS_SUCCESS) {
-                $photo->status = CombinePhoto::STATUS_SUCCESS;
-                $photo->failreason = null;
-                $photo->save();
-            }
-
-            return response()->json([
-                'status' => CombinePhoto::STATUS_SUCCESS,
-                'product_img' => $photo->product_img,
-            ]);
+        // 兼容：已有成品图但 status 未更新
+        if ($photo->getRawOriginal('product_img') && (int) $photo->status !== CombinePhoto::STATUS_SUCCESS) {
+            $photo->status = CombinePhoto::STATUS_SUCCESS;
+            $photo->failreason = null;
+            $photo->save();
         }
 
-        // 合成中，避免重复提交
+        $payload = [
+            'status' => (int) $photo->status,
+            'product_img' => $photo->getRawOriginal('product_img') ? $photo->product_img : null,
+            'failreason' => $photo->failreason,
+        ];
+
+        if ((int) $photo->status === CombinePhoto::STATUS_SUCCESS) {
+            return response()->json($payload);
+        }
+
         if ((int) $photo->status === CombinePhoto::STATUS_PROCESSING) {
-            return response()->json([
+            return response()->json(array_merge($payload, [
                 'message' => '图片合成中，请稍后',
-                'status' => CombinePhoto::STATUS_PROCESSING,
-            ], 403);
+            ]));
         }
 
-        $templateUrl = $photo->cover;
-        $faceUrl = $photo->photo;
-        if (!$templateUrl || !$faceUrl) {
-            $reason = '缺少模板图或用户照片';
-            $photo->status = CombinePhoto::STATUS_FAILED;
-            $photo->failreason = $reason;
-            $photo->save();
-
-            return response()->json(['message' => $reason, 'status' => CombinePhoto::STATUS_FAILED], 403);
+        if ((int) $photo->status === CombinePhoto::STATUS_FAILED) {
+            return response()->json(array_merge($payload, [
+                'message' => $photo->failreason ?: '合成失败',
+            ]), 403);
         }
 
-        $photo->status = CombinePhoto::STATUS_PROCESSING;
-        $photo->failreason = null;
-        $photo->save();
-
-        $result = app(SeeDream::class)->swapFace($templateUrl, $faceUrl);
-        if (!($result['success'] ?? false)) {
-            $reason = $result['error'] ?? '合成图片失败';
-            $photo->status = CombinePhoto::STATUS_FAILED;
-            $photo->failreason = $reason;
-            $photo->save();
-
-            return response()->json([
-                'message' => $reason,
-                'status' => CombinePhoto::STATUS_FAILED,
-            ], 403);
-        }
-
-        $folder = sprintf('zhitanbaoguan/upload/combine/product/%s/', date('Ym'));
-        $fileName = $user->id . '_' . uniqid() . '.jpg';
-        $ossKey = $folder . $fileName;
-
-        $upload = app(AliOss::class)->uploadFromUrl($result['url'], $ossKey);
-        if (!($upload['success'] ?? false)) {
-            $reason = $upload['error'] ?? '合成图上传失败';
-            $photo->status = CombinePhoto::STATUS_FAILED;
-            $photo->failreason = $reason;
-            $photo->save();
-
-            return response()->json([
-                'message' => $reason,
-                'status' => CombinePhoto::STATUS_FAILED,
-            ], 403);
-        }
-
-        $productPath = ossToPath($upload['url'] ?? '');
-        if (!$productPath) {
-            $reason = '合成图上传失败';
-            $photo->status = CombinePhoto::STATUS_FAILED;
-            $photo->failreason = $reason;
-            $photo->save();
-
-            return response()->json([
-                'message' => $reason,
-                'status' => CombinePhoto::STATUS_FAILED,
-            ], 403);
-        }
-
-        $photo->product_img = $productPath;
-        $photo->status = CombinePhoto::STATUS_SUCCESS;
-        $photo->failreason = null;
-        $photo->save();
-
-        return response()->json([
-            'status' => CombinePhoto::STATUS_SUCCESS,
-            'product_img' => $photo->product_img,
-        ]);
+        // 待合成
+        return response()->json(array_merge($payload, [
+            'message' => '排队合成中',
+        ]));
     }
 
 }
