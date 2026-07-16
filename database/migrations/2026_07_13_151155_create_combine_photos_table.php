@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('cover')->nullable()->comment('模板原图封面');
             $table->string('photo')->nullable()->comment('用户上传人脸原图');
             $table->string('product_img')->nullable()->comment('AI合成成品图');
+            $table->unsignedTinyInteger('status')->default(0)->comment('0待合成 1合成中 2合成成功 3合成失败');
+            $table->text('failreason')->nullable()->comment('失败原因');
             $table->date('combine_date')->nullable()->index()->comment('合成日期');
             $table->timestamps();
             // 软删除字段

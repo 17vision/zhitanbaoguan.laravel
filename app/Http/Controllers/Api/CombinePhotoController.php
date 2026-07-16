@@ -121,6 +121,7 @@ class CombinePhotoController extends Controller
                 'cover' => $cover,
                 'photo' => $photoPath,
                 'product_img' => null,
+                'status' => CombinePhoto::STATUS_PENDING,
                 'combine_date' => $today,
             ]);
 
@@ -168,22 +169,54 @@ class CombinePhotoController extends Controller
             return response()->json(['message' => '合成记录不存在'], 403);
         }
 
-        // 已有成品图，直接返回可预览地址
-        if ($photo->getRawOriginal('product_img')) {
+        // 已合成成功，直接返回
+        if ((int) $photo->status === CombinePhoto::STATUS_SUCCESS || $photo->getRawOriginal('product_img')) {
+            if ((int) $photo->status !== CombinePhoto::STATUS_SUCCESS) {
+                $photo->status = CombinePhoto::STATUS_SUCCESS;
+                $photo->failreason = null;
+                $photo->save();
+            }
+
             return response()->json([
+                'status' => CombinePhoto::STATUS_SUCCESS,
                 'product_img' => $photo->product_img,
             ]);
+        }
+
+        // 合成中，避免重复提交
+        if ((int) $photo->status === CombinePhoto::STATUS_PROCESSING) {
+            return response()->json([
+                'message' => '图片合成中，请稍后',
+                'status' => CombinePhoto::STATUS_PROCESSING,
+            ], 403);
         }
 
         $templateUrl = $photo->cover;
         $faceUrl = $photo->photo;
         if (!$templateUrl || !$faceUrl) {
-            return response()->json(['message' => '缺少模板图或用户照片'], 403);
+            $reason = '缺少模板图或用户照片';
+            $photo->status = CombinePhoto::STATUS_FAILED;
+            $photo->failreason = $reason;
+            $photo->save();
+
+            return response()->json(['message' => $reason, 'status' => CombinePhoto::STATUS_FAILED], 403);
         }
+
+        $photo->status = CombinePhoto::STATUS_PROCESSING;
+        $photo->failreason = null;
+        $photo->save();
 
         $result = app(SeeDream::class)->swapFace($templateUrl, $faceUrl);
         if (!($result['success'] ?? false)) {
-            return response()->json(['message' => $result['error'] ?? '合成图片失败'], 403);
+            $reason = $result['error'] ?? '合成图片失败';
+            $photo->status = CombinePhoto::STATUS_FAILED;
+            $photo->failreason = $reason;
+            $photo->save();
+
+            return response()->json([
+                'message' => $reason,
+                'status' => CombinePhoto::STATUS_FAILED,
+            ], 403);
         }
 
         $folder = sprintf('zhitanbaoguan/upload/combine/product/%s/', date('Ym'));
@@ -192,18 +225,37 @@ class CombinePhotoController extends Controller
 
         $upload = app(AliOss::class)->uploadFromUrl($result['url'], $ossKey);
         if (!($upload['success'] ?? false)) {
-            return response()->json(['message' => $upload['error'] ?? '合成图上传失败'], 403);
+            $reason = $upload['error'] ?? '合成图上传失败';
+            $photo->status = CombinePhoto::STATUS_FAILED;
+            $photo->failreason = $reason;
+            $photo->save();
+
+            return response()->json([
+                'message' => $reason,
+                'status' => CombinePhoto::STATUS_FAILED,
+            ], 403);
         }
 
         $productPath = ossToPath($upload['url'] ?? '');
         if (!$productPath) {
-            return response()->json(['message' => '合成图上传失败'], 403);
+            $reason = '合成图上传失败';
+            $photo->status = CombinePhoto::STATUS_FAILED;
+            $photo->failreason = $reason;
+            $photo->save();
+
+            return response()->json([
+                'message' => $reason,
+                'status' => CombinePhoto::STATUS_FAILED,
+            ], 403);
         }
 
         $photo->product_img = $productPath;
+        $photo->status = CombinePhoto::STATUS_SUCCESS;
+        $photo->failreason = null;
         $photo->save();
 
         return response()->json([
+            'status' => CombinePhoto::STATUS_SUCCESS,
             'product_img' => $photo->product_img,
         ]);
     }

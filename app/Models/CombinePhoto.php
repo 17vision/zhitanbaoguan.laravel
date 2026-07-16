@@ -10,10 +10,28 @@ class CombinePhoto extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['organization_id', 'venue_id', 'user_id', 'combine_album_id', 'combine_template_id', 'cover', 'photo', 'product_img', 'combine_date'];
+    public const STATUS_PENDING = 0; // 待合成
+    public const STATUS_PROCESSING = 1; // 合成中
+    public const STATUS_SUCCESS = 2; // 成功
+    public const STATUS_FAILED = 3; // 失败
+
+    protected $fillable = [
+        'organization_id',
+        'venue_id',
+        'user_id',
+        'combine_album_id',
+        'combine_template_id',
+        'cover',
+        'photo',
+        'product_img',
+        'status',
+        'failreason',
+        'combine_date',
+    ];
 
     protected $casts = [
         'combine_date' => 'date',
+        'status' => 'integer',
     ];
 
     public function getCoverAttribute()
