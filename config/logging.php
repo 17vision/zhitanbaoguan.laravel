@@ -100,6 +100,13 @@ return [
             'days' => 300,
         ],
 
+        'combine-notify' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/combine-notify/laravel.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 300,
+        ],
+
         'pay-refund' => [
             'driver' => 'daily',
             'path' => storage_path('logs/pay-refund/laravel.log'),

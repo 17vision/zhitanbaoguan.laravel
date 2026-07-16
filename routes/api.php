@@ -131,3 +131,8 @@ Route::put('workflows/paid_orders', [OrderController::class, 'updateOrders']);
 
 // 发起退款
 Route::post('workflows/paid_orders/refund', [OrderController::class, 'refundOrders']);
+
+
+Route::post('combine-test', [CombinePhotoController::class, 'combineTest']);
+
+Route::post('combine-notify', [CombinePhotoController::class, 'combineNotify']);
