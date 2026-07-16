@@ -68,6 +68,54 @@ class AliOss
     }
 
     /**
+     * 从公网 URL 下载文件并上传到 OSS
+     * @param string $fileUrl 源文件地址
+     * @param string $ossKey 上传到 oss 的目录+文件名
+     * @param int $timeout 下载超时秒数
+     * @return array
+     */
+    public function uploadFromUrl(string $fileUrl, string $ossKey, int $timeout = 60)
+    {
+        try {
+            $content = curl($fileUrl, false, false, true, $timeout);
+            if ($content === false || $content === '') {
+                return [
+                    'success' => false,
+                    'error' => '下载合成图片失败',
+                ];
+            }
+
+            $credentialsProvider = new StaticCredentialsProvider(
+                config('oss.aliyun.accessKeyId'),
+                config('oss.aliyun.accessKeySecret')
+            );
+
+            $cfg = Oss\Config::loadDefault();
+            $cfg->setCredentialsProvider($credentialsProvider);
+            $cfg->setRegion($this->region);
+
+            $client = new Oss\Client($cfg);
+
+            $request = new PutObjectRequest($this->bucket, $ossKey);
+            $request->body = Oss\Utils::streamFor($content);
+            $client->putObject($request);
+
+            $url = $this->getOssFileUrl($ossKey);
+
+            return [
+                'success' => true,
+                'url' => $url,
+                'path' => $ossKey,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
      * 获取文件访问URL
      */
     private function getOssFileUrl(string $key): string

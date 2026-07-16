@@ -94,6 +94,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
         Route::get('combine_photos', [CombinePhotoController::class, 'index']);
         // 发起合成照片
         Route::post('combine_photos/generate', [CombinePhotoController::class, 'generatePhoto']);
+        // 实时合成照片
+        Route::post('combine_photos/combine', [CombinePhotoController::class, 'combinePicture']);
 
         // 获取自己的身高体重等数据
         Route::get('user_body_metrics', action: [UserController::class, 'getUserBodyMetrics']);
@@ -132,7 +134,3 @@ Route::put('workflows/paid_orders', [OrderController::class, 'updateOrders']);
 // 发起退款
 Route::post('workflows/paid_orders/refund', [OrderController::class, 'refundOrders']);
 
-
-Route::post('combine-test', [CombinePhotoController::class, 'combineTest']);
-
-Route::post('combine-notify', [CombinePhotoController::class, 'combineNotify']);

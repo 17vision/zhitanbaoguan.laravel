@@ -174,19 +174,21 @@ function getWxMiniShortLink($url, $title = '', $is_permanent = false)
 
 /**
  * @param string $url 请求网址
- * @param bool $params 请求参数
- * @param bool $post 请求方式，是否是post
- * @param bool $https 请求http协议，是否是https
+ * @param bool|string|array $params 请求参数（POST JSON 传字符串）
+ * @param bool $post 请求方式，是否是 post
+ * @param bool $https 请求 http 协议，是否是 https
+ * @param int $timeout 超时秒数，默认 30
+ * @param array $headers 额外请求头，如 ['Authorization: Bearer xxx']
  * @return bool|mixed
  */
-function curl($url, $params = false, $post = false, $https = false)
+function curl($url, $params = false, $post = false, $https = false, $timeout = 30, $headers = [])
 {
     $httpInfo = array();
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
     curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36');
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, min(30, (int) $timeout));
+    curl_setopt($ch, CURLOPT_TIMEOUT, (int) $timeout);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     if ($post === true) {
@@ -194,13 +196,20 @@ function curl($url, $params = false, $post = false, $https = false)
         curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
         curl_setopt($ch, CURLOPT_URL, $url);
         if (gettype($params) == 'string') {
-            $header = array('Content-Type: application/json', 'Content-Length: ' . strlen($params));
+            $header = array_merge(
+                ['Content-Type: application/json', 'Content-Length: ' . strlen($params)],
+                $headers
+            );
             curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        } elseif (!empty($headers)) {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         }
     } else {
         // 临时加的，后边删掉这个玩意
         if (isset($params['sign']) && isset($params['time'])) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, ['sign' . ':' . $params['sign'], 'time' . ':' . $params['time']]);
+        } elseif (!empty($headers)) {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         }
 
         if ($params === false) {
