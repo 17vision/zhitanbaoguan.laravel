@@ -16,7 +16,7 @@ class CheckOrder extends Command
     public function handle()
     {
         // VIP 订单超过 30 分钟未支付，关闭订单
-        $count3 = VipOrder::query()
+        $count = VipOrder::query()
             ->where('status', 1)
             ->where('created_at', '<', now()->subMinutes(30))
             ->update([
@@ -24,6 +24,6 @@ class CheckOrder extends Command
                 'closed_at' => now()->toDateTimeString(),
             ]);
 
-        Log::channel('cron')->info("CheckOrder: 关闭workflows订单:{$count1}, {$count2} | 关闭vip订单:{$count3}");
+        Log::channel('cron')->info("CheckOrder: 关闭vip订单:{$count}");
     }
 }
