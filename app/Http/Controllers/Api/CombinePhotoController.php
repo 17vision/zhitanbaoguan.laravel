@@ -151,59 +151,5 @@ class CombinePhotoController extends Controller
         return response()->json($photo);
     }
 
-    /**
-     * 查询合成结果（合成由异步脚本 app:combine-photo 处理）
-     */
-    public function combinePicture(Request $request)
-    {
-        $request->validate([
-            'id' => 'required|integer|exists:combine_photos,id',
-        ], [], [
-            'id' => '合成记录 id',
-        ]);
-
-        $photo = CombinePhoto::query()
-            ->where('id', $request->input('id'))
-            ->where('user_id', $request->user()->id)
-            ->first();
-
-        if (!$photo) {
-            return response()->json(['message' => '合成记录不存在'], 403);
-        }
-
-        // 兼容：已有成品图但 status 未更新
-        if ($photo->getRawOriginal('product_img') && (int) $photo->status !== CombinePhoto::STATUS_SUCCESS) {
-            $photo->status = CombinePhoto::STATUS_SUCCESS;
-            $photo->failreason = null;
-            $photo->save();
-        }
-
-        $payload = [
-            'status' => (int) $photo->status,
-            'product_img' => $photo->getRawOriginal('product_img') ? $photo->product_img : null,
-            'failreason' => $photo->failreason,
-        ];
-
-        if ((int) $photo->status === CombinePhoto::STATUS_SUCCESS) {
-            return response()->json($payload);
-        }
-
-        if ((int) $photo->status === CombinePhoto::STATUS_PROCESSING) {
-            return response()->json(array_merge($payload, [
-                'message' => '图片合成中，请稍后',
-            ]));
-        }
-
-        if ((int) $photo->status === CombinePhoto::STATUS_FAILED) {
-            return response()->json(array_merge($payload, [
-                'message' => $photo->failreason ?: '合成失败',
-            ]), 403);
-        }
-
-        // 待合成
-        return response()->json(array_merge($payload, [
-            'message' => '排队合成中',
-        ]));
-    }
 
 }

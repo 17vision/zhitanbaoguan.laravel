@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class CombinePhoto extends Model
 {
@@ -33,6 +34,58 @@ class CombinePhoto extends Model
         'combine_date' => 'date',
         'status' => 'integer',
     ];
+
+    /**
+     * 标记合成失败并返还次数（已失败过则不重复返还）
+     */
+    public function markFailed(string $reason): void
+    {
+        $shouldRefund = (int) $this->status !== self::STATUS_FAILED;
+
+        $this->status = self::STATUS_FAILED;
+        $this->failreason = $reason;
+        $this->save();
+
+        if ($shouldRefund) {
+            $this->refundCombineCount();
+        }
+    }
+
+    /**
+     * 合成失败返还次数：
+     * 优先 vip_users 有记录则 +1；否则按 venue_id+user_id+combine_date 找 user_receives +1
+     */
+    public function refundCombineCount(): void
+    {
+        DB::transaction(function () {
+            $vipUser = VipUser::query()
+                ->where('user_id', $this->user_id)
+                ->where('venue_id', $this->venue_id)
+                ->lockForUpdate()
+                ->first();
+
+            if ($vipUser) {
+                $vipUser->increment('combine_count');
+
+                return;
+            }
+
+            if (!$this->combine_date) {
+                return;
+            }
+
+            $receive = UserReceive::query()
+                ->where('user_id', $this->user_id)
+                ->where('venue_id', $this->venue_id)
+                ->whereDate('date', $this->combine_date)
+                ->lockForUpdate()
+                ->first();
+
+            if ($receive) {
+                $receive->increment('combine_count');
+            }
+        });
+    }
 
     public function getCoverAttribute()
     {

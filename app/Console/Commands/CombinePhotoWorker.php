@@ -15,7 +15,6 @@ class CombinePhotoWorker extends Command
 
     protected $description = '异步合成照片（多实例常驻，单实例按 flag 互斥）';
 
-
     private const WORKER_TTL = 150;
     private const RECORD_LOCK_TTL = 120;
     private const RUN_SECONDS = 3600;
@@ -38,7 +37,7 @@ class CombinePhotoWorker extends Command
             $startedAt = time();
 
             while ((time() - $startedAt) < self::RUN_SECONDS) {
-                // 续期 worker 锁，避免接近 2 小时时提前过期
+                // 续期 worker 锁
                 Redis::expire($workerKey, self::WORKER_TTL);
 
                 $photo = CombinePhoto::query()
@@ -63,21 +62,18 @@ class CombinePhotoWorker extends Command
                     $this->processPhoto($photo, $flag);
                 } catch (\Throwable $e) {
                     $photo->refresh();
-                    $photo->status = CombinePhoto::STATUS_FAILED;
-                    $photo->failreason = mb_substr($e->getMessage(), 0, 1000);
-                    $photo->save();
+                    $photo->markFailed(mb_substr($e->getMessage(), 0, 1000));
 
                     Log::channel('cron')->error("CombinePhotoWorker flag={$flag} id={$photo->id} exception", [
                         'message' => $e->getMessage(),
                     ]);
                 } finally {
                     Redis::del($lockKey);
-                    // 合成耗时长，处理后立刻续期 worker 锁
                     Redis::expire($workerKey, self::WORKER_TTL);
                 }
             }
 
-            Log::channel('cron')->info("CombinePhotoWorker flag={$flag} finished after 2 hours");
+            Log::channel('cron')->info("CombinePhotoWorker flag={$flag} finished");
         } finally {
             Redis::del($workerKey);
         }
@@ -100,20 +96,14 @@ class CombinePhotoWorker extends Command
         $templateUrl = $photo->cover;
         $faceUrl = $photo->photo;
         if (!$templateUrl || !$faceUrl) {
-            $reason = '缺少模板图或用户照片';
-            $photo->status = CombinePhoto::STATUS_FAILED;
-            $photo->failreason = $reason;
-            $photo->save();
+            $photo->markFailed('缺少模板图或用户照片');
 
             return;
         }
 
         $result = app(SeeDream::class)->swapFace($templateUrl, $faceUrl);
         if (!($result['success'] ?? false)) {
-            $reason = $result['error'] ?? '合成图片失败';
-            $photo->status = CombinePhoto::STATUS_FAILED;
-            $photo->failreason = $reason;
-            $photo->save();
+            $photo->markFailed($result['error'] ?? '合成图片失败');
 
             return;
         }
@@ -124,20 +114,14 @@ class CombinePhotoWorker extends Command
 
         $upload = app(AliOss::class)->uploadFromUrl($result['url'], $ossKey);
         if (!($upload['success'] ?? false)) {
-            $reason = $upload['error'] ?? '合成图上传失败';
-            $photo->status = CombinePhoto::STATUS_FAILED;
-            $photo->failreason = $reason;
-            $photo->save();
+            $photo->markFailed($upload['error'] ?? '合成图上传失败');
 
             return;
         }
 
         $productPath = ossToPath($upload['url'] ?? '');
         if (!$productPath) {
-            $reason = '合成图上传失败';
-            $photo->status = CombinePhoto::STATUS_FAILED;
-            $photo->failreason = $reason;
-            $photo->save();
+            $photo->markFailed('合成图上传失败');
 
             return;
         }
