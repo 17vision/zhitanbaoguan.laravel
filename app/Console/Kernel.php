@@ -17,16 +17,16 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:check-order')->everyMinute();
 
         // 合成脚本常驻约 2 小时；每分钟尝试拉起，同 flag 已运行则内部 Redis 互斥直接退出
-        $schedule->command('app:combine-photo 1')->everyMinute();
-        $schedule->command('app:combine-photo 2')->everyMinute();
-        $schedule->command('app:combine-photo 3')->everyMinute();
-        $schedule->command('app:combine-photo 4')->everyMinute();
-        $schedule->command('app:combine-photo 5')->everyMinute();
-        $schedule->command('app:combine-photo 6')->everyMinute();
-        $schedule->command('app:combine-photo 7')->everyMinute();
-        $schedule->command('app:combine-photo 8')->everyMinute();
-        $schedule->command('app:combine-photo 9')->everyMinute();
-        $schedule->command('app:combine-photo 10')->everyMinute();
+        $schedule->command('app:combine-photo 1')->everyMinute()->runInBackground();
+        $schedule->command('app:combine-photo 2')->everyMinute()->runInBackground();
+        $schedule->command('app:combine-photo 3')->everyMinute()->runInBackground();
+        $schedule->command('app:combine-photo 4')->everyMinute()->runInBackground();
+        $schedule->command('app:combine-photo 5')->everyMinute()->runInBackground();
+        $schedule->command('app:combine-photo 6')->everyMinute()->runInBackground();
+        $schedule->command('app:combine-photo 7')->everyMinute()->runInBackground();
+        $schedule->command('app:combine-photo 8')->everyMinute()->runInBackground();
+        $schedule->command('app:combine-photo 9')->everyMinute()->runInBackground();
+        $schedule->command('app:combine-photo 10')->everyMinute()->runInBackground();
     }
 
     /**
