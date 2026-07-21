@@ -41,7 +41,7 @@ class VenueIntroductionController extends Controller
         $request->validate([
             'venue_id' => 'required|integer|exists:venues,id',
             'name' => 'required|string|max:16',
-            'content' => 'required|string|max:2500',
+            'content' => 'required|string',
             'voice' => 'filled|string|max:255',
             'status' => 'filled|in:1,2',
         ], [], [
@@ -69,7 +69,7 @@ class VenueIntroductionController extends Controller
             'id' => 'required|integer|exists:venue_introductions,id',
             'venue_id' => 'filled|integer|exists:places,id',
             'name' => 'filled|string|max:16',
-            'content' => 'filled|string|max:2500',
+            'content' => 'filled|string',
             'voice' => 'filled|string|max:255',
             'status' => 'filled|in:1,2',
         ], [], [
