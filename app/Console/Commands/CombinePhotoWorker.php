@@ -31,8 +31,7 @@ class CombinePhotoWorker extends Command
 
         try {
             // 随机错开启动
-            $sleepSeconds = random_int(1, 10);
-            sleep($sleepSeconds);
+            sleep(mt_rand(1, 10));
 
             $startedAt = time();
 
@@ -42,19 +41,19 @@ class CombinePhotoWorker extends Command
 
                 $photo = CombinePhoto::query()
                     ->where('status', CombinePhoto::STATUS_PENDING)
-                    ->where('combine_date', '>=', now()->subDays(3)->toDateString())
+                    ->where('combine_date', '>=', now()->subDays(15)->toDateString())
                     ->inRandomOrder()
                     ->first();
 
                 if (!$photo) {
-                    sleep(2);
+                    sleep(mt_rand(1, 10));
                     continue;
                 }
 
                 $lockKey = "combine_photo:lock:{$photo->id}";
                 // 已被其它脚本锁定
                 if (!Redis::set($lockKey, $flag, 'EX', self::RECORD_LOCK_TTL, 'NX')) {
-                    sleep(2);
+                    sleep(1);
                     continue;
                 }
 
