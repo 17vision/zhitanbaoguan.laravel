@@ -21,8 +21,7 @@ trait Authorization
         $user['is_vip'] = VipUser::query()
             ->where('user_id', $id)
             ->where(function ($query) {
-                $query->where('combine_count', '>', 0)
-                    ->orWhere('expired_at', '>', now());
+                $query->where('expired_at', '>', now());
             })
             ->exists();
 
