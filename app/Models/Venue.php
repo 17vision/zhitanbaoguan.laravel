@@ -63,7 +63,10 @@ class Venue extends Model
 
     public function introductions()
     {
-        return $this->hasMany(VenueIntroduction::class);
+        return $this->hasMany(VenueIntroduction::class)
+            ->orderBy('status', 'asc')
+            ->orderBy('sort')
+            ->orderByDesc('id');
     }
 
     public function medias()
