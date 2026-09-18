@@ -43,7 +43,15 @@ class PlaceController extends Controller
 
     public function detail(Request $request, $id)
     {
-        $venue = Place::where('id', $id)->with(['introductions', 'medias'])->first();
+        $venue = Place::where('id', $id)->with([
+            'introductions' => function ($query) {
+                $query->where('status', 1)
+                    ->orderBy('status', 'asc')
+                    ->orderBy('sort')
+                    ->orderByDesc('id');
+            },
+            'medias',
+        ])->first();
 
         return response()->json($venue);
     }

@@ -10,7 +10,16 @@ class VenueController extends Controller
 {
     public function detail(Request $request, $id)
     {
-        $venue = Venue::where('id', $id)->with(['organization:id,name', 'introductions', 'medias'])->first();
+        $venue = Venue::where('id', $id)->with([
+            'organization:id,name',
+            'introductions' => function ($query) {
+                $query->where('status', 1)
+                    ->orderBy('status', 'asc')
+                    ->orderBy('sort')
+                    ->orderByDesc('id');
+            },
+            'medias',
+        ])->first();
 
         return response()->json($venue);
     }
