@@ -45,7 +45,7 @@ class PlaceController extends Controller
     {
         $venue = Place::where('id', $id)->with([
             'introductions' => function ($query) {
-                $query->where('status', 1)
+                $query->whereIn('status', [0, 1])
                     ->orderBy('status', 'asc')
                     ->orderBy('sort')
                     ->orderByDesc('id');
