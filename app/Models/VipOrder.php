@@ -10,6 +10,12 @@ class VipOrder extends Model
     use HasFactory;
     use SoftDeletes;
 
+    /** 普通微信支付 */
+    public const PAYMENT_CHANNEL_WECHAT = 1;
+
+    /** 小程序虚拟支付 */
+    public const PAYMENT_CHANNEL_VIRTUAL = 2;
+
     protected $fillable = [
         'organization_id',
         'venue_id',
@@ -19,6 +25,10 @@ class VipOrder extends Model
         'total_amount',
         'pay_amount',
         'payment_type',
+        'payment_channel',
+        'product_id',
+        'env',
+        'goods_delivered',
         'client_type',
         'payment_number',
         'paid_at',

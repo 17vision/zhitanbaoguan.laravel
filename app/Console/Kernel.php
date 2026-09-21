@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
 
         $schedule->command('app:check-order')->everyMinute();
+        $schedule->command('app:check-virtual-vip-order')->everyMinute();
 
         // 合成脚本常驻约 2 小时；每分钟尝试拉起，同 flag 已运行则内部 Redis 互斥直接退出
         $schedule->command('app:combine-photo 1')->everyMinute()->runInBackground();

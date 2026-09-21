@@ -15,9 +15,10 @@ class CheckOrder extends Command
 
     public function handle()
     {
-        // VIP 订单超过 30 分钟未支付，关闭订单
+        // 普通微信支付 VIP：超过 30 分钟未支付则关闭（虚拟支付由 app:check-virtual-vip-order 处理）
         $count = VipOrder::query()
             ->where('status', 1)
+            ->where('payment_channel', VipOrder::PAYMENT_CHANNEL_WECHAT)
             ->where('created_at', '<', now()->subMinutes(30))
             ->update([
                 'status' => 0,

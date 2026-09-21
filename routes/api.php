@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\CombineTemplateController;
 use App\Http\Controllers\Api\VipPackageController;
 use App\Http\Controllers\Api\BehaviorStatisticsController;
 use App\Http\Controllers\Api\VipOrderController;
+use App\Http\Controllers\Api\VipVirtualPaymentController;
 use App\Http\Controllers\Api\CombinePhotoController;
 use App\Http\Controllers\Api\UserReceiveController;
 use App\Http\Controllers\Api\VenueController;
@@ -116,12 +117,19 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
         Route::post('vip/orders/refund', [VipOrderController::class, 'refund']);
         // vip 快捷支付
         Route::post('vip/payments/quick', [VipOrderController::class, 'quickPayment']);
+        // vip 虚拟支付快捷下单（道具直购）
+        Route::post('vip/virtual-payments/quick', [VipVirtualPaymentController::class, 'quickPayment']);
+        // vip 虚拟支付订单状态（可触发查单补发货）
+        Route::post('vip/virtual-payments/status', [VipVirtualPaymentController::class, 'paymentStatus']);
     });
 });
 
 
 // 微信支付通知
 Route::post('pay/wechat-notify', [PayController::class, 'wechatNotify']);
+
+// 虚拟支付消息推送（发货 / 退款 / iOS 退款问询）
+Route::match(['get', 'post'], 'vip/virtual-payment/notify', [VipVirtualPaymentController::class, 'notify']);
 
 // unity 获取已支付的订单
 Route::get('workflows/paid_orders', [OrderController::class, 'paidOrders']);
