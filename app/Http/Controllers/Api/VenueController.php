@@ -13,7 +13,7 @@ class VenueController extends Controller
         $venue = Venue::where('id', $id)->with([
             'organization:id,name',
             'introductions' => function ($query) {
-                $query->whereIn('status', [0, 1])
+                $query->where('status', 1)
                     ->orderBy('status', 'asc')
                     ->orderBy('sort')
                     ->orderByDesc('id');
