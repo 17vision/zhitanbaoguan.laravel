@@ -41,6 +41,16 @@ class CombinePhotoController extends Controller
         return response()->json($data);
     }
 
+    public function detail(Request $request, $id)
+    {
+        $photo = CombinePhoto::query()
+            ->where('id', $id)
+            ->where('user_id', $request->user()->id)
+            ->first();
+
+        return response()->json($photo);
+    }
+
     public function generatePhoto(Request $request)
     {
         $request->validate([

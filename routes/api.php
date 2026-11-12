@@ -93,6 +93,8 @@ Route::middleware(['throttle:' . config('api.rate_limits.access'), 'user.get', '
 
         // 用户合成图片列表
         Route::get('combine_photos', [CombinePhotoController::class, 'index']);
+        // 用户合成图片详情
+        Route::get('combine_photos/{id}', [CombinePhotoController::class, 'detail'])->where('id', '^[1-9]\d*$');
         // 发起合成照片
         Route::post('combine_photos/generate', [CombinePhotoController::class, 'generatePhoto']);
 
